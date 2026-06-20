@@ -45,10 +45,12 @@ export default function HomePage() {
     <>
       <Header />
       <main className="flex-1">
-        <section className="relative overflow-x-clip">
-          <div className="bg-mesh absolute inset-0" />
-          <div className="bg-dot-grid absolute inset-0 opacity-40 md:opacity-50" />
-          <HeroBackgroundPattern />
+        <section className="relative">
+          <div className="pointer-events-none absolute inset-0 overflow-x-clip">
+            <div className="bg-mesh absolute inset-0" />
+            <div className="bg-dot-grid absolute inset-0 opacity-40 md:opacity-50" />
+            <HeroBackgroundPattern />
+          </div>
           <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
             <div className="grid w-full items-center justify-items-center gap-10 lg:grid-cols-2 lg:gap-16 lg:justify-items-stretch xl:gap-20">
               <div className="w-full max-w-xl text-center lg:max-w-none lg:text-left">
@@ -84,7 +86,7 @@ export default function HomePage() {
                   </Link>
                 </div>
               </div>
-              <div className="flex w-full justify-center lg:justify-end">
+              <div className="flex w-full justify-center overflow-visible lg:justify-end">
                 <HeroVisual />
               </div>
             </div>

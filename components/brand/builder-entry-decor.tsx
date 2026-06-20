@@ -4,17 +4,17 @@ import { cn } from "@/lib/utils";
 const BUILDER_ICONS = [
   {
     icon: Upload,
-    position: "right-0 top-2 translate-x-[30%]",
+    position: "right-0 top-2 translate-x-1/2",
     delay: "0s",
   },
   {
     icon: FileText,
-    position: "left-0 bottom-12 -translate-x-[35%]",
+    position: "left-0 bottom-12 -translate-x-1/2",
     delay: "1s",
   },
   {
     icon: Sparkles,
-    position: "right-0 bottom-2 translate-x-[25%]",
+    position: "right-0 bottom-2 translate-x-1/2",
     delay: "1.6s",
   },
 ] as const;

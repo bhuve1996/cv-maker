@@ -15,21 +15,21 @@ const HERO_ICONS: FloatingIconItem[] = [
   {
     icon: FileText,
     label: "PDF",
-    position: "left-0 top-[18%] -translate-x-[40%]",
+    position: "left-0 top-[18%] -translate-x-1/2",
     delay: "0s",
     size: "sm",
     variant: "default",
   },
   {
     icon: Sparkles,
-    position: "right-0 top-[8%] translate-x-[35%]",
+    position: "right-0 top-[8%] translate-x-1/2",
     delay: "1.2s",
     size: "sm",
     variant: "accent",
   },
   {
     icon: Briefcase,
-    position: "left-0 bottom-[30%] -translate-x-[45%]",
+    position: "left-0 bottom-[30%] -translate-x-1/2",
     delay: "0.6s",
     size: "sm",
     variant: "muted",
@@ -37,7 +37,7 @@ const HERO_ICONS: FloatingIconItem[] = [
   {
     icon: Download,
     label: "Export",
-    position: "right-0 bottom-[12%] translate-x-[30%]",
+    position: "right-0 bottom-[12%] translate-x-1/2",
     delay: "1.8s",
     size: "sm",
     variant: "accent",
@@ -87,7 +87,7 @@ export function FloatingIcons({ items = HERO_ICONS, className }: FloatingIconsPr
   return (
     <div
       className={cn(
-        "pointer-events-none absolute inset-0 hidden lg:block",
+        "pointer-events-none absolute -inset-x-6 -inset-y-2 hidden lg:block",
         className,
       )}
     >

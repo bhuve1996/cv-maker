@@ -9,6 +9,7 @@ export function useResumeExport() {
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const resume = useResumeStore((state) => state.resume);
+  const style = useResumeStore((state) => state.style);
   const fullName = resume.personalInfo.fullName.trim() || "resume";
 
   const downloadPdf = useCallback(async () => {
@@ -18,7 +19,7 @@ export function useResumeExport() {
     const filename = `${fullName.replace(/\s+/g, "-").toLowerCase()}.pdf`;
 
     try {
-      await downloadResumePdfFromData(resume, filename);
+      await downloadResumePdfFromData(resume, filename, style);
       toastExportSuccess(filename);
     } catch {
       const message = "PDF export failed. Try Print and save as PDF instead.";
@@ -27,7 +28,7 @@ export function useResumeExport() {
     } finally {
       setIsExporting(false);
     }
-  }, [fullName, resume]);
+  }, [fullName, resume, style]);
 
   const scrollToPreview = useCallback(() => {
     document

@@ -2,7 +2,6 @@
 
 import { Suspense } from "react";
 import { Loader2, RotateCcw } from "lucide-react";
-import { LogoMark } from "@/components/brand/logo";
 import { BuilderEntryDecor } from "@/components/brand/builder-entry-decor";
 import { MobileBuilderBar } from "@/components/builder/mobile-builder-bar";
 import { ParseStatusBanner } from "@/components/builder/parse-status-banner";
@@ -19,7 +18,7 @@ import { toastResetSuccess } from "@/lib/toast-messages";
 
 function BuilderLayoutContent() {
   const hydrated = useBuilderEntryMode();
-  const { hasUploaded, reset, resume, startFromScratch } = useResumeStore();
+  const { hasUploaded, reset, resume, style, startFromScratch } = useResumeStore();
 
   const handleReset = () => {
     if (
@@ -46,33 +45,25 @@ function BuilderLayoutContent() {
   return (
     <div className="relative mx-auto max-w-7xl px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-6">
       <div className="bg-mesh pointer-events-none absolute inset-x-0 top-0 h-48 opacity-40" />
-      <div className="relative mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-start gap-3">
-          <LogoMark size={36} className="mt-0.5 hidden sm:block" />
-          <div>
-            <h1 className="text-2xl font-normal tracking-tight">Resume Builder</h1>
-            <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              {hasUploaded
-                ? "Auto-saved in this browser — pick up where you left off."
-                : "Drop a file to import your resume, or start from a blank template."}
-            </p>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2 print:hidden">
-          {hasUploaded && <SaveIndicator />}
-          {hasUploaded && (
+      {hasUploaded && (
+        <div className="relative mb-6 flex flex-wrap items-center justify-between gap-3 print:hidden">
+          <p className="text-sm text-muted-foreground">
+            Auto-saved in this browser — pick up where you left off.
+          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <SaveIndicator />
             <Button type="button" variant="outline" size="sm" onClick={handleReset}>
               <RotateCcw className="size-4" />
               Clear saved data
             </Button>
-          )}
+          </div>
         </div>
-      </div>
+      )}
 
       {!hasUploaded ? (
-        <div className="relative mx-auto max-w-xl overflow-x-clip py-4 md:px-6">
-          <div className="bg-dot-grid pointer-events-none absolute inset-0 opacity-20 md:opacity-30" />
-          <BuilderEntryDecor />
+        <div className="relative mx-auto max-w-xl overflow-visible py-4 md:px-10">
+          <div className="bg-dot-grid pointer-events-none absolute inset-0 overflow-x-clip opacity-20 md:opacity-30" />
+          <BuilderEntryDecor className="-inset-x-4" />
           <div className="relative">
             <ResumeUpload />
           </div>
@@ -101,7 +92,7 @@ function BuilderLayoutContent() {
           </div>
           <MobileBuilderBar />
           <div className="resume-print-only hidden">
-            <ResumeDocument resume={resume} id="resume-print" />
+            <ResumeDocument resume={resume} style={style} id="resume-print" />
           </div>
         </>
       )}

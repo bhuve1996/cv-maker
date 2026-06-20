@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  RESUME_DOCUMENT_STYLES,
+  buildResumeDocumentStyles,
   RESUME_DOCUMENT_WIDTH_PX,
 } from "@/lib/export/resume-document-styles";
 import {
@@ -10,20 +10,25 @@ import {
   stripHtml,
 } from "@/lib/export/resume-content";
 import {
+  formatExperienceHeader,
   formatYearsOfExperienceLine,
   getTopLevelCertificationNames,
   getVisibleJobCertifications,
   getVisibleSummaryAchievements,
 } from "@/lib/export/resume-display";
+import { resolveResumeTheme } from "@/lib/export/resume-theme";
 import {
   groupSkillsByCategory,
   SKILL_CATEGORY_LABELS,
 } from "@/lib/resume/skill-categories";
 import type { Resume, SkillCategory } from "@/types/resume";
+import { DEFAULT_RESUME_STYLE } from "@/types/resume-style";
+import type { ResumeStyle } from "@/types/resume-style";
 import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
 
 interface ResumeDocumentProps {
   resume: Resume;
+  style?: ResumeStyle;
   id?: string;
 }
 
@@ -34,16 +39,29 @@ function HtmlContent({ html }: { html: string }) {
   );
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
+function SectionTitle({
+  children,
+  filled,
+}: {
+  children: React.ReactNode;
+  filled: boolean;
+}) {
   return (
-    <div className="rd-section-title">
+    <div className={filled ? "rd-section-title-filled" : "rd-section-title"}>
       <h2>{children}</h2>
       <div className="rd-separator" />
     </div>
   );
 }
 
-export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocumentProps) {
+export function ResumeDocument({
+  resume,
+  style = DEFAULT_RESUME_STYLE,
+  id = "resume-preview",
+}: ResumeDocumentProps) {
+  const theme = resolveResumeTheme(style);
+  const documentStyles = buildResumeDocumentStyles(style);
+  const sectionTitleFilled = theme.sectionHeaderStyle !== "rule";
   const { personalInfo, professionalSummary } = resume;
   const contactGroups = getContactLineGroups(resume);
   const skillGroups = groupSkillsByCategory(resume.skills);
@@ -58,7 +76,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: RESUME_DOCUMENT_STYLES }} />
+      <style dangerouslySetInnerHTML={{ __html: documentStyles }} />
       <article
         id={id}
         className="resume-document"
@@ -98,7 +116,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
 
         {professionalSummary.text && (
           <section className="rd-section">
-            <SectionTitle>Professional Summary</SectionTitle>
+            <SectionTitle filled={sectionTitleFilled}>Professional Summary</SectionTitle>
             {experienceLine && (
               <p className="rd-muted" style={{ marginBottom: 4 }}>
                 {experienceLine}
@@ -127,13 +145,14 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
 
         {resume.experience.length > 0 && (
           <section className="rd-section">
-            <SectionTitle>Work Experience</SectionTitle>
+            <SectionTitle filled={sectionTitleFilled}>Work Experience</SectionTitle>
             <div className="rd-stack">
               {resume.experience.map((item, index) => {
                 const visibleJobCerts = getVisibleJobCertifications(
                   item.certifications,
                   topLevelCertNames,
                 );
+                const header = formatExperienceHeader(item, style.experienceLayout);
 
                 return (
                 <div
@@ -143,21 +162,27 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
                   }`}
                 >
                   <div className="rd-company-header">
-                    <div className="rd-row">
+                    <div className={header.useSideDates ? "rd-row" : "rd-stack"}>
                       <div>
-                        <h3>{item.role}</h3>
-                        <p className="rd-muted">
-                          <strong>{item.company}</strong>
-                          {item.location ? ` · ${item.location}` : ""}
-                        </p>
+                        <h3>{header.primaryLine}</h3>
+                        {header.secondaryLine && (
+                          <p className="rd-muted">
+                            {style.experienceLayout === "standard" && item.company ? (
+                              <>
+                                <strong>{item.company}</strong>
+                                {item.location ? ` · ${item.location}` : ""}
+                              </>
+                            ) : (
+                              header.secondaryLine
+                            )}
+                          </p>
+                        )}
                         {item.companyDescription && (
                           <p className="rd-faint rd-small">{item.companyDescription}</p>
                         )}
                       </div>
-                      {(item.startDate || item.endDate) && (
-                        <p className="rd-subtle">
-                          {[item.startDate, item.endDate].filter(Boolean).join(" — ")}
-                        </p>
+                      {header.useSideDates && header.datesLine && (
+                        <p className="rd-subtle">{header.datesLine}</p>
                       )}
                     </div>
                   </div>
@@ -226,7 +251,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
 
         {Object.keys(skillGroups).length > 0 && (
           <section className="rd-section">
-            <SectionTitle>Skills</SectionTitle>
+            <SectionTitle filled={sectionTitleFilled}>Skills</SectionTitle>
             <div className="rd-skills-list">
               {Object.entries(skillGroups).map(([category, items]) => (
                 <div key={category} className="rd-skill-row">
@@ -244,7 +269,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
 
         {resume.education.length > 0 && (
           <section className="rd-section">
-            <SectionTitle>Education</SectionTitle>
+            <SectionTitle filled={sectionTitleFilled}>Education</SectionTitle>
             <div className="rd-stack-sm">
               {resume.education.map((item) => (
                 <div key={item.id} className="rd-row">
@@ -269,7 +294,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
 
         {resume.certifications.length > 0 && (
           <section className="rd-section">
-            <SectionTitle>Certifications</SectionTitle>
+            <SectionTitle filled={sectionTitleFilled}>Certifications</SectionTitle>
             <ul className="rd-body">
               {resume.certifications.map((item, index) => (
                 <li key={item.id ?? `cert-${index}`}>
@@ -283,7 +308,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
 
         {resume.projects.length > 0 && (
           <section className="rd-section">
-            <SectionTitle>Projects</SectionTitle>
+            <SectionTitle filled={sectionTitleFilled}>Projects</SectionTitle>
             <div className="rd-stack-sm">
               {resume.projects.map((item, index) => (
                 <div key={item.id ?? `project-${index}`}>
@@ -302,7 +327,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
 
         {resume.spokenLanguages.length > 0 && (
           <section className="rd-section">
-            <SectionTitle>Languages</SectionTitle>
+            <SectionTitle filled={sectionTitleFilled}>Languages</SectionTitle>
             <p className="rd-inline-list">
               {resume.spokenLanguages
                 .map((item) =>
@@ -317,7 +342,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
 
         {resume.keyAchievements.length > 0 && (
           <section className="rd-section">
-            <SectionTitle>Key Achievements</SectionTitle>
+            <SectionTitle filled={sectionTitleFilled}>Key Achievements</SectionTitle>
             <ul className="rd-body">
               {resume.keyAchievements.map((item, index) => (
                 <li key={item.id ?? `achievement-${index}`}>
@@ -333,14 +358,14 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
 
         {resume.interests.length > 0 && (
           <section className="rd-section">
-            <SectionTitle>Interests</SectionTitle>
+            <SectionTitle filled={sectionTitleFilled}>Interests</SectionTitle>
             <p className="rd-body">{resume.interests.join(", ")}</p>
           </section>
         )}
 
         {filledOptionalFields.length > 0 && (
           <section className="rd-section">
-            <SectionTitle>Additional Information</SectionTitle>
+            <SectionTitle filled={sectionTitleFilled}>Additional Information</SectionTitle>
             <div className="rd-body rd-optional-list">
               {filledOptionalFields.map(([key, value]) => (
                 <p key={key} className="rd-optional-row">

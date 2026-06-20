@@ -4,7 +4,7 @@ import { HeroBanner } from "@/components/brand/hero-banner";
 
 export function HeroVisual() {
   return (
-    <div className="relative mx-auto w-full max-w-[340px] sm:max-w-[380px] lg:max-w-[420px]">
+    <div className="relative mx-auto w-full max-w-[340px] overflow-visible sm:max-w-[380px] lg:max-w-[420px]">
       <div
         className="animate-drift pointer-events-none absolute -right-6 top-0 size-28 rounded-full bg-primary/10 blur-3xl lg:-right-10 lg:size-32"
         aria-hidden
@@ -15,7 +15,7 @@ export function HeroVisual() {
       />
 
       {/* Padded orbit area — icons stay anchored to the preview card */}
-      <div className="relative lg:px-7 lg:py-5">
+      <div className="relative lg:px-10 lg:py-6">
         <FloatingIcons />
 
         <div className="relative z-[1] space-y-3 sm:space-y-4">

@@ -1,11 +1,13 @@
 import { formatYearsOfExperienceLine } from "@/lib/resume/format-years";
 import { stripHtml } from "@/lib/export/text-utils";
 import type {
+  Experience,
   JobCertification,
   ProfessionalSummary,
   Resume,
   SummaryAchievement,
 } from "@/types/resume";
+import type { ExperienceLayout } from "@/types/resume-style";
 
 export { formatYearsOfExperienceLine };
 
@@ -41,4 +43,42 @@ export function getVisibleJobCertifications(
     const name = cert.name.trim().toLowerCase();
     return name.length > 0 && !topLevelNames.has(name);
   });
+}
+
+export interface ExperienceHeaderLines {
+  primaryLine: string;
+  secondaryLine: string | null;
+  datesLine: string | null;
+  useSideDates: boolean;
+}
+
+function formatExperienceDates(item: Experience): string | null {
+  const dates = [item.startDate, item.endDate].filter(Boolean).join(" — ");
+  return dates || null;
+}
+
+export function formatExperienceHeader(
+  item: Experience,
+  layout: ExperienceLayout,
+): ExperienceHeaderLines {
+  const dates = formatExperienceDates(item);
+
+  if (layout === "recruiter") {
+    const primaryParts = [item.company, item.role].filter(Boolean);
+    const secondaryParts = [item.location, dates].filter(Boolean);
+
+    return {
+      primaryLine: primaryParts.join(" | "),
+      secondaryLine: secondaryParts.length > 0 ? secondaryParts.join(" | ") : null,
+      datesLine: null,
+      useSideDates: false,
+    };
+  }
+
+  return {
+    primaryLine: item.role,
+    secondaryLine: [item.company, item.location].filter(Boolean).join(" · ") || null,
+    datesLine: dates,
+    useSideDates: true,
+  };
 }

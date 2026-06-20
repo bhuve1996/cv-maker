@@ -1,13 +1,106 @@
+import { DEFAULT_RESUME_STYLE } from "@/types/resume-style";
+import { resolveResumeTheme } from "@/lib/export/resume-theme";
+import type { ResumeStyle } from "@/types/resume-style";
+import type { ResolvedResumeTheme } from "@/lib/export/resume-theme";
+
+function buildSectionTitleCss(theme: ResolvedResumeTheme): string {
+  const { sectionTitleBackground, sectionTitleColor, showSectionRule } = theme;
+  const padding = theme.sectionTitlePadding;
+
+  let css = `
+  .resume-document h2 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: ${sectionTitleColor};
+  }`;
+
+  if (sectionTitleBackground) {
+    css += `
+  .resume-document .rd-section-title-filled {
+    background: ${sectionTitleBackground};
+    margin-left: -28px;
+    margin-right: -28px;
+    padding: ${padding.vertical}px 28px;
+    margin-bottom: 6px;
+  }
+  .resume-document .rd-section-title-filled h2 {
+    color: ${sectionTitleColor};
+  }`;
+  } else {
+    css += `
+  .resume-document .rd-section-title {
+    margin-bottom: 6px;
+  }`;
+  }
+
+  if (showSectionRule) {
+    css += `
+  .resume-document .rd-separator {
+    height: 1px;
+    margin-top: 4px;
+    background: ${theme.colors.divider};
+  }`;
+  } else {
+    css += `
+  .resume-document .rd-separator {
+    display: none;
+  }`;
+  }
+
+  return css;
+}
+
+function buildHeaderCss(theme: ResolvedResumeTheme): string {
+  const { headerBackground, headerBorderColor } = theme;
+
+  if (headerBackground) {
+    return `
+  .resume-document .rd-header {
+    background: ${headerBackground};
+    border-bottom: none;
+    margin: -22px -28px 2px;
+    padding: 18px 28px 12px;
+  }
+  .resume-document .rd-header h1 {
+    color: ${theme.headerTextPrimary};
+  }
+  .resume-document .rd-header .rd-title {
+    color: ${theme.headerTextSecondary};
+  }
+  .resume-document .rd-header .rd-specialization {
+    color: ${theme.headerTextMuted};
+  }
+  .resume-document .rd-header .rd-contact {
+    color: ${theme.headerTextMuted};
+  }`;
+  }
+
+  return `
+  .resume-document .rd-header {
+    border-bottom: 1px solid ${headerBorderColor};
+    padding-bottom: 10px;
+  }
+  .resume-document .rd-header h1 {
+    color: ${theme.colors.textPrimary};
+  }`;
+}
+
 /** Export/print-safe resume styles — hex/rgb only (no lab/oklch) for html2canvas compatibility */
-export const RESUME_DOCUMENT_STYLES = `
+export function buildResumeDocumentStyles(style: ResumeStyle = DEFAULT_RESUME_STYLE): string {
+  const theme = resolveResumeTheme(style);
+  const c = theme.colors;
+
+  return `
   .resume-document {
     box-sizing: border-box;
     width: 794px;
     min-height: auto;
     margin: 0 auto;
     padding: 22px 28px;
-    background: #ffffff;
-    color: #0f172a;
+    background: ${c.white};
+    color: ${c.textPrimary};
     font-family: Helvetica, Arial, Calibri, Verdana, Tahoma, ui-sans-serif, sans-serif;
     font-size: 10px;
     line-height: 1.38;
@@ -17,10 +110,7 @@ export const RESUME_DOCUMENT_STYLES = `
     box-sizing: border-box;
   }
 
-  .resume-document .rd-header {
-    border-bottom: 1px solid #e2e8f0;
-    padding-bottom: 10px;
-  }
+  ${buildHeaderCss(theme)}
 
   .resume-document .rd-identity {
     display: flex;
@@ -35,21 +125,20 @@ export const RESUME_DOCUMENT_STYLES = `
     font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.01em;
-    color: #0f172a;
   }
 
   .resume-document .rd-title {
     margin: 0 0 4px;
     font-size: 12px;
     font-weight: 600;
-    color: #334155;
+    color: ${c.textBody};
     line-height: 1.35;
   }
 
   .resume-document .rd-specialization {
     margin: 0;
     font-size: 10px;
-    color: #64748b;
+    color: ${c.textSubtle};
     line-height: 1.4;
   }
 
@@ -57,19 +146,13 @@ export const RESUME_DOCUMENT_STYLES = `
     margin-top: 8px;
   }
 
-  .resume-document h2 {
-    margin: 0;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: #1e293b;
-  }
+  ${buildSectionTitleCss(theme)}
 
   .resume-document h3 {
     margin: 0 0 2px;
     font-size: 12px;
     font-weight: 600;
-    color: #0f172a;
+    color: ${c.textPrimary};
     line-height: 1.35;
   }
 
@@ -94,7 +177,7 @@ export const RESUME_DOCUMENT_STYLES = `
 
   .resume-document .rd-body {
     font-size: 10px;
-    color: #334155;
+    color: ${c.textBody};
     line-height: 1.42;
     hyphens: none;
     overflow-wrap: normal;
@@ -104,7 +187,7 @@ export const RESUME_DOCUMENT_STYLES = `
   .resume-document .rd-contact {
     margin: 0;
     font-size: 10px;
-    color: #475569;
+    color: ${c.textMuted};
     line-height: 1.4;
   }
 
@@ -113,31 +196,21 @@ export const RESUME_DOCUMENT_STYLES = `
   }
 
   .resume-document .rd-section {
-    margin-top: 9px;
-  }
-
-  .resume-document .rd-section-title {
-    margin-bottom: 6px;
-  }
-
-  .resume-document .rd-separator {
-    height: 1px;
-    margin-top: 4px;
-    background: #cbd5e1;
+    margin-top: ${theme.sectionMarginTop}px;
   }
 
   .resume-document .rd-muted {
-    color: #475569;
+    color: ${c.textMuted};
   }
 
   .resume-document .rd-subtle {
-    color: #64748b;
+    color: ${c.textSubtle};
     font-size: 10px;
     white-space: nowrap;
   }
 
   .resume-document .rd-faint {
-    color: #94a3b8;
+    color: ${c.textFaint};
   }
 
   .resume-document .rd-small {
@@ -169,17 +242,32 @@ export const RESUME_DOCUMENT_STYLES = `
 
   .resume-document .rd-company-item:not(.rd-company-item-last) {
     margin-bottom: 8px;
-    border-bottom: 1px solid #cbd5e1;
+    border-bottom: 1px solid ${c.divider};
   }
 
   .resume-document .rd-company-header {
-    margin-bottom: 2px;
+    margin-bottom: 4px;
+  }
+
+  .resume-document .rd-company-header h3 {
+    margin-bottom: 4px;
+    line-height: 1.45;
+  }
+
+  .resume-document .rd-company-header .rd-muted {
+    margin-bottom: 3px;
+    line-height: 1.45;
+  }
+
+  .resume-document .rd-company-header .rd-faint {
+    margin-bottom: 4px;
+    line-height: 1.4;
   }
 
   .resume-document .rd-projects-list {
     margin-top: 8px;
     padding-left: 12px;
-    border-left: 2px solid #e2e8f0;
+    border-left: 2px solid ${c.projectAccent};
   }
 
   .resume-document .rd-stack-sm {
@@ -190,7 +278,7 @@ export const RESUME_DOCUMENT_STYLES = `
 
   .resume-document .rd-inline-list {
     font-size: 10.5px;
-    color: #334155;
+    color: ${c.textBody};
     line-height: 1.5;
   }
 
@@ -201,7 +289,7 @@ export const RESUME_DOCUMENT_STYLES = `
 
   .resume-document .rd-project-label {
     font-size: 10.5px;
-    color: #334155;
+    color: ${c.textBody};
     margin-bottom: 2px;
   }
 
@@ -211,7 +299,7 @@ export const RESUME_DOCUMENT_STYLES = `
 
   .resume-document .rd-project-item:not(:last-child) {
     margin-bottom: 8px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid ${c.headerBorder};
   }
 
   .resume-document .rd-skills-list {
@@ -231,14 +319,14 @@ export const RESUME_DOCUMENT_STYLES = `
   .resume-document .rd-skill-category {
     font-size: 10px;
     font-weight: 600;
-    color: #475569;
+    color: ${c.textMuted};
     line-height: 1.4;
     white-space: nowrap;
   }
 
   .resume-document .rd-skill-items {
     font-size: 10.5px;
-    color: #334155;
+    color: ${c.textBody};
     line-height: 1.45;
     min-width: 0;
   }
@@ -257,8 +345,17 @@ export const RESUME_DOCUMENT_STYLES = `
     .resume-document {
       padding: 24px 28px;
     }
+    .resume-document .rd-header {
+      margin-left: -28px;
+      margin-right: -28px;
+      ${theme.headerBackground ? "margin-top: -24px;" : ""}
+    }
   }
 `;
+}
+
+/** @deprecated Use buildResumeDocumentStyles(style) — kept for backward compatibility */
+export const RESUME_DOCUMENT_STYLES = buildResumeDocumentStyles();
 
 export const RESUME_DOCUMENT_WIDTH_PX = 794;
 export const RESUME_DOCUMENT_HEIGHT_PX = 1123;

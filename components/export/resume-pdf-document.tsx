@@ -12,45 +12,75 @@ import {
   type LabeledContactItem,
 } from "@/lib/export/resume-content";
 import {
+  formatExperienceHeader,
   formatYearsOfExperienceLine,
   getTopLevelCertificationNames,
   getVisibleJobCertifications,
   getVisibleSummaryAchievements,
 } from "@/lib/export/resume-display";
-import { pdfStyles } from "@/lib/export/resume-pdf-styles";
+import { buildPdfStyles } from "@/lib/export/resume-pdf-styles";
+import { resolveResumeTheme } from "@/lib/export/resume-theme";
 import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
 import {
   groupSkillsByCategory,
   SKILL_CATEGORY_LABELS,
 } from "@/lib/resume/skill-categories";
 import type { Resume, SkillCategory } from "@/types/resume";
+import { DEFAULT_RESUME_STYLE } from "@/types/resume-style";
+import type { ResumeStyle } from "@/types/resume-style";
 
 Font.registerHyphenationCallback((word) => [word]);
 
 interface ResumePdfDocumentProps {
   resume: Resume;
+  style?: ResumeStyle;
 }
 
-function SectionTitle({ children }: { children: string }) {
-  return (
-    <View>
-      <Text style={pdfStyles.sectionTitle}>{children}</Text>
-      <View style={pdfStyles.sectionRule} />
-    </View>
-  );
+function createSectionTitle(
+  pdfStyles: ReturnType<typeof buildPdfStyles>,
+  filled: boolean,
+) {
+  return function SectionTitle({ children }: { children: string }) {
+    if (filled) {
+      return (
+        <View style={pdfStyles.sectionTitleWrap} minPresenceAhead={72} wrap={false}>
+          <Text style={pdfStyles.sectionTitle}>{children}</Text>
+        </View>
+      );
+    }
+
+    return (
+      <View minPresenceAhead={72} wrap={false}>
+        <Text style={pdfStyles.sectionTitle}>{children}</Text>
+        <View style={pdfStyles.sectionRule} />
+      </View>
+    );
+  };
 }
 
-function ContactLine({ items }: { items: LabeledContactItem[] }) {
+function ContactLine({
+  items,
+  style,
+}: {
+  items: LabeledContactItem[];
+  style: ReturnType<typeof buildPdfStyles>;
+}) {
   if (items.length === 0) return null;
 
   return (
-    <Text style={pdfStyles.contactItem}>
+    <Text style={style.contactItem}>
       {items.map(({ label, value }) => `${label}: ${value}`).join(" · ")}
     </Text>
   );
 }
 
-function BulletList({ items }: { items: string[] }) {
+function BulletList({
+  items,
+  pdfStyles,
+}: {
+  items: string[];
+  pdfStyles: ReturnType<typeof buildPdfStyles>;
+}) {
   return (
     <View style={{ marginTop: 3 }}>
       {items.map((item, index) => (
@@ -67,15 +97,35 @@ function BulletList({ items }: { items: string[] }) {
 
 const PDF_SKILL_CATEGORY_LABELS = SKILL_CATEGORY_LABELS;
 
-function SkillsSection({ resume }: { resume: Resume }) {
+function SkillsSection({
+  resume,
+  pdfStyles,
+  SectionTitle,
+}: {
+  resume: Resume;
+  pdfStyles: ReturnType<typeof buildPdfStyles>;
+  SectionTitle: ReturnType<typeof createSectionTitle>;
+}) {
   const skillGroups = groupSkillsByCategory(resume.skills);
   const entries = Object.entries(skillGroups);
   if (entries.length === 0) return null;
 
+  const [firstEntry, ...restEntries] = entries;
+
   return (
     <View style={pdfStyles.section}>
-      <SectionTitle>Skills</SectionTitle>
-      {entries.map(([category, items]) => (
+      <View wrap={false}>
+        <SectionTitle>Skills</SectionTitle>
+        <View style={pdfStyles.skillRow}>
+          <Text style={pdfStyles.skillCategory} wrap={false}>
+            {PDF_SKILL_CATEGORY_LABELS[firstEntry[0] as SkillCategory]}:
+          </Text>
+          <Text style={pdfStyles.skillItems} hyphenationCallback={(word) => [word]}>
+            {firstEntry[1]?.map((skill) => skill.name).join(", ")}
+          </Text>
+        </View>
+      </View>
+      {restEntries.map(([category, items]) => (
         <View key={category} style={pdfStyles.skillRow}>
           <Text style={pdfStyles.skillCategory} wrap={false}>
             {PDF_SKILL_CATEGORY_LABELS[category as SkillCategory]}:
@@ -89,7 +139,63 @@ function SkillsSection({ resume }: { resume: Resume }) {
   );
 }
 
-export function ResumePdfDocument({ resume }: ResumePdfDocumentProps) {
+function ExperienceHeaderBlock({
+  header,
+  companyDescription,
+  pdfStyles,
+}: {
+  header: ReturnType<typeof formatExperienceHeader>;
+  companyDescription?: string;
+  pdfStyles: ReturnType<typeof buildPdfStyles>;
+}) {
+  if (header.useSideDates) {
+    return (
+      <View style={pdfStyles.row} wrap={false}>
+        <View style={pdfStyles.rowMain}>
+          <Text style={pdfStyles.entryTitle}>{header.primaryLine}</Text>
+          {header.secondaryLine ? (
+            <Text style={pdfStyles.experienceSecondary}>{header.secondaryLine}</Text>
+          ) : null}
+          {companyDescription ? (
+            <Text style={pdfStyles.experienceMeta}>{companyDescription}</Text>
+          ) : null}
+        </View>
+        {header.datesLine ? (
+          <Text style={pdfStyles.subtle}>{header.datesLine}</Text>
+        ) : null}
+      </View>
+    );
+  }
+
+  return (
+    <View style={pdfStyles.experienceHeader} wrap={false}>
+      <Text>
+        <Text style={pdfStyles.experiencePrimary}>{header.primaryLine}</Text>
+        {header.secondaryLine ? (
+          <>
+            {"\n"}
+            <Text style={pdfStyles.experienceSecondary}>{header.secondaryLine}</Text>
+          </>
+        ) : null}
+        {companyDescription ? (
+          <>
+            {"\n"}
+            <Text style={pdfStyles.experienceMeta}>{companyDescription}</Text>
+          </>
+        ) : null}
+      </Text>
+    </View>
+  );
+}
+
+export function ResumePdfDocument({
+  resume,
+  style = DEFAULT_RESUME_STYLE,
+}: ResumePdfDocumentProps) {
+  const theme = resolveResumeTheme(style);
+  const pdfStyles = buildPdfStyles(style);
+  const sectionTitleFilled = theme.sectionHeaderStyle !== "rule";
+  const SectionTitle = createSectionTitle(pdfStyles, sectionTitleFilled);
   const { personalInfo, professionalSummary } = resume;
   const contactGroups = getContactLineGroups(resume);
   const filledOptionalFields = getFilledOptionalFields(resume.optionalFields);
@@ -118,10 +224,10 @@ export function ResumePdfDocument({ resume }: ResumePdfDocumentProps) {
               </Text>
             ) : null}
           </View>
-          <ContactLine items={contactGroups.primary} />
+          <ContactLine items={contactGroups.primary} style={pdfStyles} />
           {contactGroups.secondary.length > 0 ? (
             <View style={pdfStyles.contactRow}>
-              <ContactLine items={contactGroups.secondary} />
+              <ContactLine items={contactGroups.secondary} style={pdfStyles} />
             </View>
           ) : null}
         </View>
@@ -143,6 +249,7 @@ export function ResumePdfDocument({ resume }: ResumePdfDocumentProps) {
                   (item) =>
                     `${item.description}${item.impact ? ` — ${item.impact}` : ""}`,
                 )}
+                pdfStyles={pdfStyles}
               />
             ) : null}
             {professionalSummary.coreExpertise.length > 0 ? (
@@ -161,6 +268,7 @@ export function ResumePdfDocument({ resume }: ResumePdfDocumentProps) {
                 item.certifications,
                 topLevelCertNames,
               );
+              const header = formatExperienceHeader(item, style.experienceLayout);
 
               return (
                 <View
@@ -170,37 +278,27 @@ export function ResumePdfDocument({ resume }: ResumePdfDocumentProps) {
                     index === experienceCount - 1 ? pdfStyles.companyItemLast : {},
                   ]}
                 >
-                  <View style={pdfStyles.row}>
-                    <View style={pdfStyles.rowMain}>
-                      <Text style={pdfStyles.entryTitle}>{item.role}</Text>
-                      <Text style={pdfStyles.muted}>
-                        {item.company}
-                        {item.location ? ` · ${item.location}` : ""}
-                      </Text>
-                      {item.companyDescription ? (
-                        <Text style={pdfStyles.faint}>{item.companyDescription}</Text>
-                      ) : null}
-                    </View>
-                    {item.startDate || item.endDate ? (
-                      <Text style={pdfStyles.subtle}>
-                        {[item.startDate, item.endDate].filter(Boolean).join(" — ")}
-                      </Text>
-                    ) : null}
-                  </View>
+                  <ExperienceHeaderBlock
+                    header={header}
+                    companyDescription={item.companyDescription}
+                    pdfStyles={pdfStyles}
+                  />
                   {item.projects.length > 0 ? (
                     <View style={pdfStyles.projectsList}>
                       {item.projects.map((project, projectIndex) => (
                         <View
                           key={project.id || `${item.id}-project-${projectIndex}`}
-                          style={{ marginBottom: 4 }}
+                          wrap={false}
+                          style={pdfStyles.projectItem}
                         >
-                          <Text style={pdfStyles.body}>
+                          <Text style={pdfStyles.projectLabel}>
                             {project.client}
                             {project.industry ? ` (${project.industry})` : ""}
                           </Text>
                           {project.responsibilities.length > 0 ? (
                             <BulletList
                               items={project.responsibilities.slice(0, 3)}
+                              pdfStyles={pdfStyles}
                             />
                           ) : null}
                           {project.technologies.length > 0 ? (
@@ -218,6 +316,7 @@ export function ResumePdfDocument({ resume }: ResumePdfDocumentProps) {
                         (cert) =>
                           `${cert.name}${cert.status ? ` — ${cert.status}` : ""}`,
                       )}
+                      pdfStyles={pdfStyles}
                     />
                   ) : null}
                   {item.achievements.length > 0 ? (
@@ -228,10 +327,11 @@ export function ResumePdfDocument({ resume }: ResumePdfDocumentProps) {
                             achievement.impact ? ` — ${achievement.impact}` : ""
                           }`,
                       )}
+                      pdfStyles={pdfStyles}
                     />
                   ) : null}
                   {item.description && item.projects.length === 0 ? (
-                    <View style={[pdfStyles.projectsList, { marginTop: 3 }]}>
+                    <View wrap={false} style={[pdfStyles.projectsList, { marginTop: 3 }]}>
                       <Text style={pdfStyles.body}>{stripHtml(item.description)}</Text>
                     </View>
                   ) : null}
@@ -241,13 +341,13 @@ export function ResumePdfDocument({ resume }: ResumePdfDocumentProps) {
           </View>
         ) : null}
 
-        <SkillsSection resume={resume} />
+        <SkillsSection resume={resume} pdfStyles={pdfStyles} SectionTitle={SectionTitle} />
 
         {resume.education.length > 0 ? (
           <View style={pdfStyles.sectionCompact}>
             <SectionTitle>Education</SectionTitle>
             {resume.education.map((item) => (
-              <View key={item.id} style={[pdfStyles.row, { marginBottom: 4 }]}>
+              <View key={item.id} wrap={false} style={[pdfStyles.row, { marginBottom: 4 }]}>
                 <View style={pdfStyles.rowMain}>
                   <Text style={pdfStyles.entryTitle}>{item.degree}</Text>
                   <Text style={pdfStyles.muted}>
@@ -267,19 +367,20 @@ export function ResumePdfDocument({ resume }: ResumePdfDocumentProps) {
         ) : null}
 
         {resume.certifications.length > 0 ? (
-          <View style={pdfStyles.sectionCompact}>
+          <View style={pdfStyles.sectionCompact} wrap={false}>
             <SectionTitle>Certifications</SectionTitle>
             <BulletList
               items={resume.certifications.map(
                 (item) =>
                   `${item.name}${item.issuer ? ` — ${item.issuer}` : ""}`,
               )}
+              pdfStyles={pdfStyles}
             />
           </View>
         ) : null}
 
         {resume.projects.length > 0 ? (
-          <View style={pdfStyles.sectionCompact}>
+          <View style={pdfStyles.sectionCompact} wrap={false}>
             <SectionTitle>Projects</SectionTitle>
             {resume.projects.map((item, index) => (
               <View key={item.id ?? `project-${index}`} style={{ marginBottom: 4 }}>
@@ -296,7 +397,7 @@ export function ResumePdfDocument({ resume }: ResumePdfDocumentProps) {
         ) : null}
 
         {resume.spokenLanguages.length > 0 ? (
-          <View style={pdfStyles.sectionCompact}>
+          <View style={pdfStyles.sectionCompact} wrap={false}>
             <SectionTitle>Languages</SectionTitle>
             <Text style={pdfStyles.body}>
               {resume.spokenLanguages
@@ -311,26 +412,27 @@ export function ResumePdfDocument({ resume }: ResumePdfDocumentProps) {
         ) : null}
 
         {resume.keyAchievements.length > 0 ? (
-          <View style={pdfStyles.sectionCompact}>
+          <View style={pdfStyles.sectionCompact} wrap={false}>
             <SectionTitle>Key Achievements</SectionTitle>
             <BulletList
               items={resume.keyAchievements.map(
                 (item) =>
                   `${item.title}${item.description ? ` — ${item.description}` : ""}`,
               )}
+              pdfStyles={pdfStyles}
             />
           </View>
         ) : null}
 
         {resume.interests.length > 0 ? (
-          <View style={pdfStyles.sectionCompact}>
+          <View style={pdfStyles.sectionCompact} wrap={false}>
             <SectionTitle>Interests</SectionTitle>
             <Text style={pdfStyles.body}>{resume.interests.join(", ")}</Text>
           </View>
         ) : null}
 
         {filledOptionalFields.length > 0 ? (
-          <View style={pdfStyles.sectionCompact}>
+          <View style={pdfStyles.sectionCompact} wrap={false}>
             <SectionTitle>Additional Information</SectionTitle>
             {filledOptionalFields.map(([key, value]) => (
               <Text key={key} style={[pdfStyles.body, pdfStyles.optionalRow]}>

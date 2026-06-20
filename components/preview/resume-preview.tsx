@@ -4,6 +4,7 @@ import { Download, Loader2, Printer, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { AtsAuditPanel } from "@/components/builder/ats-audit-panel";
 import { AtsScoreBadge } from "@/components/builder/ats-score-badge";
+import { ResumeStylePanel } from "@/components/builder/resume-style-panel";
 import { ResumeDocument } from "@/components/preview/resume-document";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -16,6 +17,7 @@ import { printResume } from "@/lib/pdf-export";
 export function ResumePreview() {
   const { downloadPdf, isExporting, exportError } = useResumeExport();
   const resume = useResumeStore((state) => state.resume);
+  const style = useResumeStore((state) => state.style);
   const { result, isAuditing, error: auditError, auditBuilderResume } = useAtsAudit();
   const [showAudit, setShowAudit] = useState(false);
 
@@ -90,11 +92,13 @@ export function ResumePreview() {
           )}
           <ScrollArea className="h-[min(60vh,800px)] lg:h-[calc(100vh-12rem)]">
             <div className="flex justify-center overflow-x-auto bg-gradient-to-b from-muted/80 to-muted/40 p-3 sm:p-4">
-              <ResumeDocument resume={resume} id="resume-preview" />
+              <ResumeDocument resume={resume} style={style} id="resume-preview" />
             </div>
           </ScrollArea>
         </CardContent>
       </Card>
+
+      <ResumeStylePanel />
 
       {showAudit && result && <AtsAuditPanel result={result} />}
     </div>

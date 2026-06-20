@@ -30,7 +30,7 @@ import {
 } from "@/lib/resume/field-hints";
 import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
 import { useResumeStore } from "@/hooks/use-resume-store";
-import type { OptionalFields, SkillCategory } from "@/types/resume";
+import type { OptionalFields, SkillCategory, ClientProject } from "@/types/resume";
 import { RESUME_SECTIONS } from "@/types/resume";
 
 function confirmRemove(label: string) {
@@ -214,6 +214,131 @@ export function ProfessionalSummaryForm() {
   );
 }
 
+function joinLines(items: string[]) {
+  return items.join("\n");
+}
+
+function parseLines(value: string) {
+  return value
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function ClientProjectsEditor({
+  experienceId,
+  projects,
+}: {
+  experienceId: string;
+  projects: ClientProject[];
+}) {
+  const { addClientProject, updateClientProject, removeClientProject } =
+    useResumeStore();
+
+  return (
+    <div className="space-y-3 sm:col-span-2">
+      <div className="flex items-center justify-between gap-2">
+        <Label>Client projects</Label>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => addClientProject(experienceId)}
+        >
+          <Plus className="size-4" />
+          Add project
+        </Button>
+      </div>
+
+      {projects.length === 0 && (
+        <p className="text-xs text-muted-foreground">
+          Add client or project work for this role — each entry appears in your
+          preview under this company.
+        </p>
+      )}
+
+      {projects.map((project, projectIndex) => (
+        <div
+          key={project.id}
+          className="space-y-3 rounded-md border bg-muted/20 p-3"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-medium">Project {projectIndex + 1}</p>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label={`Remove project ${projectIndex + 1}`}
+              onClick={() => {
+                if (confirmRemove(`client project ${projectIndex + 1}`)) {
+                  removeClientProject(experienceId, project.id);
+                }
+              }}
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label>Client / project name</Label>
+              <Input
+                value={project.client}
+                onChange={(e) =>
+                  updateClientProject(experienceId, project.id, {
+                    client: e.target.value,
+                  })
+                }
+                placeholder="Client or product name"
+                className="bg-background"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Industry</Label>
+              <Input
+                value={project.industry}
+                onChange={(e) =>
+                  updateClientProject(experienceId, project.id, {
+                    industry: e.target.value,
+                  })
+                }
+                placeholder="e.g. FinTech, Healthcare"
+                className="bg-background"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label>Technologies (comma-separated)</Label>
+              <Input
+                value={joinCommaList(project.technologies)}
+                onChange={(e) =>
+                  updateClientProject(experienceId, project.id, {
+                    technologies: parseCommaList(e.target.value),
+                  })
+                }
+                placeholder="React, Next.js, TypeScript"
+                className="bg-background"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label>Responsibilities (one per line)</Label>
+              <Textarea
+                value={joinLines(project.responsibilities)}
+                onChange={(e) =>
+                  updateClientProject(experienceId, project.id, {
+                    responsibilities: parseLines(e.target.value),
+                  })
+                }
+                rows={4}
+                placeholder={"Built responsive dashboards\nIntegrated REST APIs"}
+                className="bg-background"
+              />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function ExperienceForm() {
   const { resume, addExperience, updateExperience, removeExperience } =
     useResumeStore();
@@ -312,28 +437,7 @@ export function ExperienceForm() {
                 }
               />
             </div>
-            {item.projects.length > 0 && (
-              <div className="space-y-2 sm:col-span-2">
-                <Label>Parsed Client Projects ({item.projects.length})</Label>
-                <div className="space-y-2 rounded-md border bg-muted/20 p-3 text-xs">
-                  {item.projects.map((project) => (
-                    <div key={project.id}>
-                      <p className="font-medium">
-                        {project.client}
-                        {project.industry ? ` — ${project.industry}` : ""}
-                      </p>
-                      {project.responsibilities.length > 0 && (
-                        <ul className="mt-1 list-disc pl-4 text-muted-foreground">
-                          {project.responsibilities.slice(0, 3).map((task) => (
-                            <li key={task}>{task}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <ClientProjectsEditor experienceId={item.id} projects={item.projects} />
           </div>
         </div>
       ))}
@@ -440,7 +544,8 @@ export function EducationForm() {
 }
 
 export function SkillsForm() {
-  const { resume, addSkill, updateSkill, removeSkill } = useResumeStore();
+  const { resume, addSkill, updateSkill, removeSkill, replaceSkillsInCategory } =
+    useResumeStore();
   const grouped = groupSkillsByCategory(resume.skills);
   const filledCategories = SKILL_CATEGORY_ORDER.filter(
     (category) => (grouped[category]?.length ?? 0) > 0,
@@ -452,8 +557,8 @@ export function SkillsForm() {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Skills are grouped by category and shown as labeled single-column rows in
-        the preview and PDF. Change category per skill or add to any group below.
+        Edit skills by category below. Parsed skills appear as individual fields —
+        use the comma-separated row to bulk edit a whole group at once.
       </p>
 
       {filledCategories.map((category) => {
@@ -479,6 +584,21 @@ export function SkillsForm() {
                 <Plus className="size-4" />
                 Add
               </Button>
+            </div>
+
+            <div className="mb-3 space-y-2">
+              <Label className="text-xs text-muted-foreground">
+                All {SKILL_CATEGORY_LABELS[category].toLowerCase()} (comma-separated)
+              </Label>
+              <Input
+                defaultValue={joinCommaList(items.map((skill) => skill.name))}
+                key={`${category}-${items.map((s) => s.id).join("-")}`}
+                onBlur={(e) =>
+                  replaceSkillsInCategory(category, parseCommaList(e.target.value))
+                }
+                placeholder="React, Next.js, TypeScript"
+                className="bg-background"
+              />
             </div>
 
             <div className="space-y-2">
