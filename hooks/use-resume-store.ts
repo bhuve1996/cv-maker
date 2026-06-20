@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { createEmptyResume } from "@/lib/resume/default-resume";
+import { cleanupParsedResume } from "@/lib/resume/cleanup-parsed-resume";
 import { mergeResume, migrateResume } from "@/lib/resume/migrate-resume";
 import { RESUME_STORAGE_KEY } from "@/lib/resume/storage";
 import type {
@@ -94,7 +95,7 @@ export const useResumeStore = create<ResumeStore>()(
 
       mergeParsedResume: (partial, rawText, options) =>
         set({
-          resume: mergeResume(partial),
+          resume: cleanupParsedResume(mergeResume(partial)),
           rawText,
           hasUploaded: true,
           parseParser: options?.parser ?? null,

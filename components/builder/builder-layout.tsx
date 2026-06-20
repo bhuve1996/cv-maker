@@ -5,6 +5,7 @@ import { ResumeEditor } from "@/components/forms/resume-editor";
 import { ResumeDocument } from "@/components/preview/resume-document";
 import { ResumePreview } from "@/components/preview/resume-preview";
 import { ResumeUpload } from "@/components/upload/resume-upload";
+import { ParseRateLimitIndicator } from "@/components/upload/parse-rate-limit-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useResumeHydration } from "@/hooks/use-resume-hydration";
@@ -37,6 +38,7 @@ export function BuilderLayout() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 print:hidden">
+          <ParseRateLimitIndicator compact />
           {hasUploaded && rawText && (
             <Badge variant="secondary">
               {parseParser === "gemini"

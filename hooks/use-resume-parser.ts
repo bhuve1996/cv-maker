@@ -2,6 +2,11 @@
 
 import { extractTextFromDocx, isDocxFile } from "@/lib/docx-parser";
 import { extractTextFromPdf, isPdfFile } from "@/lib/pdf-parser";
+import {
+  formatRateLimitCountdown,
+  getParseRateLimitState,
+  recordParseRequest,
+} from "@/lib/ai/parse-rate-limit";
 import { parseResumeText } from "@/lib/resume-parser";
 import type { ParseResult } from "@/types/resume";
 
@@ -24,28 +29,21 @@ export function validateResumeFile(file: File): void {
   }
 }
 
-async function parseResumeViaApi(text: string): Promise<ParseResult | null> {
-  try {
-    const response = await fetch("/api/parse-resume", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-    });
+async function parseResumeViaApi(text: string): Promise<ParseResult> {
+  const response = await fetch("/api/parse-resume", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  });
 
-    if (!response.ok) {
-      const payload = (await response.json().catch(() => null)) as {
-        error?: string;
-      } | null;
-      throw new ResumeParseError(payload?.error ?? "Resume parsing failed.");
-    }
-
-    return (await response.json()) as ParseResult;
-  } catch (error) {
-    if (error instanceof ResumeParseError) {
-      throw error;
-    }
-    return null;
+  if (!response.ok) {
+    const payload = (await response.json().catch(() => null)) as {
+      error?: string;
+    } | null;
+    throw new ResumeParseError(payload?.error ?? "Resume parsing failed.");
   }
+
+  return (await response.json()) as ParseResult;
 }
 
 export async function parseResumeFile(file: File): Promise<ParseResult> {
@@ -61,16 +59,30 @@ export async function parseResumeFile(file: File): Promise<ParseResult> {
     );
   }
 
-  const apiResult = await parseResumeViaApi(text);
-  if (apiResult) {
-    return apiResult;
+  const rateLimit = getParseRateLimitState();
+
+  if (!rateLimit.canRequest) {
+    return {
+      ...parseResumeText(text),
+      parser: "heuristic",
+      warning: `AI rate limit reached (${rateLimit.limit}/min). Next slot in ${formatRateLimitCountdown(rateLimit.resetsInMs)}. Used basic local parsing.`,
+    };
   }
 
-  return {
-    ...parseResumeText(text),
-    parser: "heuristic",
-    warning: "Could not reach the parsing service. Used basic local parsing instead.",
-  };
+  try {
+    recordParseRequest();
+    return await parseResumeViaApi(text);
+  } catch (error) {
+    if (error instanceof ResumeParseError) {
+      throw error;
+    }
+
+    return {
+      ...parseResumeText(text),
+      parser: "heuristic",
+      warning: "Could not reach the parsing service. Used basic local parsing instead.",
+    };
+  }
 }
 
 export async function extractResumeText(file: File): Promise<string> {
@@ -80,3 +92,5 @@ export async function extractResumeText(file: File): Promise<string> {
     ? await extractTextFromPdf(file)
     : await extractTextFromDocx(file);
 }
+
+export { getParseRateLimitState } from "@/lib/ai/parse-rate-limit";

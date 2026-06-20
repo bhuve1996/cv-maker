@@ -2,8 +2,10 @@
 
 import { useCallback, useRef, useState } from "react";
 import { FileUp, Loader2, Upload } from "lucide-react";
+import { ParseRateLimitIndicator } from "@/components/upload/parse-rate-limit-indicator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useParseRateLimit } from "@/hooks/use-parse-rate-limit";
 import { parseResumeFile, ResumeParseError } from "@/hooks/use-resume-parser";
 import { useResumeStore } from "@/hooks/use-resume-store";
 import { cn } from "@/lib/utils";
@@ -17,6 +19,8 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { mergeParsedResume, setIsParsing, isParsing } = useResumeStore();
+  const { canRequest, countdown } = useParseRateLimit();
+  const uploadDisabled = isParsing || !canRequest;
 
   const handleFile = useCallback(
     async (file: File) => {
@@ -46,10 +50,11 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
     (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault();
       setIsDragging(false);
+      if (uploadDisabled) return;
       const file = event.dataTransfer.files[0];
       if (file) void handleFile(file);
     },
-    [handleFile],
+    [handleFile, uploadDisabled],
   );
 
   return (
@@ -58,24 +63,27 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
         <CardHeader>
           <CardTitle>Upload your resume</CardTitle>
           <CardDescription>
-            Drop a PDF or DOCX file. We&apos;ll extract what we can — you can edit
+            Drop a PDF or DOCX file. Gemini AI parses the content — you can edit
             everything afterward.
           </CardDescription>
         </CardHeader>
       )}
       <CardContent className={cn(compact && "p-4")}>
+        <ParseRateLimitIndicator className="mb-4" compact={compact} />
         <div
           onDragOver={(event) => {
             event.preventDefault();
-            setIsDragging(true);
+            if (!uploadDisabled) setIsDragging(true);
           }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={onDrop}
           className={cn(
             "flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors",
-            isDragging
-              ? "border-primary bg-primary/5"
-              : "border-muted-foreground/25 bg-muted/20",
+            uploadDisabled
+              ? "border-muted-foreground/15 bg-muted/10 opacity-80"
+              : isDragging
+                ? "border-primary bg-primary/5"
+                : "border-muted-foreground/25 bg-muted/20",
           )}
         >
           <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -86,7 +94,11 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
             )}
           </div>
           <p className="text-base font-medium">
-            {isParsing ? "Parsing resume with AI..." : "Drag & drop your resume"}
+            {isParsing
+              ? "Parsing resume with AI..."
+              : !canRequest
+                ? `AI limit reached — wait ${countdown}`
+                : "Drag & drop your resume"}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
             PDF or DOCX, up to 10MB
@@ -94,7 +106,7 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
           <Button
             type="button"
             className="mt-5"
-            disabled={isParsing}
+            disabled={uploadDisabled}
             onClick={() => inputRef.current?.click()}
           >
             <FileUp className="size-4" />
@@ -105,6 +117,7 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
             type="file"
             accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             className="hidden"
+            disabled={uploadDisabled}
             onChange={(event) => {
               const file = event.target.files?.[0];
               if (file) void handleFile(file);

@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { categorizeSkill, SKILL_CATEGORY_ORDER } from "@/lib/resume/skill-categories";
+import { cleanupParsedResume } from "@/lib/resume/cleanup-parsed-resume";
 import { migrateResume } from "@/lib/resume/migrate-resume";
 import type { Resume, SkillCategory } from "@/types/resume";
 
@@ -52,7 +53,7 @@ export function normalizeAiResumePayload(raw: unknown): Partial<Resume> {
 
   const migrated = migrateResume(normalized);
 
-  return {
+  return cleanupParsedResume({
     ...migrated,
     experience: migrated.experience.map((job) => ({
       ...job,
@@ -76,5 +77,5 @@ export function normalizeAiResumePayload(raw: unknown): Partial<Resume> {
         id: item.id || uuidv4(),
       })),
     },
-  };
+  });
 }
