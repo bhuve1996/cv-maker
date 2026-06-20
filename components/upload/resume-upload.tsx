@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from "react";
 import { FileText, FileType2, FileUp, Loader2, ShieldCheck, Upload } from "lucide-react";
+import { UploadGif } from "@/components/brand/animated-gif";
 import { AtsAuditPanel } from "@/components/builder/ats-audit-panel";
 import { ParseRateLimitIndicator } from "@/components/upload/parse-rate-limit-indicator";
 import { ParseSourceBadge } from "@/components/builder/parse-source-badge";
@@ -104,18 +105,17 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
       <Card
         className={cn(
           compact
-            ? "border-dashed border-primary/15 bg-card/60 shadow-none"
-            : "border-border/60 bg-card/80 shadow-sm ring-1 ring-primary/5",
+            ? "border-dashed border-border/60 bg-card/60 shadow-none"
+            : "border-border/50 bg-card shadow-sm",
         )}
       >
         {!compact && (
-          <CardHeader>
+          <CardHeader className="pb-2">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <CardTitle>Upload your resume</CardTitle>
+                <CardTitle className="text-lg">Import your resume</CardTitle>
                 <CardDescription>
-                  Drop a PDF or DOCX file. Gemini AI parses the content — you can edit
-                  everything afterward.
+                  We&apos;ll extract the content so you can edit it — nothing is uploaded to a server.
                 </CardDescription>
               </div>
               {parseParser && <ParseSourceBadge parser={parseParser} size="sm" />}
@@ -138,21 +138,26 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
             onDragLeave={() => setIsDragging(false)}
             onDrop={onDrop}
             className={cn(
-              "flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition-all duration-300",
+              "flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors duration-200",
               uploadDisabled
-                ? "border-muted-foreground/15 bg-muted/10 opacity-80"
+                ? "border-border bg-muted/20 opacity-80"
                 : isDragging
-                  ? "border-primary bg-primary/8 shadow-inner shadow-primary/10"
-                  : "border-primary/20 bg-gradient-to-b from-primary/5 to-transparent hover:border-primary/35 hover:bg-primary/8",
+                  ? "border-primary/50 bg-primary/5"
+                  : "border-border/80 bg-muted/20 hover:border-primary/30 hover:bg-primary/5",
             )}
           >
-            <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary ring-4 ring-primary/5">
-              {isParsing ? (
-                <Loader2 className="size-7 animate-spin" />
-              ) : (
-                <Upload className="size-7" />
-              )}
-            </div>
+            {!compact && !isParsing && (
+              <UploadGif className="mb-3 max-h-20" />
+            )}
+            {(compact || isParsing) && (
+              <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                {isParsing ? (
+                  <Loader2 className="size-7 animate-spin" />
+                ) : (
+                  <Upload className="size-7" />
+                )}
+              </div>
+            )}
             <p className="text-base font-medium">
               {isParsing
                 ? "Parsing resume with AI..."
@@ -160,18 +165,16 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
                   ? `AI limit reached — wait ${countdown}`
                   : "Drag & drop your resume"}
             </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              PDF or DOCX, up to 10MB
-            </p>
-            <div className="mt-3 flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-background/80 px-2.5 py-1 text-xs text-muted-foreground">
-                <FileType2 className="size-3.5 text-primary" />
+            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1 rounded-md bg-background px-2 py-0.5">
+                <FileType2 className="size-3 text-primary/70" />
                 PDF
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-background/80 px-2.5 py-1 text-xs text-muted-foreground">
-                <FileText className="size-3.5 text-primary" />
+              <span className="inline-flex items-center gap-1 rounded-md bg-background px-2 py-0.5">
+                <FileText className="size-3 text-primary/70" />
                 DOCX
               </span>
+              <span>· up to 10 MB</span>
             </div>
             <div className="mt-5 flex flex-wrap justify-center gap-2">
               <Button

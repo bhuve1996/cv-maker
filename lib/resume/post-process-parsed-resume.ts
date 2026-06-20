@@ -105,7 +105,25 @@ export function cleanSummaryText(text: string): string {
     .trim();
 }
 
+function isRedundantAchievementImpact(description: string, impact: string): boolean {
+  const descLower = description.toLowerCase().replace(/\.$/, "").trim();
+  const impactLower = impact.toLowerCase().replace(/\.$/, "").trim();
+  if (!descLower || !impactLower) return false;
+
+  if (descLower.includes(impactLower) || impactLower.includes(descLower)) {
+    return true;
+  }
+
+  const snippetLen = Math.min(40, descLower.length, impactLower.length);
+  if (snippetLen >= 20 && descLower.slice(0, snippetLen) === impactLower.slice(0, snippetLen)) {
+    return true;
+  }
+
+  return false;
+}
+
 export function normalizeJobAchievement(achievement: JobAchievement): JobAchievement {
+  const description = coerceString(achievement.description).trim();
   let impact = coerceString(achievement.impact).trim();
 
   if (/^\d+%$/.test(impact)) {
@@ -114,9 +132,13 @@ export function normalizeJobAchievement(achievement: JobAchievement): JobAchieve
     impact = impact.replace(/^by\s+(\d+%)\s+by\s+/i, "$1 by ");
   }
 
+  if (isRedundantAchievementImpact(description, impact)) {
+    impact = "";
+  }
+
   return {
     ...achievement,
-    description: coerceString(achievement.description).trim(),
+    description,
     impact,
   };
 }

@@ -21,6 +21,7 @@ import { pdfStyles } from "@/lib/export/resume-pdf-styles";
 import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
 import {
   groupSkillsByCategory,
+  SKILL_CATEGORY_LABELS,
 } from "@/lib/resume/skill-categories";
 import type { Resume, SkillCategory } from "@/types/resume";
 
@@ -64,23 +65,7 @@ function BulletList({ items }: { items: string[] }) {
   );
 }
 
-const PDF_SKILL_CATEGORY_LABELS: Record<SkillCategory, string> = {
-  frontend: "Frontend",
-  languages: "Languages",
-  ui_frameworks: "UI Frameworks",
-  cms: "CMS",
-  build_tools: "Build Tools",
-  version_control: "Version Control",
-  project_management: "Project Mgmt",
-  api_technologies: "APIs",
-  animations: "Animations",
-  mapping: "Mapping",
-  backend: "Backend",
-  hosting_deployment: "Hosting",
-  mobile: "Mobile",
-  other: "Other",
-  soft: "Soft Skills",
-};
+const PDF_SKILL_CATEGORY_LABELS = SKILL_CATEGORY_LABELS;
 
 function SkillsSection({ resume }: { resume: Resume }) {
   const skillGroups = groupSkillsByCategory(resume.skills);

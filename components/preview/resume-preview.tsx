@@ -88,7 +88,7 @@ export function ResumePreview() {
             </p>
           )}
           <ScrollArea className="h-[min(60vh,800px)] lg:h-[calc(100vh-12rem)]">
-            <div className="flex justify-center bg-gradient-to-b from-muted/80 to-muted/40 p-4">
+            <div className="flex justify-center overflow-x-auto bg-gradient-to-b from-muted/80 to-muted/40 p-3 sm:p-4">
               <ResumeDocument resume={resume} id="resume-preview" />
             </div>
           </ScrollArea>

@@ -132,14 +132,16 @@ export const pdfStyles = StyleSheet.create({
   },
   skillRow: {
     flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 2,
     gap: 8,
   },
   skillCategory: {
-    width: 108,
+    width: 132,
     fontSize: 9.5,
     fontWeight: 600,
     color: "#475569",
+    lineHeight: 1.35,
   },
   skillItems: {
     flex: 1,

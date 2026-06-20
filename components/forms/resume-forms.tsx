@@ -461,12 +461,14 @@ export function SkillsForm() {
 
         return (
           <div key={category} className="rounded-lg border bg-card p-4 shadow-sm">
-            <div className="mb-3 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+              <div className="flex h-5 min-w-0 items-center gap-2">
+                <span className="inline-flex items-center text-sm font-semibold leading-none">
                   {SKILL_CATEGORY_LABELS[category]}
-                </p>
-                <Badge variant="secondary">{items.length}</Badge>
+                </span>
+                <Badge variant="secondary" className="h-5 shrink-0 px-1.5 tabular-nums leading-none">
+                  {items.length}
+                </Badge>
               </div>
               <Button
                 type="button"

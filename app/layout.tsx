@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Instrument_Serif, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { AppToaster } from "@/components/providers/app-toaster";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -41,11 +42,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="min-h-full flex flex-col bg-background font-sans"
+        className="min-h-full flex flex-col bg-background font-sans text-foreground"
         suppressHydrationWarning
       >
-        <AppToaster />
-        {children}
+        <ThemeProvider>
+          <AppToaster />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

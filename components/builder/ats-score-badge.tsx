@@ -8,9 +8,13 @@ interface AtsScoreBadgeProps {
 }
 
 function scoreTone(score: number): string {
-  if (score >= 95) return "bg-emerald-500/15 text-emerald-700 ring-emerald-500/20";
+  if (score >= 95) {
+    return "bg-emerald-500/15 text-emerald-700 ring-emerald-500/20 dark:text-emerald-400";
+  }
   if (score >= 80) return "bg-primary/10 text-primary ring-primary/20";
-  if (score >= 70) return "bg-amber-500/15 text-amber-700 ring-amber-500/20";
+  if (score >= 70) {
+    return "bg-amber-500/15 text-amber-700 ring-amber-500/20 dark:text-amber-400";
+  }
   return "bg-destructive/10 text-destructive ring-destructive/20";
 }
 
@@ -42,9 +46,9 @@ export function AtsRiskBadge({
 }) {
   const tone =
     result.riskLevel === "low"
-      ? "bg-emerald-500/10 text-emerald-700"
+      ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
       : result.riskLevel === "medium"
-        ? "bg-amber-500/10 text-amber-700"
+        ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
         : "bg-destructive/10 text-destructive";
 
   return (

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" fill="none">
+  <circle cx="200" cy="200" r="180" stroke="oklch(0.48 0.16 265 / 0.08)" stroke-width="1" stroke-dasharray="6 8"/>
+  <circle cx="200" cy="200" r="130" stroke="oklch(0.48 0.16 265 / 0.06)" stroke-width="1" stroke-dasharray="4 10"/>
+  <circle cx="200" cy="200" r="80" stroke="oklch(0.48 0.16 265 / 0.05)" stroke-width="1"/>
+  <rect x="155" y="120" width="90" height="120" rx="6" fill="oklch(0.48 0.16 265 / 0.06)" stroke="oklch(0.48 0.16 265 / 0.12)" stroke-width="1.5"/>
+  <rect x="168" y="138" width="50" height="6" rx="3" fill="oklch(0.48 0.16 265 / 0.15)"/>
+  <rect x="168" y="152" width="64" height="4" rx="2" fill="oklch(0.48 0.16 265 / 0.08)"/>
+  <rect x="168" y="162" width="56" height="4" rx="2" fill="oklch(0.48 0.16 265 / 0.08)"/>
+  <rect x="168" y="182" width="64" height="3" rx="1.5" fill="oklch(0.48 0.16 265 / 0.06)"/>
+  <rect x="168" y="192" width="58" height="3" rx="1.5" fill="oklch(0.48 0.16 265 / 0.06)"/>
+  <rect x="168" y="202" width="52" height="3" rx="1.5" fill="oklch(0.48 0.16 265 / 0.06)"/>
+  <rect x="168" y="218" width="64" height="3" rx="1.5" fill="oklch(0.48 0.16 265 / 0.06)"/>
+  <rect x="168" y="228" width="48" height="3" rx="1.5" fill="oklch(0.48 0.16 265 / 0.06)"/>
+</svg>

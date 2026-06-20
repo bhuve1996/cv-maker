@@ -3,12 +3,12 @@
 import { Suspense } from "react";
 import { Eye, Loader2, PencilLine, RotateCcw } from "lucide-react";
 import { LogoMark } from "@/components/brand/logo";
+import { BuilderEntryDecor } from "@/components/brand/builder-entry-decor";
 import { MobileBuilderBar } from "@/components/builder/mobile-builder-bar";
 import { ParseSourceBadge } from "@/components/builder/parse-source-badge";
 import { ParseStatusBanner } from "@/components/builder/parse-status-banner";
 import { ResumeProgress } from "@/components/builder/resume-progress";
 import { SaveIndicator } from "@/components/builder/save-indicator";
-import { StartBanner } from "@/components/brand/start-banner";
 import { ResumeEditor } from "@/components/forms/resume-editor";
 import { ResumeDocument } from "@/components/preview/resume-document";
 import { ResumePreview } from "@/components/preview/resume-preview";
@@ -46,15 +46,16 @@ function BuilderLayoutContent() {
 
   return (
     <div className="relative mx-auto max-w-7xl px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-6">
-      <div className="bg-mesh pointer-events-none absolute inset-x-0 top-0 h-64 opacity-50" />
+      <div className="bg-mesh pointer-events-none absolute inset-x-0 top-0 h-48 opacity-40" />
       <div className="relative mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-start gap-3">
           <LogoMark size={36} className="mt-0.5 hidden sm:block" />
           <div>
             <h1 className="text-2xl font-normal tracking-tight">Resume Builder</h1>
             <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              Upload your resume, refine the details, and export a polished PDF.
-              Your progress is saved automatically in this browser.
+              {hasUploaded
+                ? "Auto-saved in this browser — pick up where you left off."
+                : "Drop a file to import your resume, or start from a blank template."}
             </p>
           </div>
         </div>
@@ -73,16 +74,19 @@ function BuilderLayoutContent() {
       </div>
 
       {!hasUploaded ? (
-        <div className="relative mx-auto max-w-2xl">
-          <StartBanner />
-          <ResumeUpload />
-          <div className="mt-6 text-center">
+        <div className="relative mx-auto max-w-xl overflow-x-clip py-4 md:px-6">
+          <div className="bg-dot-grid pointer-events-none absolute inset-0 opacity-20 md:opacity-30" />
+          <BuilderEntryDecor />
+          <div className="relative">
+            <ResumeUpload />
+          </div>
+          <div className="relative mt-5 text-center">
             <button
               type="button"
-              className="text-sm text-primary underline-offset-4 transition-colors hover:text-primary/80 hover:underline"
+              className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
               onClick={startFromScratch}
             >
-              Skip upload and start from scratch
+              Or start from scratch without uploading
             </button>
           </div>
         </div>
@@ -92,7 +96,7 @@ function BuilderLayoutContent() {
           <div className="relative mt-4 grid gap-6 lg:grid-cols-2">
             <div className="space-y-4">
               <ResumeProgress />
-              <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-card/60 px-4 py-3 text-sm text-muted-foreground">
+              <div className="hidden items-center gap-2 rounded-xl border border-border/60 bg-card/60 px-4 py-3 text-sm text-muted-foreground sm:flex">
                 <PencilLine className="size-4 shrink-0 text-primary" />
                 <span>Edit sections below — green checks show completed sections.</span>
               </div>

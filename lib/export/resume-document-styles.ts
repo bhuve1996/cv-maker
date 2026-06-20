@@ -221,25 +221,26 @@ export const RESUME_DOCUMENT_STYLES = `
   }
 
   .resume-document .rd-skill-row {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: 152px minmax(0, 1fr);
+    column-gap: 10px;
+    align-items: start;
     min-width: 0;
   }
 
   .resume-document .rd-skill-category {
-    flex: 0 0 auto;
     font-size: 10px;
     font-weight: 600;
     color: #475569;
     line-height: 1.4;
+    white-space: nowrap;
   }
 
   .resume-document .rd-skill-items {
-    flex: 1;
     font-size: 10.5px;
     color: #334155;
     line-height: 1.45;
+    min-width: 0;
   }
 
   .resume-document .rd-optional-list {
