@@ -35,6 +35,16 @@ export function toastExportError(message: string): void {
   });
 }
 
+export function toastJsonImportSuccess(): void {
+  toast.success("Resume JSON imported", {
+    description: "Structured data loaded. Review all sections before exporting.",
+  });
+}
+
+export function toastJsonImportError(message: string): void {
+  toast.error("Could not import JSON", { description: message });
+}
+
 export function toastResetSuccess(): void {
   toast.info("Saved resume cleared", {
     description: "Upload a new file or start from scratch.",

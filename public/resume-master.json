@@ -1,0 +1,767 @@
+{
+  "resume": {
+    "personalInfo": {
+      "fullName": "Bhuvesh Singla",
+      "currentTitle": "Senior Software Engineer",
+      "specialization": [
+        "React & Next.js",
+        "React Native",
+        "UI Performance Optimization",
+        "Adobe AEM"
+      ],
+      "phone": "91 9530529550",
+      "email": "bhuve1996@gmail.com",
+      "linkedIn": "linkedin.com/in/bhuvesh-singla-6b76a6120/",
+      "website": "",
+      "github": "github.com/bhuve1996/",
+      "location": {
+        "city": "Gurugram",
+        "country": "India",
+        "postalCode": "122001"
+      }
+    },
+    "professionalSummary": {
+      "text": "Senior Software Engineer with over 8 years of experience in frontend development and UI engineering, expert in React.js, React Native, and Next.js. Key achievements include increasing project delivery speed by 20% through API integration and enhancing user engagement by 20% with React UI dashboards.",
+      "yearsOfExperience": "8+",
+      "designation": "Senior Frontend Engineer",
+      "coreExpertise": [
+        "Frontend development",
+        "UI engineering",
+        "React.js",
+        "React Native",
+        "Next.js",
+        "Adobe AEM"
+      ],
+      "achievements": [],
+      "careerObjective": ""
+    },
+    "experience": [
+      {
+        "id": "531f8000-aa89-48e3-bce5-3f9b47703479",
+        "company": "AKQA",
+        "role": "Senior Software Engineer",
+        "location": "Gurugram, India",
+        "startDate": "09/2022",
+        "endDate": "Present",
+        "companyDescription": "Digital agency delivering exceptional experiences",
+        "description": "",
+        "projects": [
+          {
+            "id": "038986be-19a2-4b30-b75c-08e51d925021",
+            "client": "Panerai Global Digital Template",
+            "industry": "Luxury Watch E-commerce Platform",
+            "responsibilities": [
+              "Contributed to Panerai's global Adobe Experience Manager (AEM) platform serving multiple international markets.",
+              "Developed and maintained checkout, wishlist, mini-cart, product detail pages, and multi-currency experiences.",
+              "Implemented virtual try-on experiences, 3D product viewers, day/night product imagery, and cross-selling components.",
+              "Resolved UAE Dirham currency rendering issues across checkout, order summary, and order confirmation flows.",
+              "Worked across HTL components, Sling Models, clientlibs JavaScript, LESS styles, and Maven modules."
+            ],
+            "technologies": [
+              "Adobe AEM",
+              "HTL",
+              "Sling Models",
+              "Java",
+              "JavaScript",
+              "LESS",
+              "Maven",
+              "OSGi",
+              "Jasmine"
+            ]
+          },
+          {
+            "id": "3d5ada8c-638f-49a7-b579-03fd49535399",
+            "client": "The Kusnacht Practice",
+            "industry": "Luxury Swiss Health & Rehabilitation Clinic",
+            "responsibilities": [
+              "Translated complex Figma designs into pixel-perfect ES6 components (multilingual), used modern build tools and automated testing for clean, flawlessly rendered Sanity-fetched UIs, integrated third-party calendar.",
+              "Developed reusable React and React Native components ensuring consistency across web and mobile experiences."
+            ],
+            "technologies": [
+              "Figma",
+              "ES6",
+              "Sanity",
+              "React Native"
+            ]
+          },
+          {
+            "id": "c8bddcb6-2fd6-48e7-8a84-00415e0d2d2c",
+            "client": "Nexeon",
+            "industry": "Battery Technology & Solutions Company",
+            "responsibilities": [
+              "Developed modular UI components, optimized SEO and load performance, and streamlined content workflows through Contentful and Storybook integration."
+            ],
+            "technologies": [
+              "Contentful",
+              "Storybook",
+              "Jest"
+            ]
+          },
+          {
+            "id": "011b88c8-7b66-42fa-b302-cff63bf02c9f",
+            "client": "Melbourne Convention Bureau",
+            "industry": "Tourism & Business Events Platform",
+            "responsibilities": [
+              "Architected and customized Sitecore templates with Vue.js and SCSS, ensuring scalable and reusable frontend modules for events and campaigns."
+            ],
+            "technologies": [
+              "Sitecore",
+              "Vue.js",
+              "SCSS"
+            ]
+          },
+          {
+            "id": "f4e58a29-1d72-4e83-a4d1-e8af3fce6921",
+            "client": "Visit Victoria",
+            "industry": "",
+            "responsibilities": [
+              "Integrated Mapbox for maps, customized React for discovery, improved accessibility through strong teamwork and problem-solving, consistently delivered clean code, and converted components of Vue to React components."
+            ],
+            "technologies": [
+              "Mapbox",
+              "React"
+            ]
+          },
+          {
+            "id": "eb6f9f19-2573-455b-80c8-a37c5094d9b0",
+            "client": "Bunnings",
+            "industry": "Leading Australian Home Improvement Retailer",
+            "responsibilities": [
+              "Rebuilt catalog and checkout flows with Next.js and GraphQL, optimized performance with Vercel deployments, and ensured responsive customer journeys."
+            ],
+            "technologies": [
+              "Next.js",
+              "GraphQL",
+              "Vercel"
+            ]
+          },
+          {
+            "id": "8db146d9-5339-4d4c-8d88-4ccad2644d6d",
+            "client": "AKQA LMS",
+            "industry": "Internal Learning Management Platform",
+            "responsibilities": [
+              "Built an internal LMS platform for FE, BE, QA, and General training programs.",
+              "Implemented Google OAuth authentication with role-based access control.",
+              "Developed training calendar, video playback, Google Slides/PPT viewer, and calendar exports.",
+              "Built administration tools for content upload, user management, category filtering, and search."
+            ],
+            "technologies": [
+              "Next.js",
+              "TypeScript",
+              "PostgreSQL",
+              "Google OAuth",
+              "RBAC"
+            ]
+          }
+        ],
+        "certifications": [],
+        "achievements": [],
+        "technologies": [
+          "Figma",
+          "ES6",
+          "Sanity",
+          "Contentful",
+          "Storybook",
+          "Jest",
+          "Sitecore",
+          "Vue.js",
+          "SCSS",
+          "Mapbox",
+          "React",
+          "Next.js",
+          "GraphQL",
+          "Vercel",
+          "React Native",
+          "Adobe AEM",
+          "HTL",
+          "Sling Models",
+          "Java",
+          "JavaScript",
+          "LESS",
+          "Maven",
+          "OSGi",
+          "Jasmine",
+          "TypeScript",
+          "PostgreSQL",
+          "Google OAuth",
+          "RBAC"
+        ]
+      },
+      {
+        "id": "d503ed96-1b42-4eaa-b92b-ab177d55fc79",
+        "company": "JOSH Software",
+        "role": "Senior Software Engineer",
+        "location": "Bengaluru, India",
+        "startDate": "10/2021",
+        "endDate": "09/2022",
+        "companyDescription": "A software development company specializing in custom applications",
+        "description": "",
+        "projects": [
+          {
+            "id": "0e17ea21-8dde-4fa4-b7cf-96a56f31b284",
+            "client": "ADIB Bank",
+            "industry": "Abu Dhabi Islamic Bank, UAE",
+            "responsibilities": [
+              "Delivered secure and responsive banking modules with Angular and React, implemented dynamic forms, and integrated APIs for digital banking services.",
+              "Built responsive banking experiences across web and mobile platforms using React and React Native."
+            ],
+            "technologies": [
+              "Angular",
+              "React",
+              "SCSS",
+              "Postman",
+              "GitHub",
+              "Jira",
+              "React Native"
+            ]
+          },
+          {
+            "id": "4ae25d80-e451-4e0a-af27-3dbb9f9129ab",
+            "client": "SBER Bank",
+            "industry": "Largest Russian Financial Institution",
+            "responsibilities": [
+              "Implemented React UI dashboards enriched with GSAP animations, improving user engagement and cross-browser compatibility."
+            ],
+            "technologies": [
+              "React",
+              "GSAP",
+              "SCSS",
+              "Bitbucket"
+            ]
+          }
+        ],
+        "certifications": [],
+        "achievements": [],
+        "technologies": [
+          "Angular",
+          "React",
+          "SCSS",
+          "Postman",
+          "GitHub",
+          "Jira",
+          "GSAP",
+          "Bitbucket",
+          "React Native"
+        ]
+      },
+      {
+        "id": "f364d5c1-8c81-4a8f-8a93-eaf171a24bdc",
+        "company": "KDMS",
+        "role": "Software Engineer",
+        "location": "Chandigarh, India",
+        "startDate": "05/2018",
+        "endDate": "10/2021",
+        "companyDescription": "Educational technology service provider",
+        "description": "",
+        "projects": [
+          {
+            "id": "a08cbb05-4291-43e4-b374-2b34635c0ad5",
+            "client": "GreatMocks",
+            "industry": "EdTech Platform, Mock Test Solutions",
+            "responsibilities": [
+              "Designed responsive learning modules, integrated APIs, and implemented dynamic forms to improve student experience.",
+              "Increased international user engagement by 15% by building multilingual e-commerce UI with React and Material UI.",
+              "Extended learning experiences to mobile platforms using React Native and Expo.",
+              "Built reusable mobile UI components and integrated REST APIs for Android and iOS learning workflows."
+            ],
+            "technologies": [
+              "React",
+              "REST APIs",
+              "React Bootstrap",
+              "JavaScript",
+              "CSS",
+              "Material UI",
+              "React Native",
+              "Expo"
+            ]
+          }
+        ],
+        "certifications": [],
+        "achievements": [],
+        "technologies": [
+          "React",
+          "REST APIs",
+          "React Bootstrap",
+          "JavaScript",
+          "CSS",
+          "Material UI",
+          "React Native",
+          "Expo"
+        ]
+      }
+    ],
+    "education": [
+      {
+        "id": "6342a164-ce0a-4c53-9a61-fa772a9b4c09",
+        "institution": "Chitkara University",
+        "degree": "Bachelor of Engineering (B.E.)",
+        "board": "",
+        "location": "Rajpura, Punjab",
+        "startDate": "06/2013",
+        "endDate": "06/2017"
+      },
+      {
+        "id": "8330277f-738a-4dee-bda9-7443cf4a0eae",
+        "institution": "St. Kabir Convent Sr. Sec. School",
+        "degree": "Higher Secondary (Class 12)",
+        "board": "CBSE Board",
+        "location": "Bathinda",
+        "startDate": "03/2012",
+        "endDate": "03/2013"
+      },
+      {
+        "id": "238cafa6-65e6-4f95-8c92-759c89041630",
+        "institution": "Kendriya Vidyalaya No. 4",
+        "degree": "Secondary (Class 10)",
+        "board": "CBSE Board",
+        "location": "Bathinda",
+        "startDate": "03/2010",
+        "endDate": "03/2011"
+      }
+    ],
+    "skills": [
+      {
+        "id": "84232a23-ef4c-4ebb-9bfb-4ebc05c4138f",
+        "name": "React",
+        "category": "frontend"
+      },
+      {
+        "id": "2a214f22-1387-4cdd-a54f-994f9ec17ee5",
+        "name": "Next.js",
+        "category": "frontend"
+      },
+      {
+        "id": "4fd315d5-6593-42ef-adae-22c4fa21ab36",
+        "name": "Angular",
+        "category": "frontend"
+      },
+      {
+        "id": "a2d5e14e-9f4d-480b-86d0-b087a4c4b86f",
+        "name": "Vue.js",
+        "category": "frontend"
+      },
+      {
+        "id": "34fdc392-b128-41ac-8cb4-ece0ef34dafc",
+        "name": "React Native",
+        "category": "frontend"
+      },
+      {
+        "id": "937a0c9e-e569-42f8-a765-d565b993a6c5",
+        "name": "Cordova",
+        "category": "frontend"
+      },
+      {
+        "id": "b2eb4bf0-6f38-4ac7-ab43-0a61d51eaf7e",
+        "name": "Expo",
+        "category": "frontend"
+      },
+      {
+        "id": "cc05b00b-c13d-47bb-89c0-fe722b449955",
+        "name": "JavaScript",
+        "category": "languages"
+      },
+      {
+        "id": "afae1c72-78ac-4bba-898e-3dc0ea26a6d8",
+        "name": "TypeScript",
+        "category": "languages"
+      },
+      {
+        "id": "c3484678-d476-4818-b993-a9c377e444cc",
+        "name": "Ruby",
+        "category": "languages"
+      },
+      {
+        "id": "72f46c36-9640-436a-b738-7d2a6e361128",
+        "name": "SCSS",
+        "category": "languages"
+      },
+      {
+        "id": "fcea5768-dc2c-4d13-a1a7-aabcd12c5233",
+        "name": "HTML",
+        "category": "languages"
+      },
+      {
+        "id": "87e70a7b-ccd5-4b15-b5d2-ff1f7092b667",
+        "name": "CSS",
+        "category": "languages"
+      },
+      {
+        "id": "3b8e6cf5-a545-4986-bd2e-917862e33472",
+        "name": "Tailwind",
+        "category": "ui_frameworks"
+      },
+      {
+        "id": "95b9ea18-b94b-4857-9fca-10c5357f8f9e",
+        "name": "Material UI",
+        "category": "ui_frameworks"
+      },
+      {
+        "id": "5ca21849-aec1-4893-a10c-b98674a6d285",
+        "name": "Bootstrap",
+        "category": "ui_frameworks"
+      },
+      {
+        "id": "f38e0c60-e76e-4fd2-bbdb-dc8ce96789c3",
+        "name": "Contentful",
+        "category": "cms"
+      },
+      {
+        "id": "bd609dcb-5121-4035-92ab-0cf0e31e10a6",
+        "name": "Sitecore",
+        "category": "cms"
+      },
+      {
+        "id": "c4bf66ba-e04c-4ff3-abff-50514e1bfbfb",
+        "name": "Sanity",
+        "category": "cms"
+      },
+      {
+        "id": "f44cb5d8-c97c-4fa1-9581-ff34ea6146ee",
+        "name": "Webpack",
+        "category": "build_tools"
+      },
+      {
+        "id": "262a7d89-b207-46c2-9174-ff04e64a0830",
+        "name": "Babel",
+        "category": "build_tools"
+      },
+      {
+        "id": "59d577a7-27ad-4f99-bbf6-602f1f6d1b64",
+        "name": "Grunt",
+        "category": "build_tools"
+      },
+      {
+        "id": "8aebbb0a-9630-44f8-be9a-dfdd9e6fef62",
+        "name": "GitHub",
+        "category": "version_control"
+      },
+      {
+        "id": "f9cfdf67-7171-411c-9f36-505afb3a53ba",
+        "name": "Bitbucket",
+        "category": "version_control"
+      },
+      {
+        "id": "b560ea60-56af-48d5-bb02-d91e954c13b7",
+        "name": "JIRA",
+        "category": "project_management"
+      },
+      {
+        "id": "87832193-a32d-4fce-a515-d85f61e2feda",
+        "name": "Confluence",
+        "category": "project_management"
+      },
+      {
+        "id": "002abc7d-9556-4583-98bb-7df46f037f6b",
+        "name": "GraphQL",
+        "category": "api_technologies"
+      },
+      {
+        "id": "51e3a8c1-b9a1-406b-aa81-f80087c16937",
+        "name": "REST",
+        "category": "api_technologies"
+      },
+      {
+        "id": "b46c3176-16b4-483f-9267-78e9c0250a74",
+        "name": "Postman",
+        "category": "api_technologies"
+      },
+      {
+        "id": "66636e59-7546-4684-ad00-15c94268cc88",
+        "name": "GSAP",
+        "category": "animations"
+      },
+      {
+        "id": "70b1598d-6f52-407f-8ce8-9501b6cd91dc",
+        "name": "Mapbox",
+        "category": "mapping"
+      },
+      {
+        "id": "18e77ba3-9c2a-432e-9d9e-70701b932e1a",
+        "name": "Node JS",
+        "category": "backend"
+      },
+      {
+        "id": "92e300a2-31ff-4307-8d70-15c4645dc51b",
+        "name": "Express",
+        "category": "backend"
+      },
+      {
+        "id": "2ec78e87-a72a-483e-b30f-ab91a3960b77",
+        "name": "Fastify",
+        "category": "backend"
+      },
+      {
+        "id": "5736ccb0-3631-4ad0-b10e-6e9488211790",
+        "name": "Vercel",
+        "category": "hosting_deployment"
+      },
+      {
+        "id": "3c2d75c2-c384-4079-8dac-4ca3a1a039d1",
+        "name": "Netlify",
+        "category": "hosting_deployment"
+      },
+      {
+        "id": "0448bc99-a601-4196-872d-315283746c5c",
+        "name": "Agile",
+        "category": "soft"
+      },
+      {
+        "id": "ffd38e40-5487-4b17-9026-017cc98d7b19",
+        "name": "Figma",
+        "category": "other"
+      },
+      {
+        "id": "121b8fa1-507e-4bbb-80e4-1d1a7953ed45",
+        "name": "ES6",
+        "category": "other"
+      },
+      {
+        "id": "9e939b54-4a8e-4035-8106-8c6b6eb83536",
+        "name": "Storybook",
+        "category": "other"
+      },
+      {
+        "id": "16afd57d-ded2-4bfb-8f2d-e92ba1393b2e",
+        "name": "Jest",
+        "category": "other"
+      },
+      {
+        "id": "9ae664ef-6008-43a4-ae4b-37d8e69b66ad",
+        "name": "REST APIs",
+        "category": "api_technologies"
+      },
+      {
+        "id": "5d19dcb5-ac9c-4e98-a1d3-d07a2788dcdd",
+        "name": "Expo Router",
+        "category": "mobile"
+      },
+      {
+        "id": "53dcc667-9f05-4a63-8897-e62bfc88bb9d",
+        "name": "EAS Build",
+        "category": "mobile"
+      },
+      {
+        "id": "0b6776d0-f591-4189-8d5f-5c95c8f19fab",
+        "name": "Zustand",
+        "category": "frontend"
+      },
+      {
+        "id": "ae66372f-1f54-40d0-a5bc-7540a745fcf7",
+        "name": "React Hook Form",
+        "category": "frontend"
+      },
+      {
+        "id": "66f5e5c6-2d55-4f3d-afdd-f22eff5f36b9",
+        "name": "Zod",
+        "category": "languages"
+      },
+      {
+        "id": "34c5dd71-d67c-43b0-948c-a775735bbf8c",
+        "name": "FlashList",
+        "category": "mobile"
+      },
+      {
+        "id": "2691ae16-424c-43b9-b66e-507a2964518d",
+        "name": "React Native Reanimated",
+        "category": "mobile"
+      },
+      {
+        "id": "758918a1-c4a4-4a2f-b4b7-1bf499a10039",
+        "name": "Bottom Sheet",
+        "category": "mobile"
+      },
+      {
+        "id": "cb36e795-b2fb-4897-882b-8fc239056526",
+        "name": "Skia",
+        "category": "mobile"
+      },
+      {
+        "id": "e60052a8-eb86-477b-a065-17158f9f9949",
+        "name": "Prisma",
+        "category": "backend"
+      },
+      {
+        "id": "4b9abb18-346b-4a01-9567-4963e86fa863",
+        "name": "Supabase",
+        "category": "backend"
+      },
+      {
+        "id": "2266dbb1-3441-4aa1-aad2-966b137b5e12",
+        "name": "Adobe AEM",
+        "category": "cms"
+      },
+      {
+        "id": "d0be647d-8596-4122-98b6-6b93e239fe2e",
+        "name": "HTL",
+        "category": "cms"
+      },
+      {
+        "id": "d0ff315e-fdb5-45f4-aea8-c57e05f9773c",
+        "name": "Sling Models",
+        "category": "cms"
+      },
+      {
+        "id": "166fcdb5-078a-4be0-a831-c617967fdb71",
+        "name": "OSGi",
+        "category": "cms"
+      },
+      {
+        "id": "85500fe6-5103-4a3c-a3bd-404063b24e21",
+        "name": "Maven",
+        "category": "build_tools"
+      },
+      {
+        "id": "2b4a93a0-423e-46d0-a935-1fae04e5bfd6",
+        "name": "LESS",
+        "category": "languages"
+      },
+      {
+        "id": "e1ba0bcb-3b97-4ba1-9bb8-34637309f13e",
+        "name": "Puppeteer",
+        "category": "other"
+      },
+      {
+        "id": "256fe8ac-d8d2-40dc-b245-b26b5ca8beeb",
+        "name": "Cheerio",
+        "category": "other"
+      },
+      {
+        "id": "ec6a9673-caa5-4bcd-93f9-25b60c06b406",
+        "name": "Astro.js",
+        "category": "other"
+      },
+      {
+        "id": "e574f5a2-5232-4805-8ff0-094a3b9ebf57",
+        "name": "OpenAI",
+        "category": "other"
+      },
+      {
+        "id": "795d89ba-f5e4-4426-9589-3956099b4355",
+        "name": "Gemini AI",
+        "category": "other"
+      },
+      {
+        "id": "c96b6d72-0c3f-42b8-a409-f3e418538886",
+        "name": "OpenCV",
+        "category": "other"
+      },
+      {
+        "id": "e900e021-8a99-495d-8cff-90de24a66580",
+        "name": "Raspberry Pi",
+        "category": "other"
+      },
+      {
+        "id": "547ac0a7-8b81-4bc9-97c4-81b8749a9d0a",
+        "name": "ESP32",
+        "category": "other"
+      },
+      {
+        "id": "6bbfb9c1-3bf6-4651-b894-bd9a4e235484",
+        "name": "Jasmine",
+        "category": "other"
+      },
+      {
+        "id": "c232f1c3-b9a8-4efd-9fae-d388fab7e9e5",
+        "name": "PostgreSQL",
+        "category": "backend"
+      },
+      {
+        "id": "cf4caa27-2d34-46ef-85e8-38612c3c5be5",
+        "name": "Google OAuth",
+        "category": "api_technologies"
+      },
+      {
+        "id": "4c93ef57-a3dd-42f3-ad32-f91f4106bb37",
+        "name": "RBAC",
+        "category": "other"
+      }
+    ],
+    "spokenLanguages": [
+      {
+        "id": "a110964a-c107-4c56-9c3f-e81c1bc812e5",
+        "language": "English",
+        "proficiency": "Proficient"
+      },
+      {
+        "id": "75d041a2-97bd-4546-b9b9-f52e41370fb9",
+        "language": "Hindi",
+        "proficiency": "Native"
+      },
+      {
+        "id": "dedbfad2-5434-42d2-934e-3d8eacad29ff",
+        "language": "Punjabi",
+        "proficiency": "Native"
+      }
+    ],
+    "keyAchievements": [
+      {
+        "id": "a820a3a9-e034-4a0a-8eb8-e9be5efc2f1f",
+        "title": "Academic and Professional Excellence",
+        "description": "Achieved top 10 percentile in university studies and consistently presented scalable solutions"
+      }
+    ],
+    "interests": [
+      "Cricket",
+      "Badminton",
+      "Swimming"
+    ],
+    "projects": [
+      {
+        "id": "b7dcdeb3-6d6b-4075-b38b-7f3943ecaa98",
+        "name": "Aaloo",
+        "description": "Personal project — AI-powered food and social mobile platform built with React Native and Expo. Features meal logging with voice input, social feed, festival maps, leaderboard, rewards, OAuth, and offline sync.",
+        "technologies": "React Native, Expo, Expo Router, TypeScript, Fastify, Supabase, Prisma, FlashList, Reanimated, Google Maps"
+      },
+      {
+        "id": "36429f4c-7cff-411d-ad43-e62b684e9524",
+        "name": "InsideOut",
+        "description": "Hackathon project — Indoor navigation and wayfinding application using geolocation and location-aware experiences for interactive tours and VIP navigation.",
+        "technologies": "React Native, Expo, Google Maps, Geolocation"
+      },
+      {
+        "id": "1ba84b46-660d-48c6-aaba-33f423924742",
+        "name": "GurukulX",
+        "description": "Personal project — Config-driven AI learning PWA with swipeable feed, 12-phase AI curriculum, progress tracking, notes, comments, and Supabase adapter pattern.",
+        "technologies": "Next.js, TypeScript, Supabase, PWA"
+      },
+      {
+        "id": "cb6472d9-d977-4a52-93b6-e3eac0f751a2",
+        "name": "Website Scraper & Rebuild Estimator",
+        "description": "Personal project — Website cloner using Puppeteer for dynamic scraping, CSS-complete analysis, asset bundling, and rebuild effort estimation. Used to analyze and estimate rebuilds for production sites.",
+        "technologies": "Node.js, Puppeteer, Cheerio, Astro.js"
+      },
+      {
+        "id": "d839dce9-17f5-4843-97b6-80a7338e909a",
+        "name": "ESP32 AI Car",
+        "description": "Hackathon project — ESP32 and Raspberry Pi 4 autonomous car with Gemini AI voice control, servo steering, medical delivery sequence, obstacle sensors, and OTA firmware updates.",
+        "technologies": "ESP32, Raspberry Pi, Python, Flask, OpenCV, Gemini AI"
+      }
+    ],
+    "certifications": [
+      {
+        "id": "8275b27f-89f2-49f8-899c-3190aebad156",
+        "name": "Shopify Plus Certification",
+        "issuer": ""
+      }
+    ],
+    "optionalFields": {
+      "dateOfBirth": "",
+      "age": "",
+      "gender": "",
+      "currentCtc": "",
+      "expectedCtc": "",
+      "noticePeriod": "",
+      "maritalStatus": "",
+      "nationality": "",
+      "addressLine": "",
+      "certificationIds": "",
+      "cgpa": "",
+      "percentage10th": "",
+      "percentage12th": "",
+      "beCgpa": ""
+    }
+  },
+  "rawText": "Bhuvesh Singla Senior Software Engineer\nReact & Next.js · React Native · UI Performance Optimization · Adobe AEM\nEmail: bhuve1996@gmail.com · Phone: 91 9530529550 · Location: Gurugram, India, 122001\nLinkedIn: linkedin.com/in/bhuvesh-singla-6b76a6120/ · GitHub: github.com/bhuve1996/\n\nProfessional Summary\n8+ years of experience · Senior Frontend Engineer\nSenior Software Engineer with over 8 years of experience in frontend development and UI engineering, expert in React.js, React Native, and Next.js. Key achievements include increasing project delivery speed by 20% through API integration and enhancing user engagement by 20% with React UI dashboards.\nFrontend development, UI engineering, React.js, React Native, Next.js, Adobe AEM\n\nWork Experience\nSenior Software Engineer AKQA · Gurugram, India\nDigital agency delivering exceptional experiences\n09/2022 — Present\nPanerai Global Digital Template (Luxury Watch E-commerce Platform)\n• Contributed to Panerai's global Adobe Experience Manager (AEM) platform serving multiple international markets.\n• Developed and maintained checkout, wishlist, mini-cart, product detail pages, and multi-currency experiences.\n• Implemented virtual try-on experiences, 3D product viewers, day/night product imagery, and cross-selling components.\n• Resolved UAE Dirham currency rendering issues across checkout, order summary, and order confirmation flows.\n• Worked across HTL components, Sling Models, clientlibs JavaScript, LESS styles, and Maven modules.\nAdobe AEM, HTL, Sling Models, Java, JavaScript, LESS, Maven, OSGi, Jasmine\nThe Kusnacht Practice (Luxury Swiss Health & Rehabilitation Clinic)\n• Translated complex Figma designs into pixel-perfect ES6 components (multilingual), used modern build tools and automated testing for clean, flawlessly rendered Sanity-fetched UIs, integrated third-party calendar.\n• Developed reusable React and React Native components ensuring consistency across web and mobile experiences.\nFigma, ES6, Sanity, React Native\nNexeon (Battery Technology & Solutions Company)\n• Developed modular UI components, optimized SEO and load performance, and streamlined content workflows through Contentful and Storybook integration.\nContentful, Storybook, Jest\nMelbourne Convention Bureau (Tourism & Business Events Platform)\n• Architected and customized Sitecore templates with Vue.js and SCSS, ensuring scalable and reusable frontend modules for events and campaigns.\nSitecore, Vue.js, SCSS\nVisit Victoria\n• Integrated Mapbox for maps, customized React for discovery, improved accessibility through strong teamwork and problem-solving, consistently delivered clean code, and converted components of Vue to React components.\nMapbox, React\nBunnings (Leading Australian Home Improvement Retailer)\n• Rebuilt catalog and checkout flows with Next.js and GraphQL, optimized performance with Vercel deployments, and ensured responsive customer journeys.\nNext.js, GraphQL, Vercel\nAKQA LMS (Internal Learning Management Platform)\n• Built an internal LMS platform for FE, BE, QA, and General training programs.\n• Implemented Google OAuth authentication with role-based access control.\n• Developed training calendar, video playback, Google Slides/PPT viewer, and calendar exports.\n• Built administration tools for content upload, user management, category filtering, and search.\nNext.js, TypeScript, PostgreSQL, Google OAuth, RBAC\n\nSenior Software Engineer JOSH Software · Bengaluru, India\nA software development company specializing in custom applications\n10/2021 — 09/2022\nADIB Bank (Abu Dhabi Islamic Bank, UAE)\n• Delivered secure and responsive banking modules with Angular and React, implemented dynamic forms, and integrated APIs for digital banking services.\n• Built responsive banking experiences across web and mobile platforms using React and React Native.\nAngular, React, SCSS, Postman, GitHub, Jira, React Native\nSBER Bank (Largest Russian Financial Institution)\n• Implemented React UI dashboards enriched with GSAP animations, improving user engagement and cross-browser compatibility.\nReact, GSAP, SCSS, Bitbucket\n\nSoftware Engineer KDMS · Chandigarh, India\nEducational technology service provider\n05/2018 — 10/2021\nGreatMocks (EdTech Platform, Mock Test Solutions)\n• Designed responsive learning modules, integrated APIs, and implemented dynamic forms to improve student experience.\n• Increased international user engagement by 15% by building multilingual e-commerce UI with React and Material UI.\n• Extended learning experiences to mobile platforms using React Native and Expo.\n• Built reusable mobile UI components and integrated REST APIs for Android and iOS learning workflows.\nReact, REST APIs, React Bootstrap, JavaScript, CSS, Material UI, React Native, Expo\n\nPersonal Projects\nAaloo\n• Personal project — AI-powered food and social mobile platform built with React Native and Expo. Features meal logging with voice input, social feed, festival maps, leaderboard, rewards, OAuth, and offline sync.\nReact Native, Expo, Expo Router, TypeScript, Fastify, Supabase, Prisma, FlashList, Reanimated, Google Maps\nInsideOut\n• Hackathon project — Indoor navigation and wayfinding application using geolocation and location-aware experiences for interactive tours and VIP navigation.\nReact Native, Expo, Google Maps, Geolocation\nGurukulX\n• Personal project — Config-driven AI learning PWA with swipeable feed, 12-phase AI curriculum, progress tracking, notes, comments, and Supabase adapter pattern.\nNext.js, TypeScript, Supabase, PWA\nWebsite Scraper & Rebuild Estimator\n• Personal project — Website cloner using Puppeteer for dynamic scraping, CSS-complete analysis, asset bundling, and rebuild effort estimation. Used to analyze and estimate rebuilds for production sites.\nNode.js, Puppeteer, Cheerio, Astro.js\nESP32 AI Car\n• Hackathon project — ESP32 and Raspberry Pi 4 autonomous car with Gemini AI voice control, servo steering, medical delivery sequence, obstacle sensors, and OTA firmware updates.\nESP32, Raspberry Pi, Python, Flask, OpenCV, Gemini AI\n\nSkills\nfrontend: React, Next.js, Angular, Vue.js, React Native, Cordova, Expo, Zustand, React Hook Form\nlanguages: JavaScript, TypeScript, Ruby, SCSS, HTML, CSS, Zod, LESS\nui_frameworks: Tailwind, Material UI, Bootstrap\ncms: Contentful, Sitecore, Sanity, Adobe AEM, HTL, Sling Models, OSGi\nbuild_tools: Webpack, Babel, Grunt, Maven\nversion_control: GitHub, Bitbucket\nproject_management: JIRA, Confluence\napi_technologies: GraphQL, REST, Postman, REST APIs, Google OAuth\nanimations: GSAP\nmapping: Mapbox\nbackend: Node JS, Express, Fastify, Prisma, Supabase, PostgreSQL\nhosting_deployment: Vercel, Netlify\nsoft: Agile\nother: Figma, ES6, Storybook, Jest, Puppeteer, Cheerio, Astro.js, OpenAI, Gemini AI, OpenCV, Raspberry Pi, ESP32, Jasmine, RBAC\nmobile: Expo Router, EAS Build, FlashList, React Native Reanimated, Bottom Sheet, Skia\n\nEducation\nBachelor of Engineering (B.E.) Chitkara University · Rajpura, Punjab 06/2013 — 06/2017\nHigher Secondary (Class 12) St. Kabir Convent Sr. Sec. School · Bathinda 03/2012 — 03/2013\nSecondary (Class 10) Kendriya Vidyalaya No. 4 · Bathinda 03/2010 — 03/2011\n\nCertifications\n• Shopify Plus Certification\n\nLanguages\nEnglish (Proficient) · Hindi (Native) · Punjabi (Native)\n\nKey Achievements\n• Academic and Professional Excellence — Achieved top 10 percentile in university studies and consistently presented scalable solutions\n\nInterests\nCricket, Badminton, Swimming",
+  "confidence": "high",
+  "parser": "gemini"
+}

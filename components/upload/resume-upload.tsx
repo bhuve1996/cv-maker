@@ -1,7 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
-import { FileText, FileType2, FileUp, Loader2, ShieldCheck, Upload } from "lucide-react";
+import {
+  Braces,
+  FileJson,
+  FileText,
+  FileType2,
+  FileUp,
+  Loader2,
+  ShieldCheck,
+  Upload,
+} from "lucide-react";
 import { UploadGif } from "@/components/brand/animated-gif";
 import { AtsAuditPanel } from "@/components/builder/ats-audit-panel";
 import { ParseRateLimitIndicator } from "@/components/upload/parse-rate-limit-indicator";
@@ -13,6 +23,13 @@ import { useParseRateLimit } from "@/hooks/use-parse-rate-limit";
 import { parseResumeFile, ResumeParseError } from "@/hooks/use-resume-parser";
 import { useResumeStore } from "@/hooks/use-resume-store";
 import {
+  isJsonResumeFile,
+  parseResumeJsonFile,
+  ResumeJsonImportError,
+} from "@/lib/resume/import-resume-json";
+import {
+  toastJsonImportError,
+  toastJsonImportSuccess,
   toastParseError,
   toastParseResult,
   toastRateLimitBlocked,
@@ -25,11 +42,13 @@ interface ResumeUploadProps {
 
 export function ResumeUpload({ compact = false }: ResumeUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const jsonInputRef = useRef<HTMLInputElement>(null);
   const auditInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { mergeParsedResume, setIsParsing, isParsing, parseParser } = useResumeStore();
   const { canRequest, countdown } = useParseRateLimit();
+  const [isImportingJson, setIsImportingJson] = useState(false);
   const {
     result: auditResult,
     isAuditing,
@@ -38,8 +57,9 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
     clearAudit,
   } = useAtsAudit();
   const uploadDisabled = isParsing || !canRequest;
+  const jsonDisabled = isImportingJson;
 
-  const handleFile = useCallback(
+  const handleResumeFile = useCallback(
     async (file: File) => {
       if (!canRequest) {
         toastRateLimitBlocked(countdown);
@@ -71,6 +91,44 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
     [canRequest, clearAudit, countdown, mergeParsedResume, setIsParsing],
   );
 
+  const handleJsonFile = useCallback(
+    async (file: File) => {
+      setError(null);
+      clearAudit();
+      setIsImportingJson(true);
+
+      try {
+        const result = await parseResumeJsonFile(file);
+        mergeParsedResume(result.resume, result.rawText, {
+          parser: result.parser,
+          warning: result.warning,
+        });
+        toastJsonImportSuccess();
+      } catch (err) {
+        const message =
+          err instanceof ResumeJsonImportError
+            ? err.message
+            : "Something went wrong while importing your JSON file.";
+        setError(message);
+        toastJsonImportError(message);
+      } finally {
+        setIsImportingJson(false);
+      }
+    },
+    [clearAudit, mergeParsedResume],
+  );
+
+  const handleFile = useCallback(
+    async (file: File) => {
+      if (isJsonResumeFile(file)) {
+        await handleJsonFile(file);
+        return;
+      }
+      await handleResumeFile(file);
+    },
+    [handleJsonFile, handleResumeFile],
+  );
+
   const handleAuditFile = useCallback(
     async (file: File) => {
       setError(null);
@@ -93,11 +151,11 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
     (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault();
       setIsDragging(false);
-      if (isParsing || isAuditing) return;
+      if (isParsing || isAuditing || isImportingJson) return;
       const file = event.dataTransfer.files[0];
       if (file) void handleFile(file);
     },
-    [handleFile, isAuditing, isParsing],
+    [handleFile, isAuditing, isImportingJson, isParsing],
   );
 
   return (
@@ -115,7 +173,7 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
               <div>
                 <CardTitle className="text-lg">Import your resume</CardTitle>
                 <CardDescription>
-                  We&apos;ll extract the content so you can edit it — nothing is uploaded to a server.
+                  Upload a PDF or Word file for AI extraction, or import structured JSON.
                 </CardDescription>
               </div>
               {parseParser && <ParseSourceBadge parser={parseParser} size="sm" />}
@@ -133,25 +191,25 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
           <div
             onDragOver={(event) => {
               event.preventDefault();
-              if (!uploadDisabled) setIsDragging(true);
+              if (!uploadDisabled && !jsonDisabled) setIsDragging(true);
             }}
             onDragLeave={() => setIsDragging(false)}
             onDrop={onDrop}
             className={cn(
               "flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors duration-200",
-              uploadDisabled
+              uploadDisabled && jsonDisabled
                 ? "border-border bg-muted/20 opacity-80"
                 : isDragging
                   ? "border-primary/50 bg-primary/5"
                   : "border-border/80 bg-muted/20 hover:border-primary/30 hover:bg-primary/5",
             )}
           >
-            {!compact && !isParsing && (
+            {!compact && !isParsing && !isImportingJson && (
               <UploadGif className="mb-3 max-h-20" />
             )}
-            {(compact || isParsing) && (
+            {(compact || isParsing || isImportingJson) && (
               <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-                {isParsing ? (
+                {isParsing || isImportingJson ? (
                   <Loader2 className="size-7 animate-spin" />
                 ) : (
                   <Upload className="size-7" />
@@ -161,11 +219,13 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
             <p className="text-base font-medium">
               {isParsing
                 ? "Parsing resume with AI..."
-                : !canRequest
-                  ? `AI limit reached — wait ${countdown}`
-                  : "Drag & drop your resume"}
+                : isImportingJson
+                  ? "Importing JSON..."
+                  : !canRequest
+                    ? `AI limit reached — wait ${countdown}`
+                    : "Drag & drop your resume"}
             </p>
-            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1 rounded-md bg-background px-2 py-0.5">
                 <FileType2 className="size-3 text-primary/70" />
                 PDF
@@ -173,6 +233,10 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
               <span className="inline-flex items-center gap-1 rounded-md bg-background px-2 py-0.5">
                 <FileText className="size-3 text-primary/70" />
                 DOCX
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-md bg-background px-2 py-0.5">
+                <FileJson className="size-3 text-primary/70" />
+                JSON
               </span>
               <span>· up to 10 MB</span>
             </div>
@@ -189,7 +253,16 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
                 }}
               >
                 <FileUp className="size-4" />
-                Choose file
+                Choose PDF/DOCX
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={jsonDisabled}
+                onClick={() => jsonInputRef.current?.click()}
+              >
+                <Braces className="size-4" />
+                Choose JSON
               </Button>
               <Button
                 type="button"
@@ -213,7 +286,20 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
               disabled={uploadDisabled}
               onChange={(event) => {
                 const file = event.target.files?.[0];
-                if (file) void handleFile(file);
+                if (file) void handleResumeFile(file);
+                event.target.value = "";
+              }}
+            />
+            <input
+              ref={jsonInputRef}
+              type="file"
+              accept=".json,application/json"
+              className="hidden"
+              disabled={jsonDisabled}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) void handleJsonFile(file);
+                event.target.value = "";
               }}
             />
             <input
@@ -229,6 +315,17 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
               }}
             />
           </div>
+          {!compact && (
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              JSON must follow the CV Maker schema.{" "}
+              <Link
+                href="/docs/json-import"
+                className="font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                View format guide
+              </Link>
+            </p>
+          )}
           {(error || auditError) && (
             <p className="mt-3 text-sm text-destructive" role="alert">
               {error ?? auditError}
