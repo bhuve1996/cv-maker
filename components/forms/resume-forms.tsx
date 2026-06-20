@@ -10,6 +10,7 @@ import {
   Trash2,
   Trophy,
 } from "lucide-react";
+import { DateRangeFields } from "@/components/forms/date-range-fields";
 import { SectionEmptyState } from "@/components/forms/section-empty-state";
 import { RichTextEditor } from "@/components/forms/rich-text-editor";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +24,10 @@ import {
   SKILL_CATEGORY_LABELS,
   SKILL_CATEGORY_ORDER,
 } from "@/lib/resume/skill-categories";
-import { DATE_END_PLACEHOLDER, DATE_PLACEHOLDER } from "@/lib/resume/field-hints";
+import {
+  DATE_EDUCATION_END_PLACEHOLDER,
+  DATE_END_PLACEHOLDER,
+} from "@/lib/resume/field-hints";
 import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
 import { useResumeStore } from "@/hooks/use-resume-store";
 import type { OptionalFields, SkillCategory } from "@/types/resume";
@@ -278,26 +282,16 @@ export function ExperienceForm() {
                 }
               />
             </div>
-            <div className="space-y-2">
-              <Label>Start Date</Label>
-              <Input
-                value={item.startDate}
-                onChange={(e) =>
-                  updateExperience(item.id, { startDate: e.target.value })
-                }
-                placeholder={DATE_PLACEHOLDER}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>End Date</Label>
-              <Input
-                value={item.endDate}
-                onChange={(e) =>
-                  updateExperience(item.id, { endDate: e.target.value })
-                }
-                placeholder={DATE_END_PLACEHOLDER}
-              />
-            </div>
+            <DateRangeFields
+              hintId={`experience-dates-${item.id}`}
+              startDate={item.startDate}
+              endDate={item.endDate}
+              endPlaceholder={DATE_END_PLACEHOLDER}
+              onStartChange={(startDate) =>
+                updateExperience(item.id, { startDate })
+              }
+              onEndChange={(endDate) => updateExperience(item.id, { endDate })}
+            />
             <div className="space-y-2 sm:col-span-2">
               <Label>Technologies (comma-separated)</Label>
               <Input
@@ -422,26 +416,16 @@ export function EducationForm() {
                 }
               />
             </div>
-            <div className="space-y-2">
-              <Label>Start Date</Label>
-              <Input
-                value={item.startDate}
-                onChange={(e) =>
-                  updateEducation(item.id, { startDate: e.target.value })
-                }
-                placeholder={DATE_PLACEHOLDER}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>End Date</Label>
-              <Input
-                value={item.endDate}
-                onChange={(e) =>
-                  updateEducation(item.id, { endDate: e.target.value })
-                }
-                placeholder={DATE_PLACEHOLDER}
-              />
-            </div>
+            <DateRangeFields
+              hintId={`education-dates-${item.id}`}
+              startDate={item.startDate}
+              endDate={item.endDate}
+              endPlaceholder={DATE_EDUCATION_END_PLACEHOLDER}
+              onStartChange={(startDate) =>
+                updateEducation(item.id, { startDate })
+              }
+              onEndChange={(endDate) => updateEducation(item.id, { endDate })}
+            />
           </div>
         </div>
       ))}
