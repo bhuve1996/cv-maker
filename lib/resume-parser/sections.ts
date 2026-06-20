@@ -25,6 +25,7 @@ const SECTION_PATTERNS: Record<SectionKey, RegExp[]> = {
     /^technical\s+skills?$/i,
     /^core\s+competencies$/i,
     /^expertise$/i,
+    /^key\s+skills?$/i,
   ],
   projects: [/^projects?$/i, /^personal\s+projects?$/i],
   certifications: [
@@ -33,6 +34,9 @@ const SECTION_PATTERNS: Record<SectionKey, RegExp[]> = {
     /^credentials?$/i,
   ],
 };
+
+const STOP_SECTION_PATTERN =
+  /^(key\s+achievements|languages|interests|hobbies|certifications?|projects?|references)$/i;
 
 export function identifySections(text: string): Record<SectionKey, string> {
   const lines = text.split("\n").map((line) => line.trim());
@@ -56,6 +60,11 @@ export function identifySections(text: string): Record<SectionKey, string> {
     const matchedSection = matchSectionHeader(line);
     if (matchedSection) {
       currentSection = matchedSection;
+      continue;
+    }
+
+    if (STOP_SECTION_PATTERN.test(line.replace(/[:\-–—|•*#]+$/g, "").trim())) {
+      currentSection = null;
       continue;
     }
 
@@ -84,6 +93,9 @@ function matchSectionHeader(line: string): SectionKey | null {
   return null;
 }
 
+const INVALID_WEBSITE_PATTERN =
+  /^(next\.js|react\.js|node\.js|vue\.js|angular\.js|express\.js|nuxt\.js)$/i;
+
 export function extractContactInfo(text: string) {
   const emailMatch = text.match(
     /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i,
@@ -94,33 +106,83 @@ export function extractContactInfo(text: string) {
   const linkedInMatch = text.match(
     /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[\w-]+/i,
   );
-  const websiteMatch = text.match(
-    /(?:https?:\/\/)?(?:www\.)?(?!linkedin\.com)[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[\w\-./?%&=]*)?/i,
-  );
+
+  const websiteCandidates = [
+    ...text.matchAll(
+      /https?:\/\/(?:www\.)?(?!linkedin\.com)[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[\w\-./?%&=]*)?/gi,
+    ),
+    ...text.matchAll(
+      /(?:^|\s)(?!linkedin\.com)([a-z0-9-]+\.(?:com|dev|io|me|co|org|net|app)(?:\/[\w\-./?%&=]*)?)/gi,
+    ),
+  ];
+
+  let website = "";
+  for (const match of websiteCandidates) {
+    const candidate = (match[1] ?? match[0]).trim();
+    if (
+      !INVALID_WEBSITE_PATTERN.test(candidate) &&
+      !/linkedin\.com/i.test(candidate) &&
+      !candidate.includes("@") &&
+      !/^\d/.test(candidate)
+    ) {
+      website = candidate;
+      break;
+    }
+  }
 
   return {
     email: emailMatch?.[0] ?? "",
     phone: phoneMatch?.[0]?.trim() ?? "",
     linkedIn: linkedInMatch?.[0] ?? "",
-    website: websiteMatch?.[0] ?? "",
+    website,
   };
 }
 
 export function extractFullName(text: string): string {
-  const firstLine = text.split("\n").find((line) => line.trim())?.trim() ?? "";
+  const headerLine = text.split("\n").find((line) => line.trim())?.trim() ?? "";
 
-  if (!firstLine || firstLine.length > 60) return "";
-  if (/@|https?:\/\//i.test(firstLine)) return "";
+  const capsNameMatch = text.match(
+    /^([A-Z][A-Z\s.'-]{2,48}?)(?=\s+(?:Senior|Lead|Staff|Principal|Software|Web|Frontend|Backend|Full[\s-]?Stack|[A-Z][a-z].*(?:Engineer|Developer|Manager|Designer)))/m,
+  );
+  if (capsNameMatch) {
+    return capsNameMatch[1].trim();
+  }
 
-  const words = firstLine.split(/\s+/);
-  if (words.length < 2 || words.length > 5) return "";
+  if (headerLine && !/@|https?:\/\//i.test(headerLine)) {
+    const titleBoundary = headerLine.search(
+      /\s+(?:Senior|Lead|Staff|Principal|Software|Web|Frontend|Backend|Full[\s-]?Stack|[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:Engineer|Developer|Manager|Designer|Architect|Consultant|Analyst))/,
+    );
 
-  return firstLine;
+    if (titleBoundary > 0) {
+      return headerLine.slice(0, titleBoundary).trim();
+    }
+
+    if (headerLine.length <= 60) {
+      const words = headerLine.split(/\s+/);
+      if (words.length >= 2 && words.length <= 5) {
+        return headerLine;
+      }
+      if (words.length > 2) {
+        return words.slice(0, 2).join(" ");
+      }
+    }
+  }
+
+  return "";
 }
 
 export function extractLocation(text: string): string {
-  const locationMatch = text.match(
-    /(?:^|\n)([A-Za-z\s]+,\s*[A-Za-z\s]+(?:,\s*[A-Za-z\s]+)?)(?:\n|$)/,
-  );
-  return locationMatch?.[1]?.trim() ?? "";
+  const patterns = [
+    /([A-Za-z][A-Za-z\s.-]{1,35},\s*(?:India|USA|UK|United States|Canada|Australia|UAE|Germany|Singapore|[A-Za-z][A-Za-z\s.-]{1,30})(?:\s+\d{4,6})?)(?=\s+(?:SUMMARY|EXPERIENCE|EDUCATION|SKILLS|$))/i,
+    /(?:^|\n|\s)([A-Za-z][A-Za-z\s.-]{1,35},\s*(?:India|USA|UK|United States|Canada|Australia|UAE|[A-Za-z][A-Za-z\s.-]{1,30})(?:\s+\d{4,6})?)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) {
+      return (match[1] ?? match[0]).trim();
+    }
+  }
+
+  return "";
 }

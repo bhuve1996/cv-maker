@@ -1,6 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
 import type { ParseResult, Resume } from "@/types/resume";
 import {
+  preprocessResumeText,
+  splitEducationEntries,
+  splitExperienceEntries,
+  tokenizeSkills,
+} from "./normalize-text";
+import {
   extractContactInfo,
   extractFullName,
   extractLocation,
@@ -8,9 +14,16 @@ import {
 } from "./sections";
 
 const DATE_PATTERN =
-  /(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+\d{4}|\d{4}|\bPresent\b|\bCurrent\b/gi;
+  /(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+\d{4}|\d{2}\/\d{4}|\d{4}|\bPresent\b|\bCurrent\b/gi;
 
-export function parseResumeText(text: string): ParseResult {
+const EXPERIENCE_HEADER_PATTERN =
+  /^((?:Senior |Lead |Staff |Principal |Web |Software |Associate |Junior )?(?:[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,5})\s+(?:Engineer|Developer|Manager|Designer|Architect|Consultant|Analyst|Intern|Specialist))\s+([A-Z][A-Za-z0-9 &.()-]+?)\s+(\d{2}\/\d{4}(?:\s*-\s*(?:\d{2}\/\d{4}|Present|Current))?|\d{2}\/\d{4})/;
+
+const EDUCATION_ENTRY_PATTERN =
+  /^(.+?)\s+((?:[A-Z][A-Za-z0-9 .'-]*(?:University|School|College|Institute|Academy|Vidyalaya)[A-Za-z0-9 .'-]*)|(?:St\.?\s+[A-Za-z0-9 .'-]+(?:School|College)?)|(?:Kendriya\s+Vidyalaya[^.]*?))\s+(\d{2}\/\d{4})\s*-\s*(\d{2}\/\d{4})/;
+
+export function parseResumeText(rawText: string): ParseResult {
+  const text = preprocessResumeText(rawText);
   const contact = extractContactInfo(text);
   const sections = identifySections(text);
 
@@ -23,30 +36,27 @@ export function parseResumeText(text: string): ParseResult {
       linkedIn: contact.linkedIn,
       website: contact.website,
     },
-    summary: sections.summary || extractFallbackSummary(text, sections),
+    summary: sections.summary || extractFallbackSummary(text),
     experience: parseExperience(sections.experience),
     education: parseEducation(sections.education),
     skills: parseSkills(sections.skills),
     projects: parseProjects(sections.projects),
-    certifications: parseCertifications(sections.certifications),
+    certifications: parseCertifications(sections.certifications, text),
   };
 
   const filledFields = countFilledFields(resume);
   const confidence =
     filledFields >= 8 ? "high" : filledFields >= 4 ? "medium" : "low";
 
-  return { resume, rawText: text, confidence };
+  return { resume, rawText, confidence };
 }
 
-function extractFallbackSummary(
-  text: string,
-  sections: ReturnType<typeof identifySections>,
-): string {
-  if (sections.summary) return sections.summary;
-
+function extractFallbackSummary(text: string): string {
   const lines = text.split("\n").map((line) => line.trim());
   const startIndex = lines.findIndex((line) =>
-    /summary|profile|about|objective/i.test(line),
+    /^(professional\s+)?summary$|^profile$|^about(\s+me)?$|^objective$/i.test(
+      line,
+    ),
   );
 
   if (startIndex === -1) return "";
@@ -59,69 +69,110 @@ function extractFallbackSummary(
     summaryLines.push(line);
   }
 
-  return summaryLines.join(" ").slice(0, 600);
+  return summaryLines.join(" ").slice(0, 800);
 }
 
 function parseExperience(sectionText: string) {
   if (!sectionText) return [];
 
-  const blocks = splitIntoBlocks(sectionText);
+  const entries = splitExperienceEntries(sectionText);
 
-  return blocks
+  return entries
     .map((block) => {
-      const lines = block.split("\n").filter(Boolean);
-      if (lines.length === 0) return null;
+      const normalized = block.replace(/\n+/g, " ").trim();
+      const headerMatch = normalized.match(EXPERIENCE_HEADER_PATTERN);
 
-      const dateLine = lines.find((line) => DATE_PATTERN.test(line)) ?? "";
-      const dates = extractDates(dateLine);
-      const titleLine =
-        lines.find((line) => line !== dateLine && line.length < 80) ?? lines[0];
-      const companyLine =
-        lines.find((line) => line !== titleLine && line !== dateLine) ?? "";
-      const description = lines
-        .filter((line) => line !== titleLine && line !== companyLine && line !== dateLine)
-        .join("\n");
+      if (headerMatch) {
+        const [, role, company, dateRange] = headerMatch;
+        const dates = extractDates(dateRange);
+        const description = normalized.slice(headerMatch[0].length).trim();
 
-      return {
-        id: uuidv4(),
-        role: titleLine,
-        company: companyLine,
-        startDate: dates.start,
-        endDate: dates.end,
-        description,
-      };
+        return {
+          id: uuidv4(),
+          role: role.trim(),
+          company: company.trim(),
+          startDate: dates.start,
+          endDate: dates.end,
+          description,
+        };
+      }
+
+      return parseExperienceFallback(block);
     })
-    .filter((item): item is NonNullable<typeof item> => Boolean(item));
+    .filter(
+      (item): item is NonNullable<typeof item> =>
+        Boolean(item && (item.role || item.company)),
+    );
+}
+
+function parseExperienceFallback(block: string) {
+  const lines = block.split("\n").filter(Boolean);
+  if (lines.length === 0) return null;
+
+  const dateLine = lines.find((line) => DATE_PATTERN.test(line)) ?? "";
+  const dates = extractDates(dateLine);
+  const titleLine =
+    lines.find((line) => line !== dateLine && line.length < 80) ?? lines[0];
+  const companyLine =
+    lines.find((line) => line !== titleLine && line !== dateLine) ?? "";
+  const description = lines
+    .filter(
+      (line) => line !== titleLine && line !== companyLine && line !== dateLine,
+    )
+    .join("\n");
+
+  return {
+    id: uuidv4(),
+    role: titleLine,
+    company: companyLine,
+    startDate: dates.start,
+    endDate: dates.end,
+    description,
+  };
 }
 
 function parseEducation(sectionText: string) {
   if (!sectionText) return [];
 
-  return splitIntoBlocks(sectionText).map((block) => {
-    const lines = block.split("\n").filter(Boolean);
-    const dateLine = lines.find((line) => DATE_PATTERN.test(line)) ?? "";
-    const dates = extractDates(dateLine);
+  return splitEducationEntries(sectionText)
+    .map((block) => {
+      const normalized = block.replace(/\n+/g, " ").trim();
+      const match = normalized.match(EDUCATION_ENTRY_PATTERN);
 
-    return {
-      id: uuidv4(),
-      degree: lines[0] ?? "",
-      institution: lines.find((line) => line !== lines[0] && line !== dateLine) ?? "",
-      startDate: dates.start,
-      endDate: dates.end,
-    };
-  });
+      if (match) {
+        const [, degree, institution, startDate, endDate] = match;
+        return {
+          id: uuidv4(),
+          degree: degree.trim(),
+          institution: institution.trim(),
+          startDate,
+          endDate,
+        };
+      }
+
+      const lines = block.split("\n").filter(Boolean);
+      const dateLine = lines.find((line) => DATE_PATTERN.test(line)) ?? "";
+      const dates = extractDates(dateLine);
+
+      return {
+        id: uuidv4(),
+        degree: lines[0] ?? "",
+        institution:
+          lines.find((line) => line !== lines[0] && line !== dateLine) ?? "",
+        startDate: dates.start,
+        endDate: dates.end,
+      };
+    })
+    .filter((item) => item.degree.length > 3 && (item.institution || item.degree));
 }
 
 function parseSkills(sectionText: string) {
   if (!sectionText) return [];
 
   const technicalKeywords =
-    /javascript|typescript|python|java|react|node|sql|aws|docker|kubernetes|git|html|css|api|cloud|data|machine learning|ml|ai|figma|design|agile|scrum/i;
+    /javascript|typescript|python|java|react|node|sql|aws|docker|kubernetes|git|html|css|api|cloud|data|machine learning|ml|ai|figma|design|agile|scrum|angular|vue|next|graphql|webpack|tailwind|bootstrap|sass|scss|express|vercel|netlify|sitecore|contentful|mapbox|gsap|seo|e-commerce|shopify|cordova|expo|fastify|serverless|postman|bitbucket|jira|confluence|storybook|jest|sanity|figma|ruby|rest|modular/i;
 
-  const items = sectionText
-    .split(/[,•|\n|·|-]/)
-    .map((item) => item.trim())
-    .filter((item) => item.length > 1 && item.length < 40);
+  const items = tokenizeSkills(sectionText);
 
   return items.map((name) => ({
     id: uuidv4(),
@@ -150,21 +201,35 @@ function parseProjects(sectionText: string) {
   });
 }
 
-function parseCertifications(sectionText: string) {
-  if (!sectionText) return [];
+function parseCertifications(sectionText: string, fullText: string) {
+  const entries = sectionText
+    ? sectionText
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+          const [name, issuer] = line.split(/[-–—|]/).map((part) => part.trim());
+          return {
+            id: uuidv4(),
+            name: name ?? line,
+            issuer: issuer ?? "",
+          };
+        })
+    : [];
 
-  return sectionText
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const [name, issuer] = line.split(/[-–—|]/).map((part) => part.trim());
-      return {
-        id: uuidv4(),
-        name: name ?? line,
-        issuer: issuer ?? "",
-      };
+  const inlineCertMatch = fullText.match(
+    /((?:Shopify Plus|AWS|Azure|Google Cloud|PMP|Scrum Master)[^.\n]*Certification[^.\n]*)/i,
+  );
+
+  if (inlineCertMatch) {
+    entries.push({
+      id: uuidv4(),
+      name: inlineCertMatch[1].trim(),
+      issuer: "",
     });
+  }
+
+  return entries;
 }
 
 function splitIntoBlocks(text: string): string[] {
@@ -176,6 +241,17 @@ function splitIntoBlocks(text: string): string[] {
 
 function extractDates(text: string) {
   const matches = [...text.matchAll(DATE_PATTERN)].map((match) => match[0]);
+  const rangeParts = text.split(/\s*-\s*/);
+
+  if (rangeParts.length >= 2) {
+    const startMatch = rangeParts[0].match(DATE_PATTERN);
+    const endMatch = rangeParts.slice(1).join("-").match(DATE_PATTERN);
+    return {
+      start: startMatch?.[0] ?? matches[0] ?? "",
+      end: endMatch?.[0] ?? matches[1] ?? "",
+    };
+  }
+
   return {
     start: matches[0] ?? "",
     end: matches[1] ?? "",
@@ -183,8 +259,8 @@ function extractDates(text: string) {
 }
 
 function isLikelySectionHeader(line: string): boolean {
-  return /^(experience|education|skills|projects|certifications|work|employment)/i.test(
-    line,
+  return /^(experience|education|skills|projects|certifications|work|employment|key achievements|languages|interests)$/i.test(
+    line.replace(/[:\-–—|•*#]+$/g, "").trim(),
   );
 }
 
