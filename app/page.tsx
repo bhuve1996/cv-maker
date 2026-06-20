@@ -62,8 +62,7 @@ export default function HomePage() {
                   in minutes
                 </h1>
                 <p className="mt-5 max-w-lg text-lg leading-relaxed text-muted-foreground">
-                  Import an existing CV or start fresh. Edit with a live preview,
-                  then download a polished PDF.
+                  Import an existing CV or start fresh. Edit on the left, preview and export on the right.
                 </p>
                 <SupportBadges className="mt-6 justify-center lg:justify-start" />
                 <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">

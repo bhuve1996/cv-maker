@@ -20,14 +20,14 @@ export function ParseStatusBanner() {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <p className="font-medium text-emerald-900 dark:text-emerald-100">
-              Resume parsed successfully
+              Import complete
             </p>
             <ParseSourceBadge parser={parseParser} size="sm" />
           </div>
           <p className="mt-0.5 text-muted-foreground">
             {parseParser === "gemini"
-              ? "Gemini extracted your content — review Personal Info and Experience first."
-              : "Content extracted from your file — review and edit each section below."}
+              ? "Start with Personal Info and Experience — the preview on the right updates instantly."
+              : "Review each section below — your preview updates as you edit."}
           </p>
         </div>
       </div>

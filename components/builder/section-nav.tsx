@@ -19,9 +19,6 @@ export function SectionNav({ openSections, onNavigate }: SectionNavProps) {
       aria-label="Jump to resume section"
       className="sticky top-16 z-20 -mx-1 rounded-xl border border-border/60 bg-card/95 p-2 shadow-sm backdrop-blur-sm lg:top-20"
     >
-      <p className="mb-2 px-1 text-xs font-medium text-muted-foreground">
-        Jump to section
-      </p>
       <div className="flex gap-1.5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {RESUME_SECTIONS.map((section) => {
           const status = getSectionStatus(section.id, resume);

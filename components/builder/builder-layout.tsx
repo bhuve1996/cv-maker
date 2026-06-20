@@ -1,11 +1,10 @@
 "use client";
 
 import { Suspense } from "react";
-import { Eye, Loader2, PencilLine, RotateCcw } from "lucide-react";
+import { Loader2, RotateCcw } from "lucide-react";
 import { LogoMark } from "@/components/brand/logo";
 import { BuilderEntryDecor } from "@/components/brand/builder-entry-decor";
 import { MobileBuilderBar } from "@/components/builder/mobile-builder-bar";
-import { ParseSourceBadge } from "@/components/builder/parse-source-badge";
 import { ParseStatusBanner } from "@/components/builder/parse-status-banner";
 import { ResumeProgress } from "@/components/builder/resume-progress";
 import { SaveIndicator } from "@/components/builder/save-indicator";
@@ -20,7 +19,7 @@ import { toastResetSuccess } from "@/lib/toast-messages";
 
 function BuilderLayoutContent() {
   const hydrated = useBuilderEntryMode();
-  const { hasUploaded, reset, resume, startFromScratch, parseParser } = useResumeStore();
+  const { hasUploaded, reset, resume, startFromScratch } = useResumeStore();
 
   const handleReset = () => {
     if (
@@ -60,9 +59,6 @@ function BuilderLayoutContent() {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 print:hidden">
-          {hasUploaded && parseParser && (
-            <ParseSourceBadge parser={parseParser} size="sm" />
-          )}
           {hasUploaded && <SaveIndicator />}
           {hasUploaded && (
             <Button type="button" variant="outline" size="sm" onClick={handleReset}>
@@ -96,18 +92,10 @@ function BuilderLayoutContent() {
           <div className="relative mt-4 grid gap-6 lg:grid-cols-2">
             <div className="space-y-4">
               <ResumeProgress />
-              <div className="hidden items-center gap-2 rounded-xl border border-border/60 bg-card/60 px-4 py-3 text-sm text-muted-foreground sm:flex">
-                <PencilLine className="size-4 shrink-0 text-primary" />
-                <span>Edit sections below — green checks show completed sections.</span>
-              </div>
               <ResumeUpload compact />
               <ResumeEditor />
             </div>
             <div className="lg:sticky lg:top-20 lg:self-start" id="resume-preview-panel">
-              <div className="mb-3 flex items-center gap-2 px-1 text-sm text-muted-foreground">
-                <Eye className="size-4 text-primary" />
-                Live preview updates as you edit
-              </div>
               <ResumePreview />
             </div>
           </div>

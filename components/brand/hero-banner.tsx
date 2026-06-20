@@ -16,8 +16,8 @@ export function HeroBanner() {
           <div className="flex items-center gap-2">
             <LogoMark size={28} />
             <div>
-              <p className="text-sm font-semibold">Live preview</p>
-              <p className="text-xs text-muted-foreground">Updates as you type</p>
+              <p className="text-sm font-semibold">Preview</p>
+              <p className="text-xs text-muted-foreground">Export-ready layout</p>
             </div>
           </div>
           <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">
