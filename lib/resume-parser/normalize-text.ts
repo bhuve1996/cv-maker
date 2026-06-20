@@ -133,6 +133,9 @@ export const KNOWN_MULTI_WORD_SKILLS = [
   "React Bootstrap",
 ];
 
+const SKILL_BLOCKLIST =
+  /^(interests|languages|key|achievements|hobbies|and|will|support|your|mission|of|delivering|scalable|accessible|web|interfaces|modular|seo|e-commerce|serverless|expo)$/i;
+
 export function tokenizeSkills(sectionText: string): string[] {
   const cleaned = sectionText
     .replace(/\s+(INTERESTS|LANGUAGES|KEY ACHIEVEMENTS|HOBBIES)[\s\S]*$/i, "")
@@ -162,8 +165,6 @@ export function tokenizeSkills(sectionText: string): string[] {
       (item) =>
         item.length > 1 &&
         item.length < 40 &&
-        !/^(interests|languages|key|achievements|hobbies|and|will|support|your|mission|of|delivering|scalable|accessible|web|interfaces)$/i.test(
-          item,
-        ),
+        !SKILL_BLOCKLIST.test(item),
     );
 }

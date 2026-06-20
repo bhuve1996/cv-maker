@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  RESUME_DOCUMENT_HEIGHT_PX,
+  RESUME_DOCUMENT_FONT_LINK,
   RESUME_DOCUMENT_STYLES,
   RESUME_DOCUMENT_WIDTH_PX,
 } from "@/lib/export/resume-document-styles";
@@ -46,7 +46,9 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
     personalInfo.linkedIn,
     personalInfo.github,
     personalInfo.website,
-  ].filter(Boolean);
+  ]
+    .filter(Boolean)
+    .map(formatContactValue);
 
   const skillGroups = Object.keys(SKILL_CATEGORY_LABELS).reduce(
     (groups, category) => {
@@ -63,14 +65,12 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
 
   return (
     <>
+      <link rel="stylesheet" href={RESUME_DOCUMENT_FONT_LINK} />
       <style dangerouslySetInnerHTML={{ __html: RESUME_DOCUMENT_STYLES }} />
       <article
         id={id}
         className="resume-document"
-        style={{
-          width: RESUME_DOCUMENT_WIDTH_PX,
-          minHeight: RESUME_DOCUMENT_HEIGHT_PX,
-        }}
+        style={{ width: RESUME_DOCUMENT_WIDTH_PX }}
       >
         <header className="rd-header">
           <h1>{personalInfo.fullName || "Your Name"}</h1>
@@ -83,11 +83,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
             </p>
           )}
           {contactItems.length > 0 && (
-            <div className="rd-contact">
-              {contactItems.map((item) => (
-                <span key={item}>{formatContactValue(item)}</span>
-              ))}
-            </div>
+            <p className="rd-contact">{contactItems.join(" · ")}</p>
           )}
         </header>
 
@@ -95,7 +91,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
           <section className="rd-section">
             <SectionTitle>Summary</SectionTitle>
             {professionalSummary.yearsOfExperience && (
-              <p className="rd-muted" style={{ marginBottom: 8 }}>
+              <p className="rd-muted" style={{ marginBottom: 4 }}>
                 {professionalSummary.yearsOfExperience} years of experience
                 {professionalSummary.designation
                   ? ` · ${professionalSummary.designation}`
@@ -104,13 +100,9 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
             )}
             <HtmlContent html={professionalSummary.text} />
             {professionalSummary.coreExpertise.length > 0 && (
-              <div className="rd-badges">
-                {professionalSummary.coreExpertise.map((item) => (
-                  <span key={item} className="rd-badge">
-                    {item}
-                  </span>
-                ))}
-              </div>
+              <p className="rd-inline-list" style={{ marginTop: 4 }}>
+                {professionalSummary.coreExpertise.join(", ")}
+              </p>
             )}
           </section>
         )}
@@ -139,16 +131,16 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
                     )}
                   </div>
                   {item.projects.length > 0 && (
-                    <div className="rd-stack-sm" style={{ marginTop: 8 }}>
+                    <div className="rd-stack-sm" style={{ marginTop: 4 }}>
                       {item.projects.map((project) => (
                         <div key={project.id} className="rd-body">
-                          <p>
+                          <p className="rd-project-label">
                             <strong>{project.client}</strong>
                             {project.industry ? ` (${project.industry})` : ""}
                           </p>
                           {project.responsibilities.length > 0 && (
                             <ul>
-                              {project.responsibilities.slice(0, 4).map((task) => (
+                              {project.responsibilities.slice(0, 3).map((task) => (
                                 <li key={task}>{task}</li>
                               ))}
                             </ul>
@@ -202,13 +194,9 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
                   <p className="rd-category-label">
                     {SKILL_CATEGORY_LABELS[category as SkillCategory]}
                   </p>
-                  <div className="rd-badges">
-                    {items?.map((skill) => (
-                      <span key={skill.id} className="rd-badge">
-                        {skill.name}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="rd-inline-list">
+                    {items?.map((skill) => skill.name).join(", ")}
+                  </p>
                 </div>
               ))}
             </div>
@@ -218,14 +206,15 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
         {resume.spokenLanguages.length > 0 && (
           <section className="rd-section">
             <SectionTitle>Languages</SectionTitle>
-            <div className="rd-contact">
-              {resume.spokenLanguages.map((item) => (
-                <span key={item.id}>
-                  {item.language}
-                  {item.proficiency ? ` (${item.proficiency})` : ""}
-                </span>
-              ))}
-            </div>
+            <p className="rd-inline-list">
+              {resume.spokenLanguages
+                .map((item) =>
+                  item.proficiency
+                    ? `${item.language} (${item.proficiency})`
+                    : item.language,
+                )
+                .join(" · ")}
+            </p>
           </section>
         )}
 

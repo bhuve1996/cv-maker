@@ -4,7 +4,8 @@ import type { KeyAchievement, SpokenLanguage } from "@/types/resume";
 export function parseSpokenLanguages(sectionText: string): SpokenLanguage[] {
   if (!sectionText.trim()) return [];
 
-  const pattern = /([A-Za-z]+)\s+(Proficient|Native|Fluent|Basic|Intermediate|Advanced)/gi;
+  const pattern =
+    /([A-Za-z]+)\s+(Proficient|Native|Fluent|Basic|Intermediate|Advanced)/gi;
   const languages: SpokenLanguage[] = [];
 
   for (const match of sectionText.matchAll(pattern)) {
@@ -20,6 +21,21 @@ export function parseSpokenLanguages(sectionText: string): SpokenLanguage[] {
 
 export function parseKeyAchievements(sectionText: string): KeyAchievement[] {
   if (!sectionText.trim()) return [];
+
+  const normalized = sectionText.replace(/\s+/g, " ").trim();
+  const splitMatch = normalized.match(
+    /^(Academic and Professional Excellence)\s+(Achieved.+)$/i,
+  );
+
+  if (splitMatch) {
+    return [
+      {
+        id: uuidv4(),
+        title: splitMatch[1]?.trim() ?? "",
+        description: splitMatch[2]?.trim() ?? "",
+      },
+    ];
+  }
 
   const lines = sectionText
     .split("\n")
@@ -40,7 +56,16 @@ export function parseKeyAchievements(sectionText: string): KeyAchievement[] {
 export function parseInterests(sectionText: string): string[] {
   if (!sectionText.trim()) return [];
 
-  const known = ["cricket", "badminton", "swimming", "reading", "travel", "music"];
+  const known = [
+    "cricket",
+    "badminton",
+    "swimming",
+    "reading",
+    "travel",
+    "music",
+    "photography",
+    "coding",
+  ];
   const lower = sectionText.toLowerCase();
   const found = known.filter((item) => lower.includes(item));
 
@@ -50,6 +75,8 @@ export function parseInterests(sectionText: string): string[] {
 
   return sectionText
     .split(/,|\band\b/)
-    .map((item) => item.replace(/^(engaged in|enjoys|like|sports like)\s+/i, "").trim())
+    .map((item) =>
+      item.replace(/^(engaged in|enjoys|like|sports like)\s+/i, "").trim(),
+    )
     .filter((item) => item.length > 2 && item.length < 40);
 }

@@ -3,18 +3,22 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import {
+  RESUME_DOCUMENT_FONT_LINK,
   RESUME_DOCUMENT_STYLES,
   RESUME_DOCUMENT_WIDTH_PX,
 } from "@/lib/export/resume-document-styles";
 
 const A4_WIDTH_MM = 210;
 const A4_HEIGHT_MM = 297;
+const EXPORT_SCALE = 1.25;
+const JPEG_QUALITY = 0.88;
 
 function buildExportHtml(element: HTMLElement): string {
   return `<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="${RESUME_DOCUMENT_FONT_LINK}" />
     <style>${RESUME_DOCUMENT_STYLES}</style>
   </head>
   <body style="margin:0;padding:0;background:#ffffff;">
@@ -49,7 +53,7 @@ async function renderInIsolatedIframe(
 
   await new Promise<void>((resolve) => {
     iframe.onload = () => resolve();
-    setTimeout(resolve, 150);
+    setTimeout(resolve, 250);
   });
 
   const target = doc.querySelector(".resume-document") as HTMLElement | null;
@@ -69,7 +73,7 @@ export async function downloadResumePdf(
 
   try {
     const canvas = await html2canvas(target, {
-      scale: 2,
+      scale: EXPORT_SCALE,
       useCORS: true,
       backgroundColor: "#ffffff",
       logging: false,
@@ -77,11 +81,12 @@ export async function downloadResumePdf(
       windowWidth: RESUME_DOCUMENT_WIDTH_PX,
     });
 
-    const imgData = canvas.toDataURL("image/png");
+    const imgData = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
       format: "a4",
+      compress: true,
     });
 
     const pageWidth = A4_WIDTH_MM;
@@ -92,13 +97,13 @@ export async function downloadResumePdf(
     let heightLeft = imgHeight;
     let position = 0;
 
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight, undefined, "FAST");
     heightLeft -= pageHeight;
 
     while (heightLeft > 0) {
       position = heightLeft - imgHeight;
       pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight, undefined, "FAST");
       heightLeft -= pageHeight;
     }
 

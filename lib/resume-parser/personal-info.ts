@@ -10,13 +10,21 @@ function cleanHeaderLine(line: string): string {
     )
     .replace(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[\w-]+/gi, "")
     .replace(/(?:https?:\/\/)?(?:www\.)?github\.com\/[\w-]+/gi, "")
-    .replace(/[A-Za-z][A-Za-z\s.-]{1,35},\s*[A-Za-z][A-Za-z\s.-]{1,35}(?:\s+\d{4,6})?/g, "")
+    .replace(
+      /[A-Za-z][A-Za-z\s.-]{1,35},\s*[A-Za-z][A-Za-z\s.-]{1,35}(?:\s+\d{4,6})?/g,
+      "",
+    )
+    .replace(/\s+\d{5,6}\s*$/g, "")
+    .replace(/\s*\/\s*\d{5,6}\s*$/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
 
 export function extractHeaderLine(text: string): string {
-  const lines = text.split("\n").map((line) => line.trim()).filter(Boolean);
+  const lines = text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
   const headerLine =
     lines.find((line) => /engineer|developer|manager|designer/i.test(line)) ??
     lines[1] ??
@@ -27,21 +35,53 @@ export function extractHeaderLine(text: string): string {
 
 export function extractTitleAndSpecialization(text: string) {
   const headerLine = extractHeaderLine(text);
-  const parts = headerLine.split("|").map((part) => part.trim()).filter(Boolean);
+  const parts = headerLine
+    .split("|")
+    .map((part) => part.trim())
+    .filter(Boolean);
 
   if (parts.length === 0) {
-    return { currentTitle: "", specialization: [] as string[] };
+    return {
+      currentTitle: "",
+      specialization: [] as string[],
+      postalFromSpec: "",
+    };
   }
 
   const currentTitle = parts[0].replace(/\s+\d.*$/, "").trim();
-  const specialization = parts.slice(1);
+  let specialization = parts.slice(1);
+  let postalFromSpec = "";
 
-  return { currentTitle, specialization };
+  if (specialization.length > 0) {
+    const lastIndex = specialization.length - 1;
+    const lastPart = specialization[lastIndex] ?? "";
+    const postalMatch = lastPart.match(/(?:\/\s*|\s+)(\d{5,6})\s*$/);
+
+    if (postalMatch?.[1]) {
+      postalFromSpec = postalMatch[1];
+      specialization[lastIndex] = lastPart
+        .replace(/\s*\/\s*\d{5,6}\s*$/, "")
+        .replace(/\s+\d{5,6}\s*$/, "")
+        .trim();
+    }
+  }
+
+  specialization = specialization
+    .map((part) =>
+      part
+        .replace(/\s*\/\s*\d{5,6}\s*$/, "")
+        .replace(/\s+\d{5,6}\s*$/, "")
+        .replace(/\s*\/\s*$/, "")
+        .trim(),
+    )
+    .filter(Boolean);
+
+  return { currentTitle, specialization, postalFromSpec };
 }
 
 export function extractStructuredLocation(text: string): StructuredLocation {
   const match = text.match(
-    /([A-Za-z][A-Za-z\s.-]{1,35}),\s*([A-Za-z][A-Za-z\s.-]{1,35})(?:\s+(\d{4,6}))?/,
+    /([A-Za-z][A-Za-z\s.-]{1,35}),\s*([A-Z][a-z]+)(?:\s+(\d{4,6}))?/,
   );
 
   if (!match) {
@@ -57,7 +97,13 @@ export function extractStructuredLocation(text: string): StructuredLocation {
 
 export function extractPersonalInfo(text: string) {
   const contact = extractContactInfo(text);
-  const { currentTitle, specialization } = extractTitleAndSpecialization(text);
+  const { currentTitle, specialization, postalFromSpec } =
+    extractTitleAndSpecialization(text);
+  const location = extractStructuredLocation(text);
+
+  if (!location.postalCode && postalFromSpec) {
+    location.postalCode = postalFromSpec;
+  }
 
   return {
     fullName: extractFullName(text),
@@ -68,6 +114,6 @@ export function extractPersonalInfo(text: string) {
     linkedIn: contact.linkedIn,
     website: contact.website,
     github: contact.github,
-    location: extractStructuredLocation(text),
+    location,
   };
 }
