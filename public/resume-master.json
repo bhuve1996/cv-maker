@@ -77,7 +77,7 @@
             "client": "The Kusnacht Practice",
             "industry": "Luxury Swiss Health & Rehabilitation Clinic",
             "responsibilities": [
-              "Translated complex Figma designs into pixel-perfect ES6 components (multilingual), used modern build tools and automated testing for clean, flawlessly rendered Sanity-fetched UIs, integrated third-party calendar.",
+              "Translated complex Figma designs into pixel-perfect, multilingual ES6 components; used modern build tools and automated testing to deliver cleanly rendered Sanity-powered UIs and integrated a third-party calendar.",
               "Developed reusable React and React Native components ensuring consistency across web and mobile experiences."
             ],
             "technologies": [
@@ -118,7 +118,7 @@
             "client": "Visit Victoria",
             "industry": "",
             "responsibilities": [
-              "Integrated Mapbox for maps, customized React for discovery, improved accessibility through strong teamwork and problem-solving, consistently delivered clean code, and converted components of Vue to React components."
+              "Integrated Mapbox for interactive maps, customized React discovery experiences, improved accessibility through collaboration and problem-solving, delivered maintainable code, and migrated Vue components to React."
             ],
             "technologies": [
               "Mapbox",
@@ -143,7 +143,7 @@
             "client": "AKQA LMS",
             "industry": "Internal Learning Management Platform",
             "responsibilities": [
-              "Built an internal LMS platform for FE, BE, QA, and General training programs.",
+              "Built an internal LMS for frontend, backend, QA, and general training programs.",
               "Implemented Google OAuth authentication with role-based access control.",
               "Developed training calendar, video playback, Google Slides/PPT viewer, and calendar exports.",
               "Built administration tools for content upload, user management, category filtering, and search."
@@ -160,9 +160,19 @@
         "certifications": [],
         "achievements": [],
         "technologies": [
+          "Adobe AEM",
+          "HTL",
+          "Sling Models",
+          "Java",
+          "JavaScript",
+          "LESS",
+          "Maven",
+          "OSGi",
+          "Jasmine",
           "Figma",
           "ES6",
           "Sanity",
+          "React Native",
           "Contentful",
           "Storybook",
           "Jest",
@@ -174,16 +184,6 @@
           "Next.js",
           "GraphQL",
           "Vercel",
-          "React Native",
-          "Adobe AEM",
-          "HTL",
-          "Sling Models",
-          "Java",
-          "JavaScript",
-          "LESS",
-          "Maven",
-          "OSGi",
-          "Jasmine",
           "TypeScript",
           "PostgreSQL",
           "Google OAuth",
@@ -214,7 +214,7 @@
               "SCSS",
               "Postman",
               "GitHub",
-              "Jira",
+              "JIRA",
               "React Native"
             ]
           },
@@ -241,10 +241,10 @@
           "SCSS",
           "Postman",
           "GitHub",
-          "Jira",
+          "JIRA",
+          "React Native",
           "GSAP",
-          "Bitbucket",
-          "React Native"
+          "Bitbucket"
         ]
       },
       {
@@ -346,17 +346,17 @@
       {
         "id": "34fdc392-b128-41ac-8cb4-ece0ef34dafc",
         "name": "React Native",
-        "category": "frontend"
+        "category": "mobile"
       },
       {
         "id": "937a0c9e-e569-42f8-a765-d565b993a6c5",
         "name": "Cordova",
-        "category": "frontend"
+        "category": "mobile"
       },
       {
         "id": "b2eb4bf0-6f38-4ac7-ab43-0a61d51eaf7e",
         "name": "Expo",
-        "category": "frontend"
+        "category": "mobile"
       },
       {
         "id": "cc05b00b-c13d-47bb-89c0-fe722b449955",
@@ -480,7 +480,7 @@
       },
       {
         "id": "18e77ba3-9c2a-432e-9d9e-70701b932e1a",
-        "name": "Node JS",
+        "name": "Node.js",
         "category": "backend"
       },
       {
@@ -516,7 +516,7 @@
       {
         "id": "121b8fa1-507e-4bbb-80e4-1d1a7953ed45",
         "name": "ES6",
-        "category": "other"
+        "category": "languages"
       },
       {
         "id": "9e939b54-4a8e-4035-8106-8c6b6eb83536",
@@ -556,7 +556,7 @@
       {
         "id": "66f5e5c6-2d55-4f3d-afdd-f22eff5f36b9",
         "name": "Zod",
-        "category": "languages"
+        "category": "other"
       },
       {
         "id": "34c5dd71-d67c-43b0-948c-a775735bbf8c",
@@ -581,12 +581,12 @@
       {
         "id": "e60052a8-eb86-477b-a065-17158f9f9949",
         "name": "Prisma",
-        "category": "backend"
+        "category": "database"
       },
       {
         "id": "4b9abb18-346b-4a01-9567-4963e86fa863",
         "name": "Supabase",
-        "category": "backend"
+        "category": "database"
       },
       {
         "id": "2266dbb1-3441-4aa1-aad2-966b137b5e12",
@@ -666,7 +666,7 @@
       {
         "id": "c232f1c3-b9a8-4efd-9fae-d388fab7e9e5",
         "name": "PostgreSQL",
-        "category": "backend"
+        "category": "database"
       },
       {
         "id": "cf4caa27-2d34-46ef-85e8-38612c3c5be5",
@@ -705,7 +705,7 @@
       {
         "id": "a820a3a9-e034-4a0a-8eb8-e9be5efc2f1f",
         "title": "Academic and Professional Excellence",
-        "description": "Achieved top 10 percentile in university studies and consistently presented scalable solutions"
+        "description": "Achieved top 10 percentile in university studies and consistently delivered scalable solutions"
       }
     ],
     "interests": [
@@ -717,31 +717,31 @@
       {
         "id": "b7dcdeb3-6d6b-4075-b38b-7f3943ecaa98",
         "name": "Aaloo",
-        "description": "Personal project — AI-powered food and social mobile platform built with React Native and Expo. Features meal logging with voice input, social feed, festival maps, leaderboard, rewards, OAuth, and offline sync.",
+        "description": "AI-powered food and social mobile platform built with React Native and Expo, featuring meal logging with voice input, a social feed, festival maps, a leaderboard, rewards, OAuth, and offline sync.",
         "technologies": "React Native, Expo, Expo Router, TypeScript, Fastify, Supabase, Prisma, FlashList, Reanimated, Google Maps"
       },
       {
         "id": "36429f4c-7cff-411d-ad43-e62b684e9524",
         "name": "InsideOut",
-        "description": "Hackathon project — Indoor navigation and wayfinding application using geolocation and location-aware experiences for interactive tours and VIP navigation.",
+        "description": "Indoor navigation and wayfinding application using geolocation and location-aware experiences for interactive tours and VIP navigation.",
         "technologies": "React Native, Expo, Google Maps, Geolocation"
       },
       {
         "id": "1ba84b46-660d-48c6-aaba-33f423924742",
         "name": "GurukulX",
-        "description": "Personal project — Config-driven AI learning PWA with swipeable feed, 12-phase AI curriculum, progress tracking, notes, comments, and Supabase adapter pattern.",
+        "description": "Config-driven AI learning PWA with a swipeable feed, 12-phase AI curriculum, progress tracking, notes, comments, and a Supabase adapter pattern.",
         "technologies": "Next.js, TypeScript, Supabase, PWA"
       },
       {
         "id": "cb6472d9-d977-4a52-93b6-e3eac0f751a2",
         "name": "Website Scraper & Rebuild Estimator",
-        "description": "Personal project — Website cloner using Puppeteer for dynamic scraping, CSS-complete analysis, asset bundling, and rebuild effort estimation. Used to analyze and estimate rebuilds for production sites.",
+        "description": "Website cloner using Puppeteer for dynamic scraping, CSS-complete analysis, asset bundling, and rebuild effort estimation for production sites.",
         "technologies": "Node.js, Puppeteer, Cheerio, Astro.js"
       },
       {
         "id": "d839dce9-17f5-4843-97b6-80a7338e909a",
         "name": "ESP32 AI Car",
-        "description": "Hackathon project — ESP32 and Raspberry Pi 4 autonomous car with Gemini AI voice control, servo steering, medical delivery sequence, obstacle sensors, and OTA firmware updates.",
+        "description": "ESP32 and Raspberry Pi 4 autonomous car with Gemini AI voice control, servo steering, a medical delivery sequence, obstacle sensors, and OTA firmware updates.",
         "technologies": "ESP32, Raspberry Pi, Python, Flask, OpenCV, Gemini AI"
       }
     ],
@@ -769,7 +769,7 @@
       "beCgpa": ""
     }
   },
-  "rawText": "Bhuvesh Singla Senior Software Engineer\nReact & Next.js · React Native · Adobe AEM · Java · UI Performance Optimization\nEmail: bhuve1996@gmail.com · Phone: 91 9530529550 · Location: Gurugram, India, 122001\nLinkedIn: linkedin.com/in/bhuvesh-singla-6b76a6120/ · GitHub: github.com/bhuve1996/\n\nProfessional Summary\n8+ years of experience · Senior Frontend Engineer\nSenior Software Engineer with over 8 years of experience in frontend development and UI engineering, expert in React.js, React Native, Next.js, Adobe AEM, and Java. Key achievements include increasing project delivery speed by 20% through API integration and enhancing user engagement by 20% with React UI dashboards.\nFrontend development, UI engineering, React.js, React Native, Next.js, Adobe AEM, Java\n\nWork Experience\nSenior Software Engineer AKQA · Gurugram, India\nDigital agency delivering exceptional experiences\n09/2022 — Present\nPanerai Global Digital Template (Luxury Watch E-commerce Platform)\n• Contributed to Panerai's global Adobe Experience Manager (AEM) platform serving multiple international markets.\n• Developed and maintained checkout, wishlist, mini-cart, product detail pages, and multi-currency experiences.\n• Implemented virtual try-on experiences, 3D product viewers, day/night product imagery, and cross-selling components.\n• Resolved UAE Dirham currency rendering issues across checkout, order summary, and order confirmation flows.\n• Developed Java Sling Models and OSGi services to support checkout, product pages, and multi-currency commerce logic.\n• Worked across HTL components, Sling Models, Java OSGi services, clientlibs JavaScript, LESS styles, and Maven modules.\nAdobe AEM, HTL, Sling Models, Java, JavaScript, LESS, Maven, OSGi, Jasmine\nThe Kusnacht Practice (Luxury Swiss Health & Rehabilitation Clinic)\n• Translated complex Figma designs into pixel-perfect ES6 components (multilingual), used modern build tools and automated testing for clean, flawlessly rendered Sanity-fetched UIs, integrated third-party calendar.\n• Developed reusable React and React Native components ensuring consistency across web and mobile experiences.\nFigma, ES6, Sanity, React Native\nNexeon (Battery Technology & Solutions Company)\n• Developed modular UI components, optimized SEO and load performance, and streamlined content workflows through Contentful and Storybook integration.\nContentful, Storybook, Jest\nMelbourne Convention Bureau (Tourism & Business Events Platform)\n• Architected and customized Sitecore templates with Vue.js and SCSS, ensuring scalable and reusable frontend modules for events and campaigns.\nSitecore, Vue.js, SCSS\nVisit Victoria\n• Integrated Mapbox for maps, customized React for discovery, improved accessibility through strong teamwork and problem-solving, consistently delivered clean code, and converted components of Vue to React components.\nMapbox, React\nBunnings (Leading Australian Home Improvement Retailer)\n• Rebuilt catalog and checkout flows with Next.js and GraphQL, optimized performance with Vercel deployments, and ensured responsive customer journeys.\nNext.js, GraphQL, Vercel\nAKQA LMS (Internal Learning Management Platform)\n• Built an internal LMS platform for FE, BE, QA, and General training programs.\n• Implemented Google OAuth authentication with role-based access control.\n• Developed training calendar, video playback, Google Slides/PPT viewer, and calendar exports.\n• Built administration tools for content upload, user management, category filtering, and search.\nNext.js, TypeScript, PostgreSQL, Google OAuth, RBAC\n\nSenior Software Engineer JOSH Software · Bengaluru, India\nA software development company specializing in custom applications\n10/2021 — 09/2022\nADIB Bank (Abu Dhabi Islamic Bank, UAE)\n• Delivered secure and responsive banking modules with Angular and React, implemented dynamic forms, and integrated APIs for digital banking services.\n• Built responsive banking experiences across web and mobile platforms using React and React Native.\nAngular, React, SCSS, Postman, GitHub, Jira, React Native\nSBER Bank (Largest Russian Financial Institution)\n• Implemented React UI dashboards enriched with GSAP animations, improving user engagement and cross-browser compatibility.\nReact, GSAP, SCSS, Bitbucket\n\nSoftware Engineer KDMS · Chandigarh, India\nEducational technology service provider\n05/2018 — 10/2021\nGreatMocks (EdTech Platform, Mock Test Solutions)\n• Designed responsive learning modules, integrated APIs, and implemented dynamic forms to improve student experience.\n• Increased international user engagement by 15% by building multilingual e-commerce UI with React and Material UI.\n• Extended learning experiences to mobile platforms using React Native and Expo.\n• Built reusable mobile UI components and integrated REST APIs for Android and iOS learning workflows.\nReact, REST APIs, React Bootstrap, JavaScript, CSS, Material UI, React Native, Expo\n\nPersonal Projects\nAaloo\n• Personal project — AI-powered food and social mobile platform built with React Native and Expo. Features meal logging with voice input, social feed, festival maps, leaderboard, rewards, OAuth, and offline sync.\nReact Native, Expo, Expo Router, TypeScript, Fastify, Supabase, Prisma, FlashList, Reanimated, Google Maps\nInsideOut\n• Hackathon project — Indoor navigation and wayfinding application using geolocation and location-aware experiences for interactive tours and VIP navigation.\nReact Native, Expo, Google Maps, Geolocation\nGurukulX\n• Personal project — Config-driven AI learning PWA with swipeable feed, 12-phase AI curriculum, progress tracking, notes, comments, and Supabase adapter pattern.\nNext.js, TypeScript, Supabase, PWA\nWebsite Scraper & Rebuild Estimator\n• Personal project — Website cloner using Puppeteer for dynamic scraping, CSS-complete analysis, asset bundling, and rebuild effort estimation. Used to analyze and estimate rebuilds for production sites.\nNode.js, Puppeteer, Cheerio, Astro.js\nESP32 AI Car\n• Hackathon project — ESP32 and Raspberry Pi 4 autonomous car with Gemini AI voice control, servo steering, medical delivery sequence, obstacle sensors, and OTA firmware updates.\nESP32, Raspberry Pi, Python, Flask, OpenCV, Gemini AI\n\nSkills\nfrontend: React, Next.js, Angular, Vue.js, React Native, Cordova, Expo, Zustand, React Hook Form\nlanguages: JavaScript, TypeScript, Ruby, SCSS, HTML, CSS, Zod, LESS\nui_frameworks: Tailwind, Material UI, Bootstrap\ncms: Contentful, Sitecore, Sanity, Adobe AEM, HTL, Sling Models, OSGi\nbuild_tools: Webpack, Babel, Grunt, Maven\nversion_control: GitHub, Bitbucket\nproject_management: JIRA, Confluence\napi_technologies: GraphQL, REST, Postman, REST APIs, Google OAuth\nanimations: GSAP\nmapping: Mapbox\nbackend: Node JS, Express, Fastify, Prisma, Supabase, PostgreSQL, Java\nhosting_deployment: Vercel, Netlify\nsoft: Agile\nother: Figma, ES6, Storybook, Jest, Puppeteer, Cheerio, Astro.js, OpenAI, Gemini AI, OpenCV, Raspberry Pi, ESP32, Jasmine, RBAC\nmobile: Expo Router, EAS Build, FlashList, React Native Reanimated, Bottom Sheet, Skia",
+  "rawText": "Bhuvesh Singla Senior Software Engineer\nReact & Next.js · React Native · Adobe AEM · Java · UI Performance Optimization\nEmail: bhuve1996@gmail.com · Phone: 91 9530529550 · Location: Gurugram, India, 122001\nLinkedIn: linkedin.com/in/bhuvesh-singla-6b76a6120/ · GitHub: github.com/bhuve1996/\n\nProfessional Summary\n8+ years of experience · Senior Frontend Engineer\nSenior Software Engineer with over 8 years of experience in frontend development and UI engineering, expert in React.js, React Native, Next.js, Adobe AEM, and Java. Key achievements include increasing project delivery speed by 20% through API integration and enhancing user engagement by 20% with React UI dashboards.\nFrontend development, UI engineering, React.js, React Native, Next.js, Adobe AEM, Java\n\nWork Experience\nSenior Software Engineer AKQA · Gurugram, India\nDigital agency delivering exceptional experiences\n09/2022 — Present\nPanerai Global Digital Template (Luxury Watch E-commerce Platform)\n• Contributed to Panerai's global Adobe Experience Manager (AEM) platform serving multiple international markets.\n• Developed and maintained checkout, wishlist, mini-cart, product detail pages, and multi-currency experiences.\n• Implemented virtual try-on experiences, 3D product viewers, day/night product imagery, and cross-selling components.\n• Resolved UAE Dirham currency rendering issues across checkout, order summary, and order confirmation flows.\n• Developed Java Sling Models and OSGi services to support checkout, product pages, and multi-currency commerce logic.\n• Worked across HTL components, Sling Models, Java OSGi services, clientlibs JavaScript, LESS styles, and Maven modules.\nAdobe AEM, HTL, Sling Models, Java, JavaScript, LESS, Maven, OSGi, Jasmine\nThe Kusnacht Practice (Luxury Swiss Health & Rehabilitation Clinic)\n• Translated complex Figma designs into pixel-perfect, multilingual ES6 components; used modern build tools and automated testing to deliver cleanly rendered Sanity-powered UIs and integrated a third-party calendar.\n• Developed reusable React and React Native components ensuring consistency across web and mobile experiences.\nFigma, ES6, Sanity, React Native\nNexeon (Battery Technology & Solutions Company)\n• Developed modular UI components, optimized SEO and load performance, and streamlined content workflows through Contentful and Storybook integration.\nContentful, Storybook, Jest\nMelbourne Convention Bureau (Tourism & Business Events Platform)\n• Architected and customized Sitecore templates with Vue.js and SCSS, ensuring scalable and reusable frontend modules for events and campaigns.\nSitecore, Vue.js, SCSS\nVisit Victoria\n• Integrated Mapbox for interactive maps, customized React discovery experiences, improved accessibility through collaboration and problem-solving, delivered maintainable code, and migrated Vue components to React.\nMapbox, React\nBunnings (Leading Australian Home Improvement Retailer)\n• Rebuilt catalog and checkout flows with Next.js and GraphQL, optimized performance with Vercel deployments, and ensured responsive customer journeys.\nNext.js, GraphQL, Vercel\nAKQA LMS (Internal Learning Management Platform)\n• Built an internal LMS for frontend, backend, QA, and general training programs.\n• Implemented Google OAuth authentication with role-based access control.\n• Developed training calendar, video playback, Google Slides/PPT viewer, and calendar exports.\n• Built administration tools for content upload, user management, category filtering, and search.\nNext.js, TypeScript, PostgreSQL, Google OAuth, RBAC\n\nSenior Software Engineer JOSH Software · Bengaluru, India\nA software development company specializing in custom applications\n10/2021 — 09/2022\nADIB Bank (Abu Dhabi Islamic Bank, UAE)\n• Delivered secure and responsive banking modules with Angular and React, implemented dynamic forms, and integrated APIs for digital banking services.\n• Built responsive banking experiences across web and mobile platforms using React and React Native.\nAngular, React, SCSS, Postman, GitHub, JIRA, React Native\nSBER Bank (Largest Russian Financial Institution)\n• Implemented React UI dashboards enriched with GSAP animations, improving user engagement and cross-browser compatibility.\nReact, GSAP, SCSS, Bitbucket\n\nSoftware Engineer KDMS · Chandigarh, India\nEducational technology service provider\n05/2018 — 10/2021\nGreatMocks (EdTech Platform, Mock Test Solutions)\n• Designed responsive learning modules, integrated APIs, and implemented dynamic forms to improve student experience.\n• Increased international user engagement by 15% by building multilingual e-commerce UI with React and Material UI.\n• Extended learning experiences to mobile platforms using React Native and Expo.\n• Built reusable mobile UI components and integrated REST APIs for Android and iOS learning workflows.\nReact, REST APIs, React Bootstrap, JavaScript, CSS, Material UI, React Native, Expo\n\nPersonal Projects\nAaloo\n• AI-powered food and social mobile platform built with React Native and Expo, featuring meal logging with voice input, a social feed, festival maps, a leaderboard, rewards, OAuth, and offline sync.\nReact Native, Expo, Expo Router, TypeScript, Fastify, Supabase, Prisma, FlashList, Reanimated, Google Maps\nInsideOut\n• Indoor navigation and wayfinding application using geolocation and location-aware experiences for interactive tours and VIP navigation.\nReact Native, Expo, Google Maps, Geolocation\nGurukulX\n• Config-driven AI learning PWA with a swipeable feed, 12-phase AI curriculum, progress tracking, notes, comments, and a Supabase adapter pattern.\nNext.js, TypeScript, Supabase, PWA\nWebsite Scraper & Rebuild Estimator\n• Website cloner using Puppeteer for dynamic scraping, CSS-complete analysis, asset bundling, and rebuild effort estimation for production sites.\nNode.js, Puppeteer, Cheerio, Astro.js\nESP32 AI Car\n• ESP32 and Raspberry Pi 4 autonomous car with Gemini AI voice control, servo steering, a medical delivery sequence, obstacle sensors, and OTA firmware updates.\nESP32, Raspberry Pi, Python, Flask, OpenCV, Gemini AI\n\nSkills\nfrontend: React, Next.js, Angular, Vue.js, Zustand, React Hook Form\nlanguages: JavaScript, TypeScript, Ruby, SCSS, HTML, CSS, ES6, LESS\nui_frameworks: Tailwind, Material UI, Bootstrap\ncms: Contentful, Sitecore, Sanity, Adobe AEM, HTL, Sling Models, OSGi\nbuild_tools: Webpack, Babel, Grunt, Maven\nversion_control: GitHub, Bitbucket\nproject_management: JIRA, Confluence\napi_technologies: GraphQL, REST, Postman, REST APIs, Google OAuth\nanimations: GSAP\nmapping: Mapbox\nbackend: Node.js, Express, Fastify, Java\ndatabase: Prisma, Supabase, PostgreSQL\nhosting_deployment: Vercel, Netlify\nmobile: React Native, Cordova, Expo, Expo Router, EAS Build, FlashList, React Native Reanimated, Bottom Sheet, Skia\nsoft: Agile\nother: Figma, Storybook, Jest, Zod, Puppeteer, Cheerio, Astro.js, OpenAI, Gemini AI, OpenCV, Raspberry Pi, ESP32, Jasmine, RBAC\n\nEducation\nBachelor of Engineering (B.E.) Chitkara University · Rajpura, Punjab 06/2013 — 06/2017\nHigher Secondary (Class 12) St. Kabir Convent Sr. Sec. School · Bathinda 03/2012 — 03/2013\nSecondary (Class 10) Kendriya Vidyalaya No. 4 · Bathinda 03/2010 — 03/2011\n\nCertifications\n• Shopify Plus Certification\n\nLanguages\nEnglish (Proficient) · Hindi (Native) · Punjabi (Native)\n\nKey Achievements\n• Academic and Professional Excellence — Achieved top 10 percentile in university studies and consistently delivered scalable solutions\n\nInterests\nCricket, Badminton, Swimming",
   "confidence": "high",
   "parser": "gemini"
 }

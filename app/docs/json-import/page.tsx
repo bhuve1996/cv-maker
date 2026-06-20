@@ -166,7 +166,8 @@ export default function JsonImportDocsPage() {
                   <code className="rounded bg-muted px-1.5 py-0.5">category</code> (for example{" "}
                   <code className="rounded bg-muted px-1.5 py-0.5">frontend</code>,{" "}
                   <code className="rounded bg-muted px-1.5 py-0.5">languages</code>,{" "}
-                  <code className="rounded bg-muted px-1.5 py-0.5">backend</code>).
+                  <code className="rounded bg-muted px-1.5 py-0.5">backend</code>,{" "}
+                  <code className="rounded bg-muted px-1.5 py-0.5">database</code>).
                 </p>
               </CardContent>
             </Card>

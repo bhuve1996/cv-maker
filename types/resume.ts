@@ -88,6 +88,7 @@ export type SkillCategory =
   | "animations"
   | "mapping"
   | "backend"
+  | "database"
   | "hosting_deployment"
   | "mobile"
   | "other"
