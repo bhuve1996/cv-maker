@@ -21,8 +21,6 @@ interface ResumeStore {
   rawText: string;
   hasUploaded: boolean;
   isParsing: boolean;
-  _hasHydrated: boolean;
-  setHasHydrated: (value: boolean) => void;
   setResume: (resume: Resume) => void;
   mergeParsedResume: (partial: Partial<Resume>, rawText: string) => void;
   setPersonalInfo: (info: Partial<PersonalInfo>) => void;
@@ -53,9 +51,6 @@ export const useResumeStore = create<ResumeStore>()(
       rawText: "",
       hasUploaded: false,
       isParsing: false,
-      _hasHydrated: false,
-
-      setHasHydrated: (value) => set({ _hasHydrated: value }),
 
       setResume: (resume) => set({ resume, hasUploaded: true }),
 
@@ -257,18 +252,12 @@ export const useResumeStore = create<ResumeStore>()(
     {
       name: RESUME_STORAGE_KEY,
       storage: createJSONStorage(() => localStorage),
+      skipHydration: true,
       partialize: (state) => ({
         resume: state.resume,
         rawText: state.rawText,
         hasUploaded: state.hasUploaded,
       }),
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
-      },
     },
   ),
 );
-
-export function useResumeHydrated() {
-  return useResumeStore((state) => state._hasHydrated);
-}

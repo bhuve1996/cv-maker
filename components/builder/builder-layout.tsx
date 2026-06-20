@@ -6,10 +6,11 @@ import { ResumePreview } from "@/components/preview/resume-preview";
 import { ResumeUpload } from "@/components/upload/resume-upload";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useResumeHydrated, useResumeStore } from "@/hooks/use-resume-store";
+import { useResumeHydration } from "@/hooks/use-resume-hydration";
+import { useResumeStore } from "@/hooks/use-resume-store";
 
 export function BuilderLayout() {
-  const hydrated = useResumeHydrated();
+  const hydrated = useResumeHydration();
   const { hasUploaded, rawText, reset } = useResumeStore();
 
   if (!hydrated) {
