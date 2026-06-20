@@ -2,6 +2,7 @@
 
 import { Loader2, RotateCcw } from "lucide-react";
 import { ResumeEditor } from "@/components/forms/resume-editor";
+import { ResumeDocument } from "@/components/preview/resume-document";
 import { ResumePreview } from "@/components/preview/resume-preview";
 import { ResumeUpload } from "@/components/upload/resume-upload";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +12,7 @@ import { useResumeStore } from "@/hooks/use-resume-store";
 
 export function BuilderLayout() {
   const hydrated = useResumeHydration();
-  const { hasUploaded, rawText, reset } = useResumeStore();
+  const { hasUploaded, rawText, reset, resume } = useResumeStore();
 
   if (!hydrated) {
     return (
@@ -61,15 +62,20 @@ export function BuilderLayout() {
           </div>
         </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-2 print:block">
-          <div className="space-y-4 print:hidden">
-            <ResumeUpload compact />
-            <ResumeEditor />
+        <>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="space-y-4">
+              <ResumeUpload compact />
+              <ResumeEditor />
+            </div>
+            <div className="lg:sticky lg:top-20 lg:self-start">
+              <ResumePreview />
+            </div>
           </div>
-          <div className="lg:sticky lg:top-20 lg:self-start print:static">
-            <ResumePreview />
+          <div className="resume-print-only hidden">
+            <ResumeDocument resume={resume} id="resume-print" />
           </div>
-        </div>
+        </>
       )}
     </div>
   );

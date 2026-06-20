@@ -140,13 +140,40 @@
     margin: 0;
   }
 
+  html,
   body {
-    background: white !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .resume-print-only,
+  .resume-print-only * {
+    visibility: visible !important;
+  }
+
+  .resume-print-only {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .resume-print-only .resume-document {
+    margin: 0 auto !important;
+    box-shadow: none !important;
   }
 
   header,
-  footer,
-  .print\:hidden {
+  footer {
     display: none !important;
   }
 }
