@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CV Maker
+
+A modern, frontend-first CV/Resume builder built with Next.js, TypeScript, and Tailwind CSS.
+
+## Features
+
+- Upload existing resumes (PDF or DOCX)
+- Heuristic text extraction and section parsing
+- Editable accordion forms for all resume sections
+- Live A4 resume preview
+- Download PDF or print directly
+- No authentication, database, or backend required
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/                  # Next.js App Router pages
+components/
+  upload/             # File upload UI
+  forms/              # Editable resume sections
+  preview/            # Live preview template
+  layout/             # Header & footer
+lib/
+  pdf-parser/         # PDF text extraction (pdfjs)
+  docx-parser/        # DOCX text extraction (mammoth)
+  resume-parser/      # Heuristic section identification
+hooks/                # Zustand store & parser hook
+types/                # Resume data model
+```
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- React Hook Form + Zod (validation schemas)
+- Zustand (client state)
+- pdfjs-dist, mammoth, html2canvas, jspdf
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Future Enhancements
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The architecture supports plugging in:
 
-## Deploy on Vercel
+- AI extraction (Gemini/OpenAI)
+- Multiple templates
+- User accounts & cloud save
+- ATS optimization & resume scoring
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` — Start development server
+- `npm run build` — Production build
+- `npm run start` — Start production server
+- `npm run lint` — Run ESLint
