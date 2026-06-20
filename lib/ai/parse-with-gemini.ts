@@ -3,7 +3,8 @@ import { buildResumeParsePrompt } from "@/lib/ai/resume-parse-prompt";
 import { normalizeAiResumePayload } from "@/lib/ai/normalize-ai-resume";
 import type { ParseResult, Resume } from "@/types/resume";
 
-const DEFAULT_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
+const DEFAULT_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
+const FALLBACK_MODEL = "gemini-2.5-flash-lite";
 
 export function isGeminiConfigured(): boolean {
   return Boolean(process.env.GEMINI_API_KEY?.trim());
@@ -27,9 +28,36 @@ export async function parseResumeWithGemini(rawText: string): Promise<ParseResul
     throw new Error("GEMINI_API_KEY is not configured.");
   }
 
+  const modelsToTry = [
+    ...new Set([DEFAULT_MODEL, FALLBACK_MODEL].filter(Boolean)),
+  ];
+
+  let lastError: Error | null = null;
+
+  for (const modelName of modelsToTry) {
+    try {
+      return await parseWithModel(apiKey, modelName, rawText);
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      const retryable =
+        /429|404|503|quota|not found|unavailable/i.test(lastError.message);
+      if (!retryable || modelName === modelsToTry[modelsToTry.length - 1]) {
+        throw lastError;
+      }
+    }
+  }
+
+  throw lastError ?? new Error("Gemini parsing failed.");
+}
+
+async function parseWithModel(
+  apiKey: string,
+  modelName: string,
+  rawText: string,
+): Promise<ParseResult> {
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
-    model: DEFAULT_MODEL,
+    model: modelName,
     generationConfig: {
       responseMimeType: "application/json",
       temperature: 0.1,
@@ -40,14 +68,14 @@ export async function parseResumeWithGemini(rawText: string): Promise<ParseResul
   const responseText = result.response.text();
 
   if (!responseText.trim()) {
-    throw new Error("Gemini returned an empty response.");
+    throw new Error(`Gemini (${modelName}) returned an empty response.`);
   }
 
   let parsed: unknown;
   try {
     parsed = JSON.parse(responseText);
   } catch {
-    throw new Error("Gemini returned invalid JSON.");
+    throw new Error(`Gemini (${modelName}) returned invalid JSON.`);
   }
 
   const resume = normalizeAiResumePayload(parsed);
