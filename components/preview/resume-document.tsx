@@ -1,25 +1,24 @@
 "use client";
 
 import {
-  RESUME_DOCUMENT_FONT_LINK,
   RESUME_DOCUMENT_STYLES,
   RESUME_DOCUMENT_WIDTH_PX,
 } from "@/lib/export/resume-document-styles";
-import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
+import {
+  formatContactLine,
+  getFilledOptionalFields,
+  stripHtml,
+} from "@/lib/export/resume-content";
 import {
   groupSkillsByCategory,
   SKILL_CATEGORY_LABELS,
 } from "@/lib/resume/skill-categories";
-import type { OptionalFields, Resume, SkillCategory } from "@/types/resume";
-import { formatLocation } from "@/types/resume";
+import type { Resume, SkillCategory } from "@/types/resume";
+import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
 
 interface ResumeDocumentProps {
   resume: Resume;
   id?: string;
-}
-
-function formatContactValue(value: string) {
-  return value.replace(/^https?:\/\//i, "").replace(/^www\./i, "");
 }
 
 function HtmlContent({ html }: { html: string }) {
@@ -40,28 +39,13 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocumentProps) {
   const { personalInfo, professionalSummary } = resume;
-  const locationText = formatLocation(personalInfo.location);
-
-  const contactItems = [
-    personalInfo.email,
-    personalInfo.phone,
-    locationText,
-    personalInfo.linkedIn,
-    personalInfo.github,
-    personalInfo.website,
-  ]
-    .filter(Boolean)
-    .map(formatContactValue);
-
+  const contactLine = formatContactLine(resume);
   const skillGroups = groupSkillsByCategory(resume.skills);
-
-  const filledOptionalFields = (
-    Object.entries(resume.optionalFields) as Array<[keyof OptionalFields, string]>
-  ).filter(([, value]) => value.trim());
+  const filledOptionalFields = getFilledOptionalFields(resume.optionalFields);
+  const experienceCount = resume.experience.length;
 
   return (
     <>
-      <link rel="stylesheet" href={RESUME_DOCUMENT_FONT_LINK} />
       <style dangerouslySetInnerHTML={{ __html: RESUME_DOCUMENT_STYLES }} />
       <article
         id={id}
@@ -78,14 +62,12 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
               {personalInfo.specialization.join(" · ")}
             </p>
           )}
-          {contactItems.length > 0 && (
-            <p className="rd-contact">{contactItems.join(" · ")}</p>
-          )}
+          {contactLine && <p className="rd-contact">{contactLine}</p>}
         </header>
 
         {professionalSummary.text && (
           <section className="rd-section">
-            <SectionTitle>Summary</SectionTitle>
+            <SectionTitle>Professional Summary</SectionTitle>
             {professionalSummary.yearsOfExperience && (
               <p className="rd-muted" style={{ marginBottom: 4 }}>
                 {professionalSummary.yearsOfExperience} years of experience
@@ -115,12 +97,35 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
           </section>
         )}
 
+        {Object.keys(skillGroups).length > 0 && (
+          <section className="rd-section">
+            <SectionTitle>Skills</SectionTitle>
+            <div className="rd-skills-list">
+              {Object.entries(skillGroups).map(([category, items]) => (
+                <div key={category} className="rd-skill-row">
+                  <span className="rd-skill-category">
+                    {SKILL_CATEGORY_LABELS[category as SkillCategory]}:
+                  </span>
+                  <span className="rd-skill-items">
+                    {items?.map((skill) => skill.name).join(", ")}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {resume.experience.length > 0 && (
           <section className="rd-section">
-            <SectionTitle>Experience</SectionTitle>
+            <SectionTitle>Work Experience</SectionTitle>
             <div className="rd-stack">
-              {resume.experience.map((item) => (
-                <div key={item.id} className="rd-company-item">
+              {resume.experience.map((item, index) => (
+                <div
+                  key={item.id}
+                  className={`rd-company-item${
+                    index === experienceCount - 1 ? " rd-company-item-last" : ""
+                  }`}
+                >
                   <div className="rd-company-header">
                     <div className="rd-row">
                       <div>
@@ -153,8 +158,8 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
                           </p>
                           {project.responsibilities.length > 0 && (
                             <ul>
-                              {project.responsibilities.slice(0, 3).map((task, index) => (
-                                <li key={`${project.id}-resp-${index}`}>{task}</li>
+                              {project.responsibilities.slice(0, 3).map((task, idx) => (
+                                <li key={`${project.id}-resp-${idx}`}>{task}</li>
                               ))}
                             </ul>
                           )}
@@ -169,8 +174,8 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
                   )}
                   {item.certifications.length > 0 && (
                     <ul className="rd-body rd-small" style={{ marginTop: 4 }}>
-                      {item.certifications.map((cert, index) => (
-                        <li key={cert.id ?? `${item.id}-cert-${index}`}>
+                      {item.certifications.map((cert, certIndex) => (
+                        <li key={cert.id ?? `${item.id}-cert-${certIndex}`}>
                           <strong>{cert.name}</strong>
                           {cert.status ? (
                             <span className="rd-muted"> — {cert.status}</span>
@@ -181,8 +186,8 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
                   )}
                   {item.achievements.length > 0 && (
                     <ul className="rd-body rd-small" style={{ marginTop: 4 }}>
-                      {item.achievements.map((achievement, index) => (
-                        <li key={achievement.id ?? `${item.id}-ach-${index}`}>
+                      {item.achievements.map((achievement, achIndex) => (
+                        <li key={achievement.id ?? `${item.id}-ach-${achIndex}`}>
                           {achievement.description}
                           {achievement.impact ? (
                             <span className="rd-muted"> — {achievement.impact}</span>
@@ -227,18 +232,33 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
           </section>
         )}
 
-        {Object.keys(skillGroups).length > 0 && (
+        {resume.certifications.length > 0 && (
           <section className="rd-section">
-            <SectionTitle>Skills</SectionTitle>
-            <div className="rd-skills-grid">
-              {Object.entries(skillGroups).map(([category, items]) => (
-                <div key={category} className="rd-skill-row">
-                  <span className="rd-skill-category">
-                    {SKILL_CATEGORY_LABELS[category as SkillCategory]}
-                  </span>
-                  <span className="rd-skill-items">
-                    {items?.map((skill) => skill.name).join(", ")}
-                  </span>
+            <SectionTitle>Certifications</SectionTitle>
+            <ul className="rd-body">
+              {resume.certifications.map((item, index) => (
+                <li key={item.id ?? `cert-${index}`}>
+                  <strong>{item.name}</strong>
+                  {item.issuer && <span className="rd-muted"> — {item.issuer}</span>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {resume.projects.length > 0 && (
+          <section className="rd-section">
+            <SectionTitle>Projects</SectionTitle>
+            <div className="rd-stack-sm">
+              {resume.projects.map((item, index) => (
+                <div key={item.id ?? `project-${index}`}>
+                  <h3>{item.name}</h3>
+                  {item.description && (
+                    <p className="rd-body">{stripHtml(item.description)}</p>
+                  )}
+                  {item.technologies && (
+                    <p className="rd-faint rd-small">{item.technologies}</p>
+                  )}
                 </div>
               ))}
             </div>
@@ -283,26 +303,12 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
           </section>
         )}
 
-        {resume.certifications.length > 0 && (
-          <section className="rd-section">
-            <SectionTitle>Certifications</SectionTitle>
-            <ul className="rd-body">
-              {resume.certifications.map((item, index) => (
-                <li key={item.id ?? `cert-${index}`}>
-                  <strong>{item.name}</strong>
-                  {item.issuer && <span className="rd-muted"> — {item.issuer}</span>}
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
         {filledOptionalFields.length > 0 && (
           <section className="rd-section">
             <SectionTitle>Additional Information</SectionTitle>
-            <div className="rd-grid-2 rd-body">
+            <div className="rd-body rd-optional-list">
               {filledOptionalFields.map(([key, value]) => (
-                <p key={key}>
+                <p key={key} className="rd-optional-row">
                   <strong>{OPTIONAL_FIELD_LABELS[key]}:</strong> {value}
                 </p>
               ))}

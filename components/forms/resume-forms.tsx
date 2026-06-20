@@ -468,8 +468,8 @@ export function SkillsForm() {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Skills are grouped by category and shown as a two-column list in the
-        preview. Change category per skill or add to any group below.
+        Skills are grouped by category and shown as labeled single-column rows in
+        the preview and PDF. Change category per skill or add to any group below.
       </p>
 
       {filledCategories.map((category) => {

@@ -1,7 +1,4 @@
 /** Export/print-safe resume styles — hex/rgb only (no lab/oklch) for html2canvas compatibility */
-export const RESUME_DOCUMENT_FONT_LINK =
-  "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap";
-
 export const RESUME_DOCUMENT_STYLES = `
   .resume-document {
     box-sizing: border-box;
@@ -11,7 +8,7 @@ export const RESUME_DOCUMENT_STYLES = `
     padding: 28px 32px;
     background: #ffffff;
     color: #0f172a;
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: Helvetica, Arial, Calibri, Verdana, Tahoma, ui-sans-serif, sans-serif;
     font-size: 10.5px;
     line-height: 1.45;
   }
@@ -22,8 +19,8 @@ export const RESUME_DOCUMENT_STYLES = `
 
   .resume-document h1 {
     margin: 0;
-    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-    font-size: 26px;
+    font-family: Helvetica, Arial, Georgia, Calibri, sans-serif;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.01em;
     color: #0f172a;
@@ -31,10 +28,9 @@ export const RESUME_DOCUMENT_STYLES = `
 
   .resume-document h2 {
     margin: 0;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: #1e293b;
   }
 
@@ -147,7 +143,7 @@ export const RESUME_DOCUMENT_STYLES = `
     padding-bottom: 12px;
   }
 
-  .resume-document .rd-company-item:not(:last-child) {
+  .resume-document .rd-company-item:not(.rd-company-item-last) {
     margin-bottom: 12px;
     border-bottom: 1px solid #cbd5e1;
   }
@@ -174,21 +170,6 @@ export const RESUME_DOCUMENT_STYLES = `
     line-height: 1.5;
   }
 
-  .resume-document .rd-category-label {
-    margin-bottom: 2px;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #64748b;
-  }
-
-  .resume-document .rd-grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px;
-  }
-
   .resume-document .rd-html ul {
     list-style: disc;
     padding-left: 14px;
@@ -209,10 +190,10 @@ export const RESUME_DOCUMENT_STYLES = `
     border-bottom: 1px solid #e2e8f0;
   }
 
-  .resume-document .rd-skills-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px 20px;
+  .resume-document .rd-skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
   .resume-document .rd-skill-row {
@@ -223,7 +204,7 @@ export const RESUME_DOCUMENT_STYLES = `
   }
 
   .resume-document .rd-skill-category {
-    flex: 0 0 38%;
+    flex: 0 0 auto;
     font-size: 10px;
     font-weight: 600;
     color: #475569;
@@ -237,6 +218,16 @@ export const RESUME_DOCUMENT_STYLES = `
     line-height: 1.45;
   }
 
+  .resume-document .rd-optional-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .resume-document .rd-optional-row {
+    margin: 0;
+  }
+
   @media print {
     .resume-document {
       padding: 24px 28px;
@@ -246,3 +237,6 @@ export const RESUME_DOCUMENT_STYLES = `
 
 export const RESUME_DOCUMENT_WIDTH_PX = 794;
 export const RESUME_DOCUMENT_HEIGHT_PX = 1123;
+
+/** @deprecated Google Fonts removed for ATS-safe typography */
+export const RESUME_DOCUMENT_FONT_LINK = "";
