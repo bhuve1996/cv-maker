@@ -5,10 +5,26 @@ import { RichTextEditor } from "@/components/forms/rich-text-editor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { SKILL_CATEGORY_LABELS } from "@/lib/resume/skill-categories";
+import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
 import { useResumeStore } from "@/hooks/use-resume-store";
+import type { OptionalFields, SkillCategory } from "@/types/resume";
+import { RESUME_SECTIONS } from "@/types/resume";
+
+function parseCommaList(value: string) {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function joinCommaList(items: string[]) {
+  return items.join(", ");
+}
 
 export function PersonalInfoForm() {
-  const { resume, setPersonalInfo } = useResumeStore();
+  const { resume, setPersonalInfo, setLocation } = useResumeStore();
   const { personalInfo } = resume;
 
   return (
@@ -19,7 +35,26 @@ export function PersonalInfoForm() {
           id="fullName"
           value={personalInfo.fullName}
           onChange={(e) => setPersonalInfo({ fullName: e.target.value })}
-          placeholder="Jane Doe"
+        />
+      </div>
+      <div className="space-y-2 sm:col-span-2">
+        <Label htmlFor="currentTitle">Current Title</Label>
+        <Input
+          id="currentTitle"
+          value={personalInfo.currentTitle}
+          onChange={(e) => setPersonalInfo({ currentTitle: e.target.value })}
+          placeholder="Senior Web Frontend Engineer"
+        />
+      </div>
+      <div className="space-y-2 sm:col-span-2">
+        <Label htmlFor="specialization">Specialization (comma-separated)</Label>
+        <Input
+          id="specialization"
+          value={joinCommaList(personalInfo.specialization)}
+          onChange={(e) =>
+            setPersonalInfo({ specialization: parseCommaList(e.target.value) })
+          }
+          placeholder="React.js, Next.js, UI Performance"
         />
       </div>
       <div className="space-y-2">
@@ -29,7 +64,6 @@ export function PersonalInfoForm() {
           type="email"
           value={personalInfo.email}
           onChange={(e) => setPersonalInfo({ email: e.target.value })}
-          placeholder="jane@email.com"
         />
       </div>
       <div className="space-y-2">
@@ -38,16 +72,30 @@ export function PersonalInfoForm() {
           id="phone"
           value={personalInfo.phone}
           onChange={(e) => setPersonalInfo({ phone: e.target.value })}
-          placeholder="+1 555 000 0000"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="location">Location</Label>
+        <Label htmlFor="city">City</Label>
         <Input
-          id="location"
-          value={personalInfo.location}
-          onChange={(e) => setPersonalInfo({ location: e.target.value })}
-          placeholder="San Francisco, CA"
+          id="city"
+          value={personalInfo.location.city}
+          onChange={(e) => setLocation({ city: e.target.value })}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="country">Country</Label>
+        <Input
+          id="country"
+          value={personalInfo.location.country}
+          onChange={(e) => setLocation({ country: e.target.value })}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="postalCode">Postal Code</Label>
+        <Input
+          id="postalCode"
+          value={personalInfo.location.postalCode}
+          onChange={(e) => setLocation({ postalCode: e.target.value })}
         />
       </div>
       <div className="space-y-2">
@@ -56,7 +104,14 @@ export function PersonalInfoForm() {
           id="linkedIn"
           value={personalInfo.linkedIn}
           onChange={(e) => setPersonalInfo({ linkedIn: e.target.value })}
-          placeholder="linkedin.com/in/janedoe"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="github">GitHub</Label>
+        <Input
+          id="github"
+          value={personalInfo.github}
+          onChange={(e) => setPersonalInfo({ github: e.target.value })}
         />
       </div>
       <div className="space-y-2 sm:col-span-2">
@@ -65,22 +120,69 @@ export function PersonalInfoForm() {
           id="website"
           value={personalInfo.website}
           onChange={(e) => setPersonalInfo({ website: e.target.value })}
-          placeholder="janedoe.dev"
         />
       </div>
     </div>
   );
 }
 
-export function SummaryForm() {
-  const { resume, setSummary } = useResumeStore();
+export function ProfessionalSummaryForm() {
+  const { resume, setProfessionalSummary } = useResumeStore();
+  const { professionalSummary } = resume;
 
   return (
-    <RichTextEditor
-      value={resume.summary}
-      onChange={setSummary}
-      placeholder="Write a brief professional summary..."
-    />
+    <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label>Years of Experience</Label>
+          <Input
+            value={professionalSummary.yearsOfExperience}
+            onChange={(e) =>
+              setProfessionalSummary({ yearsOfExperience: e.target.value })
+            }
+            placeholder="7+"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>Designation</Label>
+          <Input
+            value={professionalSummary.designation}
+            onChange={(e) =>
+              setProfessionalSummary({ designation: e.target.value })
+            }
+          />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Label>Summary</Label>
+        <RichTextEditor
+          value={professionalSummary.text}
+          onChange={(text) => setProfessionalSummary({ text })}
+          placeholder="Professional summary..."
+        />
+      </div>
+      <div className="space-y-2">
+        <Label>Core Expertise (comma-separated)</Label>
+        <Input
+          value={joinCommaList(professionalSummary.coreExpertise)}
+          onChange={(e) =>
+            setProfessionalSummary({
+              coreExpertise: parseCommaList(e.target.value),
+            })
+          }
+        />
+      </div>
+      <div className="space-y-2">
+        <Label>Career Objective</Label>
+        <Textarea
+          value={professionalSummary.careerObjective}
+          onChange={(e) =>
+            setProfessionalSummary({ careerObjective: e.target.value })
+          }
+          rows={3}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -93,13 +195,12 @@ export function ExperienceForm() {
       {resume.experience.map((item, index) => (
         <div key={item.id} className="rounded-lg border p-4">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-sm font-medium">Experience {index + 1}</p>
+            <p className="text-sm font-medium">Role {index + 1}</p>
             <Button
               type="button"
               variant="ghost"
               size="icon-sm"
               onClick={() => removeExperience(item.id)}
-              aria-label="Remove experience"
             >
               <Trash2 className="size-4" />
             </Button>
@@ -110,7 +211,6 @@ export function ExperienceForm() {
               <Input
                 value={item.role}
                 onChange={(e) => updateExperience(item.id, { role: e.target.value })}
-                placeholder="Software Engineer"
               />
             </div>
             <div className="space-y-2">
@@ -120,7 +220,26 @@ export function ExperienceForm() {
                 onChange={(e) =>
                   updateExperience(item.id, { company: e.target.value })
                 }
-                placeholder="Acme Inc."
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Location</Label>
+              <Input
+                value={item.location}
+                onChange={(e) =>
+                  updateExperience(item.id, { location: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Company Description</Label>
+              <Input
+                value={item.companyDescription}
+                onChange={(e) =>
+                  updateExperience(item.id, {
+                    companyDescription: e.target.value,
+                  })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -130,7 +249,6 @@ export function ExperienceForm() {
                 onChange={(e) =>
                   updateExperience(item.id, { startDate: e.target.value })
                 }
-                placeholder="Jan 2022"
               />
             </div>
             <div className="space-y-2">
@@ -144,15 +262,47 @@ export function ExperienceForm() {
               />
             </div>
             <div className="space-y-2 sm:col-span-2">
-              <Label>Description</Label>
+              <Label>Technologies (comma-separated)</Label>
+              <Input
+                value={joinCommaList(item.technologies)}
+                onChange={(e) =>
+                  updateExperience(item.id, {
+                    technologies: parseCommaList(e.target.value),
+                  })
+                }
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label>Description / Client Work</Label>
               <RichTextEditor
                 value={item.description}
                 onChange={(description) =>
                   updateExperience(item.id, { description })
                 }
-                placeholder="Describe your responsibilities and achievements..."
               />
             </div>
+            {item.projects.length > 0 && (
+              <div className="space-y-2 sm:col-span-2">
+                <Label>Parsed Client Projects ({item.projects.length})</Label>
+                <div className="space-y-2 rounded-md border bg-muted/20 p-3 text-xs">
+                  {item.projects.map((project) => (
+                    <div key={project.id}>
+                      <p className="font-medium">
+                        {project.client}
+                        {project.industry ? ` — ${project.industry}` : ""}
+                      </p>
+                      {project.responsibilities.length > 0 && (
+                        <ul className="mt-1 list-disc pl-4 text-muted-foreground">
+                          {project.responsibilities.slice(0, 3).map((task) => (
+                            <li key={task}>{task}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ))}
@@ -179,22 +329,11 @@ export function EducationForm() {
               variant="ghost"
               size="icon-sm"
               onClick={() => removeEducation(item.id)}
-              aria-label="Remove education"
             >
               <Trash2 className="size-4" />
             </Button>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-2 sm:col-span-2">
-              <Label>Institution</Label>
-              <Input
-                value={item.institution}
-                onChange={(e) =>
-                  updateEducation(item.id, { institution: e.target.value })
-                }
-                placeholder="University of Example"
-              />
-            </div>
             <div className="space-y-2 sm:col-span-2">
               <Label>Degree</Label>
               <Input
@@ -202,7 +341,34 @@ export function EducationForm() {
                 onChange={(e) =>
                   updateEducation(item.id, { degree: e.target.value })
                 }
-                placeholder="B.S. Computer Science"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label>Institution</Label>
+              <Input
+                value={item.institution}
+                onChange={(e) =>
+                  updateEducation(item.id, { institution: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Board</Label>
+              <Input
+                value={item.board}
+                onChange={(e) =>
+                  updateEducation(item.id, { board: e.target.value })
+                }
+                placeholder="CBSE"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Location</Label>
+              <Input
+                value={item.location}
+                onChange={(e) =>
+                  updateEducation(item.id, { location: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -212,7 +378,6 @@ export function EducationForm() {
                 onChange={(e) =>
                   updateEducation(item.id, { startDate: e.target.value })
                 }
-                placeholder="2018"
               />
             </div>
             <div className="space-y-2">
@@ -222,7 +387,6 @@ export function EducationForm() {
                 onChange={(e) =>
                   updateEducation(item.id, { endDate: e.target.value })
                 }
-                placeholder="2022"
               />
             </div>
           </div>
@@ -238,56 +402,152 @@ export function EducationForm() {
 
 export function SkillsForm() {
   const { resume, addSkill, updateSkill, removeSkill } = useResumeStore();
+  const categories = Object.keys(SKILL_CATEGORY_LABELS) as SkillCategory[];
 
-  const technicalSkills = resume.skills.filter((s) => s.category === "technical");
-  const softSkills = resume.skills.filter((s) => s.category === "soft");
+  return (
+    <div className="space-y-6">
+      {categories.map((category) => {
+        const items = resume.skills.filter((skill) => skill.category === category);
+        if (items.length === 0) return null;
 
-  const renderSkillGroup = (
-    title: string,
-    category: "technical" | "soft",
-    items: typeof resume.skills,
-  ) => (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-medium">{title}</p>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => addSkill(category)}
-        >
-          <Plus className="size-4" />
-          Add
-        </Button>
-      </div>
-      {items.length === 0 && (
-        <p className="text-sm text-muted-foreground">No skills added yet.</p>
-      )}
-      {items.map((item) => (
+        return (
+          <div key={category} className="space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium">{SKILL_CATEGORY_LABELS[category]}</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => addSkill(category)}
+              >
+                <Plus className="size-4" />
+                Add
+              </Button>
+            </div>
+            {items.map((item) => (
+              <div key={item.id} className="flex gap-2">
+                <Input
+                  value={item.name}
+                  onChange={(e) => updateSkill(item.id, { name: e.target.value })}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeSkill(item.id)}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+      <Button type="button" variant="outline" onClick={() => addSkill("other")}>
+        <Plus className="size-4" />
+        Add skill
+      </Button>
+    </div>
+  );
+}
+
+export function SpokenLanguagesForm() {
+  const { resume, addSpokenLanguage, updateSpokenLanguage, removeSpokenLanguage } =
+    useResumeStore();
+
+  return (
+    <div className="space-y-4">
+      {resume.spokenLanguages.map((item, index) => (
         <div key={item.id} className="flex gap-2">
           <Input
-            value={item.name}
-            onChange={(e) => updateSkill(item.id, { name: e.target.value })}
-            placeholder="Skill name"
+            value={item.language}
+            onChange={(e) =>
+              updateSpokenLanguage(item.id, { language: e.target.value })
+            }
+            placeholder={`Language ${index + 1}`}
+          />
+          <Input
+            value={item.proficiency}
+            onChange={(e) =>
+              updateSpokenLanguage(item.id, { proficiency: e.target.value })
+            }
+            placeholder="Proficient / Native"
           />
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            onClick={() => removeSkill(item.id)}
-            aria-label="Remove skill"
+            onClick={() => removeSpokenLanguage(item.id)}
           >
             <Trash2 className="size-4" />
           </Button>
         </div>
       ))}
+      <Button type="button" variant="outline" onClick={addSpokenLanguage}>
+        <Plus className="size-4" />
+        Add language
+      </Button>
     </div>
   );
+}
+
+export function KeyAchievementsForm() {
+  const { resume, addKeyAchievement, updateKeyAchievement, removeKeyAchievement } =
+    useResumeStore();
 
   return (
-    <div className="space-y-6">
-      {renderSkillGroup("Technical Skills", "technical", technicalSkills)}
-      {renderSkillGroup("Soft Skills", "soft", softSkills)}
+    <div className="space-y-4">
+      {resume.keyAchievements.map((item, index) => (
+        <div key={item.id} className="rounded-lg border p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-sm font-medium">Achievement {index + 1}</p>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => removeKeyAchievement(item.id)}
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+          <div className="space-y-3">
+            <Input
+              value={item.title}
+              onChange={(e) =>
+                updateKeyAchievement(item.id, { title: e.target.value })
+              }
+              placeholder="Title"
+            />
+            <Textarea
+              value={item.description}
+              onChange={(e) =>
+                updateKeyAchievement(item.id, { description: e.target.value })
+              }
+              placeholder="Description"
+              rows={3}
+            />
+          </div>
+        </div>
+      ))}
+      <Button type="button" variant="outline" onClick={addKeyAchievement}>
+        <Plus className="size-4" />
+        Add achievement
+      </Button>
+    </div>
+  );
+}
+
+export function InterestsForm() {
+  const { resume, setInterests } = useResumeStore();
+
+  return (
+    <div className="space-y-2">
+      <Label>Interests (comma-separated)</Label>
+      <Input
+        value={joinCommaList(resume.interests)}
+        onChange={(e) => setInterests(parseCommaList(e.target.value))}
+        placeholder="Cricket, Badminton, Swimming"
+      />
     </div>
   );
 }
@@ -306,40 +566,29 @@ export function ProjectsForm() {
               variant="ghost"
               size="icon-sm"
               onClick={() => removeProject(item.id)}
-              aria-label="Remove project"
             >
               <Trash2 className="size-4" />
             </Button>
           </div>
           <div className="space-y-3">
-            <div className="space-y-2">
-              <Label>Project Name</Label>
-              <Input
-                value={item.name}
-                onChange={(e) => updateProject(item.id, { name: e.target.value })}
-                placeholder="Portfolio Website"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Technologies</Label>
-              <Input
-                value={item.technologies}
-                onChange={(e) =>
-                  updateProject(item.id, { technologies: e.target.value })
-                }
-                placeholder="React, TypeScript, Tailwind"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Description</Label>
-              <RichTextEditor
-                value={item.description}
-                onChange={(description) =>
-                  updateProject(item.id, { description })
-                }
-                placeholder="Describe the project..."
-              />
-            </div>
+            <Input
+              value={item.name}
+              onChange={(e) => updateProject(item.id, { name: e.target.value })}
+              placeholder="Project name"
+            />
+            <Input
+              value={item.technologies}
+              onChange={(e) =>
+                updateProject(item.id, { technologies: e.target.value })
+              }
+              placeholder="Technologies"
+            />
+            <RichTextEditor
+              value={item.description}
+              onChange={(description) =>
+                updateProject(item.id, { description })
+              }
+            />
           </div>
         </div>
       ))}
@@ -366,32 +615,25 @@ export function CertificationsForm() {
               variant="ghost"
               size="icon-sm"
               onClick={() => removeCertification(item.id)}
-              aria-label="Remove certification"
             >
               <Trash2 className="size-4" />
             </Button>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Name</Label>
-              <Input
-                value={item.name}
-                onChange={(e) =>
-                  updateCertification(item.id, { name: e.target.value })
-                }
-                placeholder="AWS Certified Developer"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Issuer</Label>
-              <Input
-                value={item.issuer}
-                onChange={(e) =>
-                  updateCertification(item.id, { issuer: e.target.value })
-                }
-                placeholder="Amazon Web Services"
-              />
-            </div>
+            <Input
+              value={item.name}
+              onChange={(e) =>
+                updateCertification(item.id, { name: e.target.value })
+              }
+              placeholder="Name"
+            />
+            <Input
+              value={item.issuer}
+              onChange={(e) =>
+                updateCertification(item.id, { issuer: e.target.value })
+              }
+              placeholder="Issuer"
+            />
           </div>
         </div>
       ))}
@@ -402,3 +644,44 @@ export function CertificationsForm() {
     </div>
   );
 }
+
+export function OptionalFieldsForm() {
+  const { resume, setOptionalFields } = useResumeStore();
+  const { optionalFields } = resume;
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      {(Object.keys(OPTIONAL_FIELD_LABELS) as Array<keyof OptionalFields>).map(
+        (field) => (
+          <div key={field} className="space-y-2">
+            <Label htmlFor={field}>{OPTIONAL_FIELD_LABELS[field]}</Label>
+            <Input
+              id={field}
+              value={optionalFields[field]}
+              onChange={(e) =>
+                setOptionalFields({ [field]: e.target.value } as Partial<OptionalFields>)
+              }
+              placeholder={`Enter ${OPTIONAL_FIELD_LABELS[field].toLowerCase()}`}
+            />
+          </div>
+        ),
+      )}
+    </div>
+  );
+}
+
+export const FORM_BY_SECTION = {
+  personalInfo: <PersonalInfoForm />,
+  professionalSummary: <ProfessionalSummaryForm />,
+  experience: <ExperienceForm />,
+  education: <EducationForm />,
+  skills: <SkillsForm />,
+  spokenLanguages: <SpokenLanguagesForm />,
+  keyAchievements: <KeyAchievementsForm />,
+  interests: <InterestsForm />,
+  projects: <ProjectsForm />,
+  certifications: <CertificationsForm />,
+  optionalFields: <OptionalFieldsForm />,
+} as const;
+
+export { RESUME_SECTIONS };

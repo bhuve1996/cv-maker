@@ -2,7 +2,10 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import type { Resume } from "@/types/resume";
+import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
+import { SKILL_CATEGORY_LABELS } from "@/lib/resume/skill-categories";
+import type { OptionalFields, Resume, SkillCategory } from "@/types/resume";
+import { formatLocation } from "@/types/resume";
 import { cn } from "@/lib/utils";
 
 interface ResumeTemplateProps {
@@ -26,17 +29,30 @@ function HtmlContent({ html }: { html: string }) {
 }
 
 export function ResumeTemplate({ resume, className, id }: ResumeTemplateProps) {
-  const { personalInfo } = resume;
-  const technicalSkills = resume.skills.filter((s) => s.category === "technical");
-  const softSkills = resume.skills.filter((s) => s.category === "soft");
+  const { personalInfo, professionalSummary } = resume;
+  const locationText = formatLocation(personalInfo.location);
 
   const contactItems = [
     personalInfo.email,
     personalInfo.phone,
-    personalInfo.location,
+    locationText,
     personalInfo.linkedIn,
+    personalInfo.github,
     personalInfo.website,
   ].filter(Boolean);
+
+  const skillGroups = Object.keys(SKILL_CATEGORY_LABELS).reduce(
+    (groups, category) => {
+      const items = resume.skills.filter((skill) => skill.category === category);
+      if (items.length > 0) groups[category as SkillCategory] = items;
+      return groups;
+    },
+    {} as Partial<Record<SkillCategory, typeof resume.skills>>,
+  );
+
+  const filledOptionalFields = (
+    Object.entries(resume.optionalFields) as Array<[keyof OptionalFields, string]>
+  ).filter(([, value]) => value.trim());
 
   return (
     <article
@@ -50,6 +66,16 @@ export function ResumeTemplate({ resume, className, id }: ResumeTemplateProps) {
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
           {personalInfo.fullName || "Your Name"}
         </h1>
+        {personalInfo.currentTitle && (
+          <p className="mt-1 text-sm font-medium text-slate-700">
+            {personalInfo.currentTitle}
+          </p>
+        )}
+        {personalInfo.specialization.length > 0 && (
+          <p className="mt-1 text-xs text-slate-500">
+            {personalInfo.specialization.join(" · ")}
+          </p>
+        )}
         {contactItems.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
             {contactItems.map((item) => (
@@ -59,10 +85,31 @@ export function ResumeTemplate({ resume, className, id }: ResumeTemplateProps) {
         )}
       </header>
 
-      {resume.summary && (
+      {professionalSummary.text && (
         <section className="mt-6">
           <SectionTitle>Summary</SectionTitle>
-          <HtmlContent html={resume.summary} />
+          {professionalSummary.yearsOfExperience && (
+            <p className="mb-2 text-xs text-slate-600">
+              {professionalSummary.yearsOfExperience} years of experience
+              {professionalSummary.designation
+                ? ` · ${professionalSummary.designation}`
+                : ""}
+            </p>
+          )}
+          <HtmlContent html={professionalSummary.text} />
+          {professionalSummary.coreExpertise.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {professionalSummary.coreExpertise.map((item) => (
+                <Badge
+                  key={item}
+                  variant="secondary"
+                  className="rounded-md bg-slate-100 text-[10px] font-normal text-slate-700"
+                >
+                  {item}
+                </Badge>
+              ))}
+            </div>
+          )}
         </section>
       )}
 
@@ -75,7 +122,13 @@ export function ResumeTemplate({ resume, className, id }: ResumeTemplateProps) {
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <div>
                     <h3 className="text-sm font-semibold text-slate-900">{item.role}</h3>
-                    <p className="text-xs text-slate-600">{item.company}</p>
+                    <p className="text-xs text-slate-600">
+                      {item.company}
+                      {item.location ? ` · ${item.location}` : ""}
+                    </p>
+                    {item.companyDescription && (
+                      <p className="text-[10px] text-slate-500">{item.companyDescription}</p>
+                    )}
                   </div>
                   {(item.startDate || item.endDate) && (
                     <p className="text-xs text-slate-500">
@@ -83,7 +136,26 @@ export function ResumeTemplate({ resume, className, id }: ResumeTemplateProps) {
                     </p>
                   )}
                 </div>
-                {item.description && (
+                {item.projects.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    {item.projects.map((project) => (
+                      <div key={project.id} className="text-[11px] text-slate-700">
+                        <p className="font-medium text-slate-900">
+                          {project.client}
+                          {project.industry ? ` (${project.industry})` : ""}
+                        </p>
+                        {project.responsibilities.length > 0 && (
+                          <ul className="mt-1 list-disc pl-4">
+                            {project.responsibilities.slice(0, 4).map((task) => (
+                              <li key={task}>{task}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {item.description && !item.projects.length && (
                   <div className="mt-1">
                     <HtmlContent html={item.description} />
                   </div>
@@ -102,7 +174,11 @@ export function ResumeTemplate({ resume, className, id }: ResumeTemplateProps) {
               <div key={item.id} className="flex flex-wrap items-baseline justify-between gap-2">
                 <div>
                   <h3 className="text-sm font-semibold text-slate-900">{item.degree}</h3>
-                  <p className="text-xs text-slate-600">{item.institution}</p>
+                  <p className="text-xs text-slate-600">
+                    {item.institution}
+                    {item.board ? ` · ${item.board}` : ""}
+                    {item.location ? ` · ${item.location}` : ""}
+                  </p>
                 </div>
                 {(item.startDate || item.endDate) && (
                   <p className="text-xs text-slate-500">
@@ -115,17 +191,17 @@ export function ResumeTemplate({ resume, className, id }: ResumeTemplateProps) {
         </section>
       )}
 
-      {(technicalSkills.length > 0 || softSkills.length > 0) && (
+      {Object.keys(skillGroups).length > 0 && (
         <section className="mt-6">
           <SectionTitle>Skills</SectionTitle>
           <div className="space-y-3">
-            {technicalSkills.length > 0 && (
-              <div>
+            {Object.entries(skillGroups).map(([category, items]) => (
+              <div key={category}>
                 <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">
-                  Technical
+                  {SKILL_CATEGORY_LABELS[category as SkillCategory]}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  {technicalSkills.map((skill) => (
+                  {items?.map((skill) => (
                     <Badge
                       key={skill.id}
                       variant="secondary"
@@ -136,49 +212,45 @@ export function ResumeTemplate({ resume, className, id }: ResumeTemplateProps) {
                   ))}
                 </div>
               </div>
-            )}
-            {softSkills.length > 0 && (
-              <div>
-                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">
-                  Soft Skills
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {softSkills.map((skill) => (
-                    <Badge
-                      key={skill.id}
-                      variant="secondary"
-                      className="rounded-md bg-slate-100 text-[10px] font-normal text-slate-700"
-                    >
-                      {skill.name}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
+            ))}
           </div>
         </section>
       )}
 
-      {resume.projects.length > 0 && (
+      {resume.spokenLanguages.length > 0 && (
         <section className="mt-6">
-          <SectionTitle>Projects</SectionTitle>
-          <div className="space-y-4">
-            {resume.projects.map((item) => (
-              <div key={item.id}>
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="text-sm font-semibold text-slate-900">{item.name}</h3>
-                  {item.technologies && (
-                    <p className="text-xs text-slate-500">{item.technologies}</p>
-                  )}
-                </div>
-                {item.description && (
-                  <div className="mt-1">
-                    <HtmlContent html={item.description} />
-                  </div>
-                )}
-              </div>
+          <SectionTitle>Languages</SectionTitle>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-700">
+            {resume.spokenLanguages.map((item) => (
+              <span key={item.id}>
+                {item.language}
+                {item.proficiency ? ` (${item.proficiency})` : ""}
+              </span>
             ))}
           </div>
+        </section>
+      )}
+
+      {resume.keyAchievements.length > 0 && (
+        <section className="mt-6">
+          <SectionTitle>Key Achievements</SectionTitle>
+          <ul className="space-y-2 text-xs text-slate-700">
+            {resume.keyAchievements.map((item) => (
+              <li key={item.id}>
+                <span className="font-medium text-slate-900">{item.title}</span>
+                {item.description && (
+                  <span className="text-slate-600"> — {item.description}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {resume.interests.length > 0 && (
+        <section className="mt-6">
+          <SectionTitle>Interests</SectionTitle>
+          <p className="text-xs text-slate-700">{resume.interests.join(", ")}</p>
         </section>
       )}
 
@@ -193,6 +265,21 @@ export function ResumeTemplate({ resume, className, id }: ResumeTemplateProps) {
               </li>
             ))}
           </ul>
+        </section>
+      )}
+      {filledOptionalFields.length > 0 && (
+        <section className="mt-6">
+          <SectionTitle>Additional Information</SectionTitle>
+          <div className="grid gap-1 text-xs text-slate-700 sm:grid-cols-2">
+            {filledOptionalFields.map(([key, value]) => (
+              <p key={key}>
+                <span className="font-medium text-slate-900">
+                  {OPTIONAL_FIELD_LABELS[key]}:
+                </span>{" "}
+                {value}
+              </p>
+            ))}
+          </div>
         </section>
       )}
     </article>

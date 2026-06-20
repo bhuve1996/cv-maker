@@ -1,17 +1,21 @@
 import { v4 as uuidv4 } from "uuid";
+import { categorizeSkill } from "@/lib/resume/skill-categories";
 import type { ParseResult, Resume } from "@/types/resume";
+import { parseExperienceDetails } from "./experience-details";
+import {
+  parseInterests,
+  parseKeyAchievements,
+  parseSpokenLanguages,
+} from "./extended-sections";
 import {
   preprocessResumeText,
   splitEducationEntries,
   splitExperienceEntries,
   tokenizeSkills,
 } from "./normalize-text";
-import {
-  extractContactInfo,
-  extractFullName,
-  extractLocation,
-  identifySections,
-} from "./sections";
+import { extractPersonalInfo } from "./personal-info";
+import { identifySections } from "./sections";
+import { parseProfessionalSummary } from "./summary-details";
 
 const DATE_PATTERN =
   /(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+\d{4}|\d{2}\/\d{4}|\d{4}|\bPresent\b|\bCurrent\b/gi;
@@ -24,29 +28,25 @@ const EDUCATION_ENTRY_PATTERN =
 
 export function parseResumeText(rawText: string): ParseResult {
   const text = preprocessResumeText(rawText);
-  const contact = extractContactInfo(text);
   const sections = identifySections(text);
+  const summaryText = sections.summary || extractFallbackSummary(text);
 
   const resume: Partial<Resume> = {
-    personalInfo: {
-      fullName: extractFullName(text),
-      email: contact.email,
-      phone: contact.phone,
-      location: extractLocation(text),
-      linkedIn: contact.linkedIn,
-      website: contact.website,
-    },
-    summary: sections.summary || extractFallbackSummary(text),
+    personalInfo: extractPersonalInfo(text),
+    professionalSummary: parseProfessionalSummary(summaryText),
     experience: parseExperience(sections.experience),
     education: parseEducation(sections.education),
     skills: parseSkills(sections.skills),
+    spokenLanguages: parseSpokenLanguages(sections.languages),
+    keyAchievements: parseKeyAchievements(sections.keyAchievements),
+    interests: parseInterests(sections.interests),
     projects: parseProjects(sections.projects),
     certifications: parseCertifications(sections.certifications, text),
   };
 
   const filledFields = countFilledFields(resume);
   const confidence =
-    filledFields >= 8 ? "high" : filledFields >= 4 ? "medium" : "low";
+    filledFields >= 12 ? "high" : filledFields >= 6 ? "medium" : "low";
 
   return { resume, rawText, confidence };
 }
@@ -85,15 +85,22 @@ function parseExperience(sectionText: string) {
       if (headerMatch) {
         const [, role, company, dateRange] = headerMatch;
         const dates = extractDates(dateRange);
-        const description = normalized.slice(headerMatch[0].length).trim();
+        const body = normalized.slice(headerMatch[0].length).trim();
+        const details = parseExperienceDetails(body);
 
         return {
           id: uuidv4(),
           role: role.trim(),
           company: company.trim(),
           startDate: dates.start,
-          endDate: dates.end,
-          description,
+          endDate: dates.end || "Present",
+          location: details.location,
+          companyDescription: details.companyDescription,
+          description: details.description,
+          projects: details.projects,
+          certifications: details.certifications,
+          achievements: details.achievements,
+          technologies: details.technologies,
         };
       }
 
@@ -127,7 +134,13 @@ function parseExperienceFallback(block: string) {
     company: companyLine,
     startDate: dates.start,
     endDate: dates.end,
+    location: "",
+    companyDescription: "",
     description,
+    projects: [],
+    certifications: [],
+    achievements: [],
+    technologies: [],
   };
 }
 
@@ -141,10 +154,17 @@ function parseEducation(sectionText: string) {
 
       if (match) {
         const [, degree, institution, startDate, endDate] = match;
+        const boardMatch = degree.match(/CBSE|ICSE|State Board/i);
+        const locationMatch = normalized.match(
+          /\d{2}\/\d{4}\s*-\s*\d{2}\/\d{4}\s+([A-Za-z .,-]+)$/,
+        );
+
         return {
           id: uuidv4(),
           degree: degree.trim(),
           institution: institution.trim(),
+          board: boardMatch?.[0] ?? "",
+          location: locationMatch?.[1]?.trim() ?? "",
           startDate,
           endDate,
         };
@@ -159,6 +179,8 @@ function parseEducation(sectionText: string) {
         degree: lines[0] ?? "",
         institution:
           lines.find((line) => line !== lines[0] && line !== dateLine) ?? "",
+        board: "",
+        location: "",
         startDate: dates.start,
         endDate: dates.end,
       };
@@ -169,36 +191,35 @@ function parseEducation(sectionText: string) {
 function parseSkills(sectionText: string) {
   if (!sectionText) return [];
 
-  const technicalKeywords =
-    /javascript|typescript|python|java|react|node|sql|aws|docker|kubernetes|git|html|css|api|cloud|data|machine learning|ml|ai|figma|design|agile|scrum|angular|vue|next|graphql|webpack|tailwind|bootstrap|sass|scss|express|vercel|netlify|sitecore|contentful|mapbox|gsap|seo|e-commerce|shopify|cordova|expo|fastify|serverless|postman|bitbucket|jira|confluence|storybook|jest|sanity|figma|ruby|rest|modular/i;
-
   const items = tokenizeSkills(sectionText);
 
   return items.map((name) => ({
     id: uuidv4(),
     name,
-    category: technicalKeywords.test(name)
-      ? ("technical" as const)
-      : ("soft" as const),
+    category: categorizeSkill(name),
   }));
 }
 
 function parseProjects(sectionText: string) {
   if (!sectionText) return [];
 
-  return splitIntoBlocks(sectionText).map((block) => {
-    const lines = block.split("\n").filter(Boolean);
-    const techLine =
-      lines.find((line) => /technologies|stack|tools|built with/i.test(line)) ??
-      "";
+  return sectionText
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean)
+    .map((block) => {
+      const lines = block.split("\n").filter(Boolean);
+      const techLine =
+        lines.find((line) => /technologies|stack|tools|built with/i.test(line)) ??
+        "";
 
-    return {
-      id: uuidv4(),
-      name: lines[0] ?? "",
-      description: lines.slice(1).filter((line) => line !== techLine).join("\n"),
-      technologies: techLine.replace(/technologies:|stack:|tools:/i, "").trim(),
-    };
-  });
+      return {
+        id: uuidv4(),
+        name: lines[0] ?? "",
+        description: lines.slice(1).filter((line) => line !== techLine).join("\n"),
+        technologies: techLine.replace(/technologies:|stack:|tools:/i, "").trim(),
+      };
+    });
 }
 
 function parseCertifications(sectionText: string, fullText: string) {
@@ -232,13 +253,6 @@ function parseCertifications(sectionText: string, fullText: string) {
   return entries;
 }
 
-function splitIntoBlocks(text: string): string[] {
-  return text
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean);
-}
-
 function extractDates(text: string) {
   const matches = [...text.matchAll(DATE_PATTERN)].map((match) => match[0]);
   const rangeParts = text.split(/\s*-\s*/);
@@ -270,10 +284,15 @@ function countFilledFields(resume: Partial<Resume>): number {
   if (resume.personalInfo?.fullName) count += 1;
   if (resume.personalInfo?.email) count += 1;
   if (resume.personalInfo?.phone) count += 1;
-  if (resume.summary) count += 1;
+  if (resume.personalInfo?.currentTitle) count += 1;
+  if (resume.professionalSummary?.text) count += 1;
   count += resume.experience?.length ?? 0;
+  count += resume.experience?.flatMap((item) => item.projects).length ?? 0;
   count += resume.education?.length ?? 0;
   count += resume.skills?.length ?? 0;
+  count += resume.spokenLanguages?.length ?? 0;
+  count += resume.keyAchievements?.length ?? 0;
+  count += resume.interests?.length ?? 0;
   count += resume.projects?.length ?? 0;
   count += resume.certifications?.length ?? 0;
 

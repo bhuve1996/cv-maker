@@ -4,7 +4,10 @@ export type SectionKey =
   | "education"
   | "skills"
   | "projects"
-  | "certifications";
+  | "certifications"
+  | "languages"
+  | "interests"
+  | "keyAchievements";
 
 const SECTION_PATTERNS: Record<SectionKey, RegExp[]> = {
   summary: [
@@ -33,21 +36,18 @@ const SECTION_PATTERNS: Record<SectionKey, RegExp[]> = {
     /^licenses?(\s+(&|and)\s+certifications?)?$/i,
     /^credentials?$/i,
   ],
+  languages: [/^languages?$/i],
+  interests: [/^interests?$/i, /^hobbies(\s+and\s+interests)?$/i],
+  keyAchievements: [/^key\s+achievements?$/i],
 };
 
-const STOP_SECTION_PATTERN =
-  /^(key\s+achievements|languages|interests|hobbies|certifications?|projects?|references)$/i;
+const STOP_SECTION_PATTERN = /^(references)$/i;
 
 export function identifySections(text: string): Record<SectionKey, string> {
   const lines = text.split("\n").map((line) => line.trim());
-  const sections: Record<SectionKey, string[]> = {
-    summary: [],
-    experience: [],
-    education: [],
-    skills: [],
-    projects: [],
-    certifications: [],
-  };
+  const sections = Object.fromEntries(
+    Object.keys(SECTION_PATTERNS).map((key) => [key, [] as string[]]),
+  ) as Record<SectionKey, string[]>;
 
   let currentSection: SectionKey | null = null;
 
@@ -106,13 +106,16 @@ export function extractContactInfo(text: string) {
   const linkedInMatch = text.match(
     /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[\w-]+/i,
   );
+  const githubMatch = text.match(
+    /(?:https?:\/\/)?(?:www\.)?github\.com\/[\w-]+/i,
+  );
 
   const websiteCandidates = [
     ...text.matchAll(
-      /https?:\/\/(?:www\.)?(?!linkedin\.com)[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[\w\-./?%&=]*)?/gi,
+      /https?:\/\/(?:www\.)?(?!linkedin\.com|github\.com)[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[\w\-./?%&=]*)?/gi,
     ),
     ...text.matchAll(
-      /(?:^|\s)(?!linkedin\.com)([a-z0-9-]+\.(?:com|dev|io|me|co|org|net|app)(?:\/[\w\-./?%&=]*)?)/gi,
+      /(?:^|\s)(?!linkedin\.com|github\.com)([a-z0-9-]+\.(?:com|dev|io|me|co|org|net|app)(?:\/[\w\-./?%&=]*)?)/gi,
     ),
   ];
 
@@ -122,6 +125,7 @@ export function extractContactInfo(text: string) {
     if (
       !INVALID_WEBSITE_PATTERN.test(candidate) &&
       !/linkedin\.com/i.test(candidate) &&
+      !/github\.com/i.test(candidate) &&
       !candidate.includes("@") &&
       !/^\d/.test(candidate)
     ) {
@@ -134,6 +138,7 @@ export function extractContactInfo(text: string) {
     email: emailMatch?.[0] ?? "",
     phone: phoneMatch?.[0]?.trim() ?? "",
     linkedIn: linkedInMatch?.[0] ?? "",
+    github: githubMatch?.[0] ?? "",
     website,
   };
 }
@@ -142,10 +147,10 @@ export function extractFullName(text: string): string {
   const headerLine = text.split("\n").find((line) => line.trim())?.trim() ?? "";
 
   const capsNameMatch = text.match(
-    /^([A-Z][A-Z\s.'-]{2,48}?)(?=\s+(?:Senior|Lead|Staff|Principal|Software|Web|Frontend|Backend|Full[\s-]?Stack|[A-Z][a-z].*(?:Engineer|Developer|Manager|Designer)))/m,
+    /^([A-Z][A-Z\s.'-]{2,48}?)(?=\s*\n|\s+(?:Senior|Lead|Staff|Principal|Software|Web|Frontend|Backend|Full[\s-]?Stack|[A-Z][a-z].*(?:Engineer|Developer|Manager|Designer)))/m,
   );
   if (capsNameMatch) {
-    return capsNameMatch[1].trim();
+    return toTitleCase(capsNameMatch[1].trim());
   }
 
   if (headerLine && !/@|https?:\/\//i.test(headerLine)) {
@@ -169,6 +174,14 @@ export function extractFullName(text: string): string {
   }
 
   return "";
+}
+
+function toTitleCase(value: string): string {
+  return value
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 export function extractLocation(text: string): string {
