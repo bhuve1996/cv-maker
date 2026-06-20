@@ -130,16 +130,19 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
                   </div>
                   {item.projects.length > 0 && (
                     <div className="rd-projects-list rd-stack-sm">
-                      {item.projects.map((project) => (
-                        <div key={project.id} className="rd-body rd-project-item">
+                      {item.projects.map((project, projectIndex) => (
+                        <div
+                          key={project.id || `${item.id}-project-${projectIndex}`}
+                          className="rd-body rd-project-item"
+                        >
                           <p className="rd-project-label">
                             <strong>{project.client}</strong>
                             {project.industry ? ` (${project.industry})` : ""}
                           </p>
                           {project.responsibilities.length > 0 && (
                             <ul>
-                              {project.responsibilities.slice(0, 3).map((task) => (
-                                <li key={task}>{task}</li>
+                              {project.responsibilities.slice(0, 3).map((task, index) => (
+                                <li key={`${project.id}-resp-${index}`}>{task}</li>
                               ))}
                             </ul>
                           )}
@@ -220,8 +223,8 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
           <section className="rd-section">
             <SectionTitle>Key Achievements</SectionTitle>
             <ul className="rd-body">
-              {resume.keyAchievements.map((item) => (
-                <li key={item.id}>
+              {resume.keyAchievements.map((item, index) => (
+                <li key={item.id ?? `achievement-${index}`}>
                   <strong>{item.title}</strong>
                   {item.description && (
                     <span className="rd-muted"> — {item.description}</span>

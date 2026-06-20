@@ -138,8 +138,16 @@ export function migrateResume(partial: LegacyResume): Resume {
         category,
       };
     }),
-    spokenLanguages: partial.spokenLanguages ?? base.spokenLanguages,
-    keyAchievements: partial.keyAchievements ?? base.keyAchievements,
+    spokenLanguages: (partial.spokenLanguages ?? []).map((item) => ({
+      id: item.id ?? uuidv4(),
+      language: item.language ?? "",
+      proficiency: item.proficiency ?? "",
+    })),
+    keyAchievements: (partial.keyAchievements ?? []).map((item) => ({
+      id: item.id ?? uuidv4(),
+      title: item.title ?? "",
+      description: item.description ?? "",
+    })),
     interests: partial.interests ?? base.interests,
     projects: partial.projects ?? base.projects,
     certifications: partial.certifications ?? base.certifications,
