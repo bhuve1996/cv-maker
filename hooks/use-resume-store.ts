@@ -96,7 +96,7 @@ export const useResumeStore = create<ResumeStore>()(
 
       mergeParsedResume: (partial, rawText, options) =>
         set({
-          resume: cleanupParsedResume(mergeResume(partial)),
+          resume: cleanupParsedResume(mergeResume(partial), rawText),
           rawText,
           hasUploaded: true,
           parseParser: options?.parser ?? null,

@@ -10,9 +10,11 @@ Rules:
 - Split employment into separate jobs by employer/role changes.
 - Nest client or project work under the correct employer in experience[].projects when the resume groups them that way.
 - For each project, use 1-2 complete-sentence bullets in responsibilities[] — do NOT split a single sentence into multiple lowercase fragments.
-- Put measurable summary wins in professionalSummary.achievements[] and job-level wins in experience[].achievements[].
-- Copy certifications mentioned anywhere (including inside jobs) to both experience[].certifications and top-level certifications[] when applicable.
-- interests[] must be short individual items (e.g. "Cricket", "Badminton", "Swimming"), not a full prose sentence.
+- Put measurable summary wins in professionalSummary.achievements[] only when they are NOT already written inside professionalSummary.text. Put job-level wins in experience[].achievements[].
+- Copy certifications mentioned anywhere to top-level certifications[] with issuer when known. Use concise certification names and short status values in experience[].certifications.
+- professionalSummary.yearsOfExperience must be a number token only (e.g. "7" or "7+"), never include the word "years".
+- Capture every client/project under the correct employer, including entries with malformed parentheses (e.g. "Client Name Industry Label) -") or colon separators (e.g. "Client Name: Delivered ...").
+- interests[] must be short individual hobby names, not a full prose sentence.
 - skills[] must be concrete tools/frameworks/languages only — exclude generic words like Modular, SEO, E-commerce unless they appear as explicit standalone skills in a skills section.
 - Do not duplicate the same skill twice. Use correct categories (React/Next.js = frontend, not ui_frameworks).
 - Include the full summary paragraph in professionalSummary.text, including career objective if present.
@@ -35,7 +37,7 @@ export const RESUME_PARSE_JSON_SCHEMA = {
   },
   professionalSummary: {
     text: "string — full summary paragraph including objective if present",
-    yearsOfExperience: "string",
+    yearsOfExperience: "string — number only, e.g. 7 or 7+ (no 'years' suffix)",
     designation: "string",
     coreExpertise: ["string"],
     achievements: [{ description: "string", impact: "string" }],

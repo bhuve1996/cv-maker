@@ -1,19 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 import { categorizeSkill, SKILL_CATEGORY_ORDER } from "@/lib/resume/skill-categories";
+import { coerceString, coerceStringArray } from "@/lib/resume/coerce-string";
 import { cleanupParsedResume } from "@/lib/resume/cleanup-parsed-resume";
 import { migrateResume } from "@/lib/resume/migrate-resume";
 import type { Resume, SkillCategory } from "@/types/resume";
 
 const VALID_SKILL_CATEGORIES = new Set<string>(SKILL_CATEGORY_ORDER);
-
-function asString(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
-function asStringArray(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  return value.map((item) => asString(item)).filter(Boolean);
-}
 
 function normalizeSkillCategory(value: unknown, skillName: string): SkillCategory {
   const fromRules = categorizeSkill(skillName);
@@ -21,7 +13,7 @@ function normalizeSkillCategory(value: unknown, skillName: string): SkillCategor
     return fromRules;
   }
 
-  const category = asString(value);
+  const category = coerceString(value);
   if (VALID_SKILL_CATEGORIES.has(category)) {
     return category as SkillCategory;
   }
@@ -29,7 +21,10 @@ function normalizeSkillCategory(value: unknown, skillName: string): SkillCategor
   return fromRules;
 }
 
-export function normalizeAiResumePayload(raw: unknown): Partial<Resume> {
+export function normalizeAiResumePayload(
+  raw: unknown,
+  rawText?: string,
+): Partial<Resume> {
   if (!raw || typeof raw !== "object") {
     return {};
   }
@@ -41,7 +36,7 @@ export function normalizeAiResumePayload(raw: unknown): Partial<Resume> {
         .filter((item) => item && typeof item === "object")
         .map((item) => {
           const skill = item as Record<string, unknown>;
-          const name = asString(skill.name);
+          const name = coerceString(skill.name);
           if (!name) return null;
           return {
             name,
@@ -54,7 +49,7 @@ export function normalizeAiResumePayload(raw: unknown): Partial<Resume> {
   const normalized = {
     ...(payload as Partial<Resume>),
     skills,
-    interests: asStringArray(payload.interests),
+    interests: coerceStringArray(payload.interests),
   } as Partial<Resume>;
 
   const migrated = migrateResume(normalized);
@@ -83,5 +78,5 @@ export function normalizeAiResumePayload(raw: unknown): Partial<Resume> {
         id: item.id || uuidv4(),
       })),
     },
-  });
+  }, rawText);
 }

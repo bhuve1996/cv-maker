@@ -1,4 +1,11 @@
+import { stripHtml } from "@/lib/export/text-utils";
 import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
+import {
+  formatYearsOfExperienceLine,
+  getTopLevelCertificationNames,
+  getVisibleJobCertifications,
+  getVisibleSummaryAchievements,
+} from "@/lib/export/resume-display";
 import {
   groupSkillsByCategory,
   SKILL_CATEGORY_LABELS,
@@ -6,19 +13,7 @@ import {
 import type { OptionalFields, Resume, SkillCategory } from "@/types/resume";
 import { formatLocation } from "@/types/resume";
 
-export function stripHtml(html: string): string {
-  return html
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<\/p>/gi, "\n")
-    .replace(/<\/li>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
+export { stripHtml } from "@/lib/export/text-utils";
 
 export function formatContactValue(value: string): string {
   return value.replace(/^https?:\/\//i, "").replace(/^www\./i, "");
@@ -27,6 +22,19 @@ export function formatContactValue(value: string): string {
 export interface LabeledContactItem {
   label: string;
   value: string;
+}
+
+const PRIMARY_CONTACT_LABELS = new Set(["Email", "Phone", "Location"]);
+
+export function getContactLineGroups(resume: Resume): {
+  primary: LabeledContactItem[];
+  secondary: LabeledContactItem[];
+} {
+  const items = getLabeledContactItems(resume);
+  return {
+    primary: items.filter((item) => PRIMARY_CONTACT_LABELS.has(item.label)),
+    secondary: items.filter((item) => !PRIMARY_CONTACT_LABELS.has(item.label)),
+  };
 }
 
 export function getLabeledContactItems(resume: Resume): LabeledContactItem[] {
@@ -95,17 +103,15 @@ export function resumeToPlainText(resume: Resume): string {
 
   if (professionalSummary.text) {
     lines.push("PROFESSIONAL SUMMARY");
-    if (professionalSummary.yearsOfExperience) {
-      lines.push(
-        `${professionalSummary.yearsOfExperience} years of experience${
-          professionalSummary.designation
-            ? ` · ${professionalSummary.designation}`
-            : ""
-        }`,
-      );
+    const experienceLine = formatYearsOfExperienceLine(
+      professionalSummary.yearsOfExperience,
+      professionalSummary.designation,
+    );
+    if (experienceLine) {
+      lines.push(experienceLine);
     }
     lines.push(stripHtml(professionalSummary.text));
-    professionalSummary.achievements.forEach((item) => {
+    getVisibleSummaryAchievements(professionalSummary).forEach((item) => {
       lines.push(
         `- ${item.description}${item.impact ? ` — ${item.impact}` : ""}`,
       );
@@ -116,17 +122,7 @@ export function resumeToPlainText(resume: Resume): string {
     lines.push("");
   }
 
-  const skillGroups = groupSkillsByCategory(resume.skills);
-  if (Object.keys(skillGroups).length > 0) {
-    lines.push("SKILLS");
-    Object.entries(skillGroups).forEach(([category, items]) => {
-      const label = SKILL_CATEGORY_LABELS[category as SkillCategory];
-      lines.push(
-        `${label}: ${items?.map((skill) => skill.name).join(", ") ?? ""}`,
-      );
-    });
-    lines.push("");
-  }
+  const topLevelCertNames = getTopLevelCertificationNames(resume);
 
   if (resume.experience.length > 0) {
     lines.push("WORK EXPERIENCE");
@@ -144,9 +140,28 @@ export function resumeToPlainText(resume: Resume): string {
         );
         project.responsibilities.forEach((task) => lines.push(`- ${task}`));
       });
+      getVisibleJobCertifications(item.certifications, topLevelCertNames).forEach(
+        (cert) => {
+          lines.push(
+            `- ${cert.name}${cert.status ? ` — ${cert.status}` : ""}`,
+          );
+        },
+      );
       if (item.description && item.projects.length === 0) {
         lines.push(stripHtml(item.description));
       }
+    });
+    lines.push("");
+  }
+
+  const skillGroups = groupSkillsByCategory(resume.skills);
+  if (Object.keys(skillGroups).length > 0) {
+    lines.push("SKILLS");
+    Object.entries(skillGroups).forEach(([category, items]) => {
+      const label = SKILL_CATEGORY_LABELS[category as SkillCategory];
+      lines.push(
+        `${label}: ${items?.map((skill) => skill.name).join(", ") ?? ""}`,
+      );
     });
     lines.push("");
   }

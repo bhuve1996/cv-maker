@@ -1,3 +1,4 @@
+import { isValidProjectClient } from "@/lib/resume/dedupe-projects";
 import { v4 as uuidv4 } from "uuid";
 import type {
   ClientProject,
@@ -13,6 +14,15 @@ const PAREN_PROJECT_RE =
 
 const DASH_PROJECT_RE =
   /([A-Z][A-Za-z0-9&'./-]+(?:\s+[A-Za-z][^,-.]{0,80}){0,8})\s+-\s+/g;
+
+const COLON_PROJECT_RE =
+  /([A-Z][A-Za-z0-9&'./-]+(?:\s+[A-Z][a-z]+){0,5})\s*:\s+/g;
+
+const COLON_BODY_START =
+  /^(?:Translated|Developed|Architected|Integrated|Implemented|Designed|Built|Rebuilt|Optimized|Led|Managed|Ensuring|Delivered|Created|Maintained|Improved|Customized|Streamlined|Collaborated|Supported|Enhanced|Automated|Deployed)/;
+
+const NON_CLIENT_HEADERS =
+  /^(Note|See|Ref|Source|Role|Company|Client|Project|Technologies|Stack|Tools)$/i;
 
 export function parseExperienceDetails(description: string) {
   let remaining = description.trim();
@@ -68,6 +78,16 @@ function findFirstProjectIndex(text: string): number {
     }
   }
 
+  const colonMatch = text.match(COLON_PROJECT_RE);
+  if (colonMatch?.index != null && colonMatch.index >= 0) {
+    const header = colonMatch[1]?.trim() ?? "";
+    const bodyStart = colonMatch.index + colonMatch[0].length;
+    const body = text.slice(bodyStart).trim();
+    if (isValidClientHeader(header) && COLON_BODY_START.test(body)) {
+      return colonMatch.index;
+    }
+  }
+
   return -1;
 }
 
@@ -93,18 +113,41 @@ function parseClientProjects(text: string): ClientProject[] {
   }
 
   for (const match of normalized.matchAll(DASH_PROJECT_RE)) {
-    if (match.index == null) continue;
+    const matchIndex = match.index;
+    if (matchIndex == null) continue;
     const header = match[1]?.trim() ?? "";
     if (!isValidClientHeader(header)) continue;
 
     const overlaps = matches.some(
-      (item) => Math.abs(item.index - match.index) < 5,
+      (item) => Math.abs(item.index - matchIndex) < 5,
     );
     if (!overlaps) {
       matches.push({
-        index: match.index,
+        index: matchIndex,
         header,
-        bodyStart: match.index + match[0].length,
+        bodyStart: matchIndex + match[0].length,
+      });
+    }
+  }
+
+  for (const match of normalized.matchAll(COLON_PROJECT_RE)) {
+    const matchIndex = match.index;
+    if (matchIndex == null) continue;
+    const header = match[1]?.trim() ?? "";
+    if (!isValidClientHeader(header)) continue;
+
+    const bodyStart = matchIndex + match[0].length;
+    const body = normalized.slice(bodyStart).trim();
+    if (!COLON_BODY_START.test(body)) continue;
+
+    const overlaps = matches.some(
+      (item) => Math.abs(item.index - matchIndex) < 5,
+    );
+    if (!overlaps) {
+      matches.push({
+        index: matchIndex,
+        header,
+        bodyStart,
       });
     }
   }
@@ -133,8 +176,9 @@ function parseClientProjects(text: string): ClientProject[] {
 function isValidClientHeader(header: string): boolean {
   if (!header || header.length > 120) return false;
   if (header.includes(".")) return false;
+  if (NON_CLIENT_HEADERS.test(header.trim())) return false;
   if (VERB_CLIENT_NAMES.test(header.split(/\s+/)[0] ?? "")) return false;
-  return true;
+  return isValidProjectClient(header);
 }
 
 function splitClientHeader(header: string): { client: string; industry: string } {
@@ -190,16 +234,22 @@ function stripTrailingTechStack(text: string): {
 
 function parseInlineCertifications(text: string): JobCertification[] {
   const matches = text.matchAll(
-    /([A-Z][A-Za-z0-9+ .-]{2,80}\bCertification\b[^.\n]{0,120})/gi,
+    /([A-Z][A-Za-z0-9+ .-]{2,80}\bCertification\b)/gi,
   );
 
-  return [...matches].map((match) => ({
-    id: uuidv4(),
-    name: match[1]?.trim() ?? "",
-    status: /successfully completed|completed|certified/i.test(match[0])
-      ? "Successfully completed"
-      : "",
-  }));
+  return [...matches].map((match) => {
+    const name = match[1]?.trim() ?? "";
+    const context = text.slice(match.index ?? 0, (match.index ?? 0) + 180);
+    const statusMatch = context.match(
+      /(?:successfully completed|completed|certified|in progress)[^..\n]*/i,
+    );
+
+    return {
+      id: uuidv4(),
+      name,
+      status: statusMatch?.[0]?.trim() ?? "",
+    };
+  });
 }
 
 function parseJobAchievements(text: string): JobAchievement[] {

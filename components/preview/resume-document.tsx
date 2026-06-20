@@ -5,10 +5,16 @@ import {
   RESUME_DOCUMENT_WIDTH_PX,
 } from "@/lib/export/resume-document-styles";
 import {
-  formatContactLine,
+  getContactLineGroups,
   getFilledOptionalFields,
   stripHtml,
 } from "@/lib/export/resume-content";
+import {
+  formatYearsOfExperienceLine,
+  getTopLevelCertificationNames,
+  getVisibleJobCertifications,
+  getVisibleSummaryAchievements,
+} from "@/lib/export/resume-display";
 import {
   groupSkillsByCategory,
   SKILL_CATEGORY_LABELS,
@@ -39,10 +45,16 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocumentProps) {
   const { personalInfo, professionalSummary } = resume;
-  const contactLine = formatContactLine(resume);
+  const contactGroups = getContactLineGroups(resume);
   const skillGroups = groupSkillsByCategory(resume.skills);
   const filledOptionalFields = getFilledOptionalFields(resume.optionalFields);
   const experienceCount = resume.experience.length;
+  const summaryAchievements = getVisibleSummaryAchievements(professionalSummary);
+  const topLevelCertNames = getTopLevelCertificationNames(resume);
+  const experienceLine = formatYearsOfExperienceLine(
+    professionalSummary.yearsOfExperience,
+    professionalSummary.designation,
+  );
 
   return (
     <>
@@ -53,33 +65,49 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
         style={{ width: RESUME_DOCUMENT_WIDTH_PX }}
       >
         <header className="rd-header">
-          <h1>{personalInfo.fullName || "Your Name"}</h1>
-          {personalInfo.currentTitle && (
-            <p className="rd-title">{personalInfo.currentTitle}</p>
+          <div className="rd-identity">
+            <h1>{personalInfo.fullName || "Your Name"}</h1>
+            {personalInfo.currentTitle && (
+              <p className="rd-title">{personalInfo.currentTitle}</p>
+            )}
+            {personalInfo.specialization.length > 0 && (
+              <p className="rd-specialization">
+                {personalInfo.specialization.join(" · ")}
+              </p>
+            )}
+          </div>
+          {(contactGroups.primary.length > 0 || contactGroups.secondary.length > 0) && (
+            <div className="rd-contact-block">
+              {contactGroups.primary.length > 0 && (
+                <p className="rd-contact">
+                  {contactGroups.primary
+                    .map(({ label, value }) => `${label}: ${value}`)
+                    .join(" · ")}
+                </p>
+              )}
+              {contactGroups.secondary.length > 0 && (
+                <p className="rd-contact">
+                  {contactGroups.secondary
+                    .map(({ label, value }) => `${label}: ${value}`)
+                    .join(" · ")}
+                </p>
+              )}
+            </div>
           )}
-          {personalInfo.specialization.length > 0 && (
-            <p className="rd-specialization">
-              {personalInfo.specialization.join(" · ")}
-            </p>
-          )}
-          {contactLine && <p className="rd-contact">{contactLine}</p>}
         </header>
 
         {professionalSummary.text && (
           <section className="rd-section">
             <SectionTitle>Professional Summary</SectionTitle>
-            {professionalSummary.yearsOfExperience && (
+            {experienceLine && (
               <p className="rd-muted" style={{ marginBottom: 4 }}>
-                {professionalSummary.yearsOfExperience} years of experience
-                {professionalSummary.designation
-                  ? ` · ${professionalSummary.designation}`
-                  : ""}
+                {experienceLine}
               </p>
             )}
             <HtmlContent html={professionalSummary.text} />
-            {professionalSummary.achievements.length > 0 && (
+            {summaryAchievements.length > 0 && (
               <ul className="rd-body" style={{ marginTop: 4 }}>
-                {professionalSummary.achievements.map((item, index) => (
+                {summaryAchievements.map((item, index) => (
                   <li key={item.id ?? `summary-achievement-${index}`}>
                     {item.description}
                     {item.impact ? (
@@ -97,29 +125,17 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
           </section>
         )}
 
-        {Object.keys(skillGroups).length > 0 && (
-          <section className="rd-section">
-            <SectionTitle>Skills</SectionTitle>
-            <div className="rd-skills-list">
-              {Object.entries(skillGroups).map(([category, items]) => (
-                <div key={category} className="rd-skill-row">
-                  <span className="rd-skill-category">
-                    {SKILL_CATEGORY_LABELS[category as SkillCategory]}:
-                  </span>
-                  <span className="rd-skill-items">
-                    {items?.map((skill) => skill.name).join(", ")}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
         {resume.experience.length > 0 && (
           <section className="rd-section">
             <SectionTitle>Work Experience</SectionTitle>
             <div className="rd-stack">
-              {resume.experience.map((item, index) => (
+              {resume.experience.map((item, index) => {
+                const visibleJobCerts = getVisibleJobCertifications(
+                  item.certifications,
+                  topLevelCertNames,
+                );
+
+                return (
                 <div
                   key={item.id}
                   className={`rd-company-item${
@@ -172,9 +188,9 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
                       ))}
                     </div>
                   )}
-                  {item.certifications.length > 0 && (
+                  {visibleJobCerts.length > 0 && (
                     <ul className="rd-body rd-small" style={{ marginTop: 4 }}>
-                      {item.certifications.map((cert, certIndex) => (
+                      {visibleJobCerts.map((cert, certIndex) => (
                         <li key={cert.id ?? `${item.id}-cert-${certIndex}`}>
                           <strong>{cert.name}</strong>
                           {cert.status ? (
@@ -201,6 +217,25 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
                       <HtmlContent html={item.description} />
                     </div>
                   )}
+                </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {Object.keys(skillGroups).length > 0 && (
+          <section className="rd-section">
+            <SectionTitle>Skills</SectionTitle>
+            <div className="rd-skills-list">
+              {Object.entries(skillGroups).map(([category, items]) => (
+                <div key={category} className="rd-skill-row">
+                  <span className="rd-skill-category">
+                    {SKILL_CATEGORY_LABELS[category as SkillCategory]}:
+                  </span>
+                  <span className="rd-skill-items">
+                    {items?.map((skill) => skill.name).join(", ")}
+                  </span>
                 </div>
               ))}
             </div>

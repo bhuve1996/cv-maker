@@ -78,7 +78,7 @@ async function parseWithModel(
     throw new Error(`Gemini (${modelName}) returned invalid JSON.`);
   }
 
-  const resume = normalizeAiResumePayload(parsed);
+  const resume = normalizeAiResumePayload(parsed, rawText);
   const filledFields = countFilledFields(resume);
   const confidence =
     filledFields >= 10 ? "high" : filledFields >= 5 ? "medium" : "low";

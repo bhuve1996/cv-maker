@@ -1,3 +1,4 @@
+import { normalizeYearsOfExperience } from "@/lib/resume/format-years";
 import { v4 as uuidv4 } from "uuid";
 import type { ProfessionalSummary, SummaryAchievement } from "@/types/resume";
 
@@ -14,7 +15,9 @@ export function parseProfessionalSummary(sectionText: string): ProfessionalSumma
 
   return {
     text,
-    yearsOfExperience: yearsMatch?.[1] ? `${yearsMatch[1]}+` : "",
+    yearsOfExperience: yearsMatch?.[1]
+      ? normalizeYearsOfExperience(yearsMatch[1])
+      : "",
     designation: designationMatch?.[0]?.trim() ?? "",
     coreExpertise: extractCoreExpertise(text),
     achievements,
