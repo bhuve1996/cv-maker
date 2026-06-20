@@ -25,7 +25,10 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
 
       try {
         const result = await parseResumeFile(file);
-        mergeParsedResume(result.resume, result.rawText);
+        mergeParsedResume(result.resume, result.rawText, {
+          parser: result.parser,
+          warning: result.warning,
+        });
       } catch (err) {
         const message =
           err instanceof ResumeParseError
@@ -83,9 +86,11 @@ export function ResumeUpload({ compact = false }: ResumeUploadProps) {
             )}
           </div>
           <p className="text-base font-medium">
-            {isParsing ? "Extracting resume content..." : "Drag & drop your resume"}
+            {isParsing ? "Parsing resume with AI..." : "Drag & drop your resume"}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">PDF or DOCX, up to 10MB</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            PDF or DOCX, up to 10MB
+          </p>
           <Button
             type="button"
             className="mt-5"

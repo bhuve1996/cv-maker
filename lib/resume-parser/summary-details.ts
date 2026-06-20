@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
 import type { ProfessionalSummary, SummaryAchievement } from "@/types/resume";
-import { CORE_EXPERTISE_KEYWORDS } from "@/lib/resume/skill-categories";
 
 export function parseProfessionalSummary(sectionText: string): ProfessionalSummary {
   const text = sectionText.trim();
@@ -40,17 +39,21 @@ function parseSummaryAchievements(text: string): SummaryAchievement[] {
 }
 
 function extractCoreExpertise(text: string): string[] {
-  const found = CORE_EXPERTISE_KEYWORDS.filter((keyword) =>
-    text.toLowerCase().includes(keyword.toLowerCase()),
-  );
+  const expertMatch = text.match(/expert in ([^.]+)\./i);
+  if (expertMatch?.[1]) {
+    return expertMatch[1]
+      .split(/,|\band\b/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
 
-  if (found.length > 0) return found;
+  const skilledMatch = text.match(/skilled in ([^.]+)\./i);
+  if (skilledMatch?.[1]) {
+    return skilledMatch[1]
+      .split(/,|\band\b/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
 
-  const expertiseMatch = text.match(/expert in ([^.]+)\./i);
-  if (!expertiseMatch?.[1]) return [];
-
-  return expertiseMatch[1]
-    .split(/,|\band\b/)
-    .map((item) => item.trim())
-    .filter(Boolean);
+  return [];
 }

@@ -6,7 +6,10 @@ import {
   RESUME_DOCUMENT_WIDTH_PX,
 } from "@/lib/export/resume-document-styles";
 import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
-import { SKILL_CATEGORY_LABELS } from "@/lib/resume/skill-categories";
+import {
+  groupSkillsByCategory,
+  SKILL_CATEGORY_LABELS,
+} from "@/lib/resume/skill-categories";
 import type { OptionalFields, Resume, SkillCategory } from "@/types/resume";
 import { formatLocation } from "@/types/resume";
 
@@ -50,14 +53,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
     .filter(Boolean)
     .map(formatContactValue);
 
-  const skillGroups = Object.keys(SKILL_CATEGORY_LABELS).reduce(
-    (groups, category) => {
-      const items = resume.skills.filter((skill) => skill.category === category);
-      if (items.length > 0) groups[category as SkillCategory] = items;
-      return groups;
-    },
-    {} as Partial<Record<SkillCategory, typeof resume.skills>>,
-  );
+  const skillGroups = groupSkillsByCategory(resume.skills);
 
   const filledOptionalFields = (
     Object.entries(resume.optionalFields) as Array<[keyof OptionalFields, string]>
@@ -112,28 +108,30 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
             <SectionTitle>Experience</SectionTitle>
             <div className="rd-stack">
               {resume.experience.map((item) => (
-                <div key={item.id}>
-                  <div className="rd-row">
-                    <div>
-                      <h3>{item.role}</h3>
-                      <p className="rd-muted">
-                        {item.company}
-                        {item.location ? ` · ${item.location}` : ""}
-                      </p>
-                      {item.companyDescription && (
-                        <p className="rd-faint rd-small">{item.companyDescription}</p>
+                <div key={item.id} className="rd-company-item">
+                  <div className="rd-company-header">
+                    <div className="rd-row">
+                      <div>
+                        <h3>{item.role}</h3>
+                        <p className="rd-muted">
+                          <strong>{item.company}</strong>
+                          {item.location ? ` · ${item.location}` : ""}
+                        </p>
+                        {item.companyDescription && (
+                          <p className="rd-faint rd-small">{item.companyDescription}</p>
+                        )}
+                      </div>
+                      {(item.startDate || item.endDate) && (
+                        <p className="rd-subtle">
+                          {[item.startDate, item.endDate].filter(Boolean).join(" — ")}
+                        </p>
                       )}
                     </div>
-                    {(item.startDate || item.endDate) && (
-                      <p className="rd-subtle">
-                        {[item.startDate, item.endDate].filter(Boolean).join(" — ")}
-                      </p>
-                    )}
                   </div>
                   {item.projects.length > 0 && (
-                    <div className="rd-stack-sm" style={{ marginTop: 4 }}>
+                    <div className="rd-projects-list rd-stack-sm">
                       {item.projects.map((project) => (
-                        <div key={project.id} className="rd-body">
+                        <div key={project.id} className="rd-body rd-project-item">
                           <p className="rd-project-label">
                             <strong>{project.client}</strong>
                             {project.industry ? ` (${project.industry})` : ""}
@@ -150,7 +148,7 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
                     </div>
                   )}
                   {item.description && item.projects.length === 0 && (
-                    <div style={{ marginTop: 4 }}>
+                    <div className="rd-projects-list" style={{ marginTop: 4 }}>
                       <HtmlContent html={item.description} />
                     </div>
                   )}
@@ -188,15 +186,15 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
         {Object.keys(skillGroups).length > 0 && (
           <section className="rd-section">
             <SectionTitle>Skills</SectionTitle>
-            <div className="rd-stack-sm">
+            <div className="rd-skills-grid">
               {Object.entries(skillGroups).map(([category, items]) => (
-                <div key={category}>
-                  <p className="rd-category-label">
+                <div key={category} className="rd-skill-row">
+                  <span className="rd-skill-category">
                     {SKILL_CATEGORY_LABELS[category as SkillCategory]}
-                  </p>
-                  <p className="rd-inline-list">
+                  </span>
+                  <span className="rd-skill-items">
                     {items?.map((skill) => skill.name).join(", ")}
-                  </p>
+                  </span>
                 </div>
               ))}
             </div>

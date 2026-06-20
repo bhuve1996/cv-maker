@@ -238,6 +238,8 @@ export interface ParseResult {
   resume: Partial<Resume>;
   rawText: string;
   confidence: "low" | "medium" | "high";
+  parser?: "gemini" | "heuristic";
+  warning?: string;
 }
 
 export function formatLocation(location: StructuredLocation): string {

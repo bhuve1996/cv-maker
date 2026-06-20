@@ -27,8 +27,14 @@ interface ResumeStore {
   rawText: string;
   hasUploaded: boolean;
   isParsing: boolean;
+  parseParser: "gemini" | "heuristic" | null;
+  parseWarning: string;
   setResume: (resume: Resume) => void;
-  mergeParsedResume: (partial: Partial<Resume>, rawText: string) => void;
+  mergeParsedResume: (
+    partial: Partial<Resume>,
+    rawText: string,
+    options?: { parser?: "gemini" | "heuristic"; warning?: string },
+  ) => void;
   setPersonalInfo: (info: Partial<PersonalInfo>) => void;
   setLocation: (location: Partial<StructuredLocation>) => void;
   setProfessionalSummary: (summary: Partial<ProfessionalSummary>) => void;
@@ -81,14 +87,18 @@ export const useResumeStore = create<ResumeStore>()(
       rawText: "",
       hasUploaded: false,
       isParsing: false,
+      parseParser: null,
+      parseWarning: "",
 
       setResume: (resume) => set({ resume: migrateResume(resume), hasUploaded: true }),
 
-      mergeParsedResume: (partial, rawText) =>
+      mergeParsedResume: (partial, rawText, options) =>
         set({
           resume: mergeResume(partial),
           rawText,
           hasUploaded: true,
+          parseParser: options?.parser ?? null,
+          parseWarning: options?.warning ?? "",
         }),
 
       setPersonalInfo: (info) =>
@@ -353,6 +363,8 @@ export const useResumeStore = create<ResumeStore>()(
           rawText: "",
           hasUploaded: false,
           isParsing: false,
+          parseParser: null,
+          parseWarning: "",
         }),
     }),
     {

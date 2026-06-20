@@ -24,6 +24,30 @@ export function validateResumeFile(file: File): void {
   }
 }
 
+async function parseResumeViaApi(text: string): Promise<ParseResult | null> {
+  try {
+    const response = await fetch("/api/parse-resume", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) {
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+      throw new ResumeParseError(payload?.error ?? "Resume parsing failed.");
+    }
+
+    return (await response.json()) as ParseResult;
+  } catch (error) {
+    if (error instanceof ResumeParseError) {
+      throw error;
+    }
+    return null;
+  }
+}
+
 export async function parseResumeFile(file: File): Promise<ParseResult> {
   validateResumeFile(file);
 
@@ -37,7 +61,16 @@ export async function parseResumeFile(file: File): Promise<ParseResult> {
     );
   }
 
-  return parseResumeText(text);
+  const apiResult = await parseResumeViaApi(text);
+  if (apiResult) {
+    return apiResult;
+  }
+
+  return {
+    ...parseResumeText(text),
+    parser: "heuristic",
+    warning: "Could not reach the parsing service. Used basic local parsing instead.",
+  };
 }
 
 export async function extractResumeText(file: File): Promise<string> {

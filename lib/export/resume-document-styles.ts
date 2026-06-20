@@ -140,7 +140,26 @@ export const RESUME_DOCUMENT_STYLES = `
   .resume-document .rd-stack {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0;
+  }
+
+  .resume-document .rd-company-item {
+    padding-bottom: 12px;
+  }
+
+  .resume-document .rd-company-item:not(:last-child) {
+    margin-bottom: 12px;
+    border-bottom: 1px solid #cbd5e1;
+  }
+
+  .resume-document .rd-company-header {
+    margin-bottom: 2px;
+  }
+
+  .resume-document .rd-projects-list {
+    margin-top: 8px;
+    padding-left: 12px;
+    border-left: 2px solid #e2e8f0;
   }
 
   .resume-document .rd-stack-sm {
@@ -179,6 +198,43 @@ export const RESUME_DOCUMENT_STYLES = `
     font-size: 10.5px;
     color: #334155;
     margin-bottom: 2px;
+  }
+
+  .resume-document .rd-project-item {
+    padding-bottom: 8px;
+  }
+
+  .resume-document .rd-project-item:not(:last-child) {
+    margin-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .resume-document .rd-skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 20px;
+  }
+
+  .resume-document .rd-skill-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .resume-document .rd-skill-category {
+    flex: 0 0 38%;
+    font-size: 10px;
+    font-weight: 600;
+    color: #475569;
+    line-height: 1.4;
+  }
+
+  .resume-document .rd-skill-items {
+    flex: 1;
+    font-size: 10.5px;
+    color: #334155;
+    line-height: 1.45;
   }
 
   @media print {

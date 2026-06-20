@@ -5,19 +5,14 @@ import type {
   JobAchievement,
 } from "@/types/resume";
 
-const CLIENT_MARKERS = [
-  "The Kusnacht Practice",
-  "Nexeon",
-  "Melbourne Convention Bureau",
-  "Visit Victoria",
-  "Bunnings",
-  "SBER Bank",
-  "ADIB Bank",
-  "GreatMocks",
-];
+const VERB_CLIENT_NAMES =
+  /^(Developed|Architected|Integrated|Optimized|Translated|Rebuilt|Implemented|Designed|Built|Created|Led|Managed|Maintained|Ensuring)$/i;
 
-const INVALID_CLIENT_NAMES =
-  /^(Developed|Architected|Integrated|Optimized|Translated|Rebuilt|Mock|Sanity|Contentful|Vue|Fetched|Ensuring)$/i;
+const PAREN_PROJECT_RE =
+  /([A-Z][A-Za-z0-9&'/-]+(?:\s+[A-Za-z][^).]{0,80}){0,8})\s*\)\s*-\s*/;
+
+const DASH_PROJECT_RE =
+  /([A-Z][A-Za-z0-9&'./-]+(?:\s+[A-Za-z][^,-.]{0,80}){0,8})\s+-\s+/;
 
 export function parseExperienceDetails(description: string) {
   let remaining = description.trim();
@@ -31,7 +26,7 @@ export function parseExperienceDetails(description: string) {
     remaining = remaining.slice(locationMatch[0].length).trim();
   }
 
-  const projectStart = findProjectStartIndex(remaining);
+  const projectStart = findFirstProjectIndex(remaining);
   let companyDescription = "";
   let projectText = remaining;
 
@@ -55,12 +50,21 @@ export function parseExperienceDetails(description: string) {
   };
 }
 
-function findProjectStartIndex(text: string): number {
-  const indices = CLIENT_MARKERS.map((marker) => text.indexOf(marker)).filter(
-    (index) => index >= 0,
-  );
+function findFirstProjectIndex(text: string): number {
+  const parenMatch = text.match(PAREN_PROJECT_RE);
+  if (parenMatch?.index != null && parenMatch.index >= 0) {
+    return parenMatch.index;
+  }
 
-  return indices.length > 0 ? Math.min(...indices) : -1;
+  const dashMatch = text.match(DASH_PROJECT_RE);
+  if (dashMatch?.index != null && dashMatch.index >= 0) {
+    const header = dashMatch[1]?.trim() ?? "";
+    if (isValidClientHeader(header)) {
+      return dashMatch.index;
+    }
+  }
+
+  return -1;
 }
 
 function parseClientProjects(text: string): ClientProject[] {
@@ -70,10 +74,9 @@ function parseClientProjects(text: string): ClientProject[] {
   type ProjectMatch = { index: number; header: string; bodyStart: number };
   const matches: ProjectMatch[] = [];
 
-  const parenPattern =
-    /([A-Z][A-Za-z0-9&'/-]+(?:\s+[A-Za-z][^).]{0,60}){0,6})\s*\)\s*-\s*/g;
-
-  for (const match of normalized.matchAll(parenPattern)) {
+  for (const match of normalized.matchAll(
+    /([A-Z][A-Za-z0-9&'/-]+(?:\s+[A-Za-z][^).]{0,80}){0,8})\s*\)\s*-\s*/g,
+  )) {
     if (match.index == null) continue;
     const header = match[1]?.trim() ?? "";
     if (!isValidClientHeader(header)) continue;
@@ -85,10 +88,7 @@ function parseClientProjects(text: string): ClientProject[] {
     });
   }
 
-  const bankPattern =
-    /([A-Z][A-Za-z0-9&'./-]+(?:\s+[A-Za-z][^,-.]{0,60}){0,6}(?:,\s*[A-Z]{2,3})?)\s+-\s+/g;
-
-  for (const match of normalized.matchAll(bankPattern)) {
+  for (const match of normalized.matchAll(DASH_PROJECT_RE)) {
     if (match.index == null) continue;
     const header = match[1]?.trim() ?? "";
     if (!isValidClientHeader(header)) continue;
@@ -110,7 +110,7 @@ function parseClientProjects(text: string): ClientProject[] {
   return matches.map((item, index) => {
     const bodyEnd =
       index + 1 < matches.length ? matches[index + 1].index : normalized.length;
-    let body = normalized.slice(item.bodyStart, bodyEnd).trim();
+    const body = normalized.slice(item.bodyStart, bodyEnd).trim();
     const { body: cleanBody, technologies } = stripTrailingTechStack(body);
     const { client, industry } = splitClientHeader(item.header);
 
@@ -127,9 +127,9 @@ function parseClientProjects(text: string): ClientProject[] {
 }
 
 function isValidClientHeader(header: string): boolean {
-  if (!header || header.length > 90) return false;
+  if (!header || header.length > 120) return false;
   if (header.includes(".")) return false;
-  if (INVALID_CLIENT_NAMES.test(header.split(/\s+/)[0] ?? "")) return false;
+  if (VERB_CLIENT_NAMES.test(header.split(/\s+/)[0] ?? "")) return false;
   return true;
 }
 
@@ -144,23 +144,23 @@ function splitClientHeader(header: string): { client: string; industry: string }
     };
   }
 
-  for (const prefix of CLIENT_MARKERS) {
-    if (trimmed.startsWith(prefix)) {
-      return {
-        client: prefix,
-        industry: trimmed.slice(prefix.length).trim(),
-      };
-    }
+  const commaSplit = trimmed.match(/^([^,]{2,60}),\s*(.+)$/);
+  if (commaSplit) {
+    return {
+      client: commaSplit[1]?.trim() ?? trimmed,
+      industry: commaSplit[2]?.trim() ?? "",
+    };
   }
 
   const words = trimmed.split(/\s+/);
-  if (words.length <= 2) {
+  if (words.length <= 3) {
     return { client: trimmed, industry: "" };
   }
 
+  const clientWordCount = Math.min(4, Math.ceil(words.length / 2));
   return {
-    client: words[0] ?? trimmed,
-    industry: words.slice(1).join(" "),
+    client: words.slice(0, clientWordCount).join(" "),
+    industry: words.slice(clientWordCount).join(" "),
   };
 }
 
@@ -186,7 +186,7 @@ function stripTrailingTechStack(text: string): {
 
 function parseInlineCertifications(text: string): JobCertification[] {
   const matches = text.matchAll(
-    /((?:Shopify Plus|AWS|Azure|Google Cloud|PMP|Scrum Master)[^.\n]*Certification[^.\n]*)/gi,
+    /([A-Z][A-Za-z0-9+ .-]{2,80}\bCertification\b[^.\n]{0,120})/gi,
   );
 
   return [...matches].map((match) => ({
@@ -199,15 +199,13 @@ function parseInlineCertifications(text: string): JobCertification[] {
 }
 
 function parseJobAchievements(text: string): JobAchievement[] {
-  const match = text.match(/Increased[^.]+\sby\s(\d+%)[^.]*\./i);
+  const matches = text.matchAll(
+    /([A-Z][^.!?]{10,200}?)\sby\s(\d+%|\$[\d,]+|[\d,.]+x)[^.!?]*[.!?]/gi,
+  );
 
-  if (!match) return [];
-
-  return [
-    {
-      id: uuidv4(),
-      description: match[0].replace(/\sby\s\d+%[^.]*\./, "").trim(),
-      impact: match[1] ?? "",
-    },
-  ];
+  return [...matches].map((match) => ({
+    id: uuidv4(),
+    description: match[1]?.trim() ?? "",
+    impact: match[2]?.trim() ?? "",
+  }));
 }

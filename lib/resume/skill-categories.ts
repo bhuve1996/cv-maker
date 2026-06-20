@@ -18,6 +18,38 @@ export const SKILL_CATEGORY_LABELS: Record<SkillCategory, string> = {
   soft: "Soft Skills",
 };
 
+/** Display order for skills in preview and editor */
+export const SKILL_CATEGORY_ORDER: SkillCategory[] = [
+  "frontend",
+  "languages",
+  "ui_frameworks",
+  "cms",
+  "build_tools",
+  "version_control",
+  "project_management",
+  "api_technologies",
+  "animations",
+  "mapping",
+  "backend",
+  "hosting_deployment",
+  "mobile",
+  "soft",
+  "other",
+];
+
+export function groupSkillsByCategory<T extends { category: SkillCategory }>(
+  skills: T[],
+): Partial<Record<SkillCategory, T[]>> {
+  return SKILL_CATEGORY_ORDER.reduce(
+    (groups, category) => {
+      const items = skills.filter((skill) => skill.category === category);
+      if (items.length > 0) groups[category] = items;
+      return groups;
+    },
+    {} as Partial<Record<SkillCategory, T[]>>,
+  );
+}
+
 const CATEGORY_RULES: Array<{ category: SkillCategory; pattern: RegExp }> = [
   { category: "frontend", pattern: /^(react(\.js| native)?|next\.js|angular|vue\.js|expo|cordova)$/i },
   { category: "languages", pattern: /^(javascript|typescript|ruby|html|css|scss|sass)$/i },

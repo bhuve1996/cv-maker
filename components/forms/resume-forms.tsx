@@ -2,11 +2,17 @@
 
 import { Plus, Trash2 } from "lucide-react";
 import { RichTextEditor } from "@/components/forms/rich-text-editor";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { SKILL_CATEGORY_LABELS } from "@/lib/resume/skill-categories";
+import {
+  categorizeSkill,
+  groupSkillsByCategory,
+  SKILL_CATEGORY_LABELS,
+  SKILL_CATEGORY_ORDER,
+} from "@/lib/resume/skill-categories";
 import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
 import { useResumeStore } from "@/hooks/use-resume-store";
 import type { OptionalFields, SkillCategory } from "@/types/resume";
@@ -402,18 +408,33 @@ export function EducationForm() {
 
 export function SkillsForm() {
   const { resume, addSkill, updateSkill, removeSkill } = useResumeStore();
-  const categories = Object.keys(SKILL_CATEGORY_LABELS) as SkillCategory[];
+  const grouped = groupSkillsByCategory(resume.skills);
+  const filledCategories = SKILL_CATEGORY_ORDER.filter(
+    (category) => (grouped[category]?.length ?? 0) > 0,
+  );
+  const emptyCategories = SKILL_CATEGORY_ORDER.filter(
+    (category) => !grouped[category]?.length,
+  );
 
   return (
-    <div className="space-y-6">
-      {categories.map((category) => {
-        const items = resume.skills.filter((skill) => skill.category === category);
-        if (items.length === 0) return null;
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Skills are grouped by category and shown as a two-column list in the
+        preview. Change category per skill or add to any group below.
+      </p>
+
+      {filledCategories.map((category) => {
+        const items = grouped[category] ?? [];
 
         return (
-          <div key={category} className="space-y-3">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium">{SKILL_CATEGORY_LABELS[category]}</p>
+          <div key={category} className="rounded-lg border bg-card p-4 shadow-sm">
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold">
+                  {SKILL_CATEGORY_LABELS[category]}
+                </p>
+                <Badge variant="secondary">{items.length}</Badge>
+              </div>
               <Button
                 type="button"
                 variant="outline"
@@ -424,29 +445,89 @@ export function SkillsForm() {
                 Add
               </Button>
             </div>
-            {items.map((item) => (
-              <div key={item.id} className="flex gap-2">
-                <Input
-                  value={item.name}
-                  onChange={(e) => updateSkill(item.id, { name: e.target.value })}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeSkill(item.id)}
+
+            <div className="space-y-2">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex flex-col gap-2 rounded-md border bg-muted/30 p-2 sm:flex-row sm:items-center"
                 >
-                  <Trash2 className="size-4" />
-                </Button>
-              </div>
-            ))}
+                  <Input
+                    value={item.name}
+                    onChange={(e) =>
+                      updateSkill(item.id, { name: e.target.value })
+                    }
+                    onBlur={(e) => {
+                      const name = e.target.value.trim();
+                      if (name && item.category === "other") {
+                        updateSkill(item.id, {
+                          name,
+                          category: categorizeSkill(name),
+                        });
+                      }
+                    }}
+                    placeholder="Skill name"
+                    className="bg-background"
+                  />
+                  <div className="flex shrink-0 items-center gap-2">
+                    <select
+                      value={item.category}
+                      onChange={(e) =>
+                        updateSkill(item.id, {
+                          category: e.target.value as SkillCategory,
+                        })
+                      }
+                      className="h-9 rounded-md border border-input bg-background px-2 text-xs"
+                      aria-label="Skill category"
+                    >
+                      {SKILL_CATEGORY_ORDER.map((option) => (
+                        <option key={option} value={option}>
+                          {SKILL_CATEGORY_LABELS[option]}
+                        </option>
+                      ))}
+                    </select>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeSkill(item.id)}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         );
       })}
-      <Button type="button" variant="outline" onClick={() => addSkill("other")}>
-        <Plus className="size-4" />
-        Add skill
-      </Button>
+
+      {emptyCategories.length > 0 && (
+        <div className="rounded-lg border border-dashed p-4">
+          <p className="mb-3 text-sm font-medium">Add skills to a category</p>
+          <div className="flex flex-wrap gap-2">
+            {emptyCategories.map((category) => (
+              <Button
+                key={category}
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => addSkill(category)}
+              >
+                <Plus className="size-4" />
+                {SKILL_CATEGORY_LABELS[category]}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {resume.skills.length === 0 && (
+        <Button type="button" variant="outline" onClick={() => addSkill("frontend")}>
+          <Plus className="size-4" />
+          Add your first skill
+        </Button>
+      )}
     </div>
   );
 }

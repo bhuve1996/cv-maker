@@ -24,7 +24,7 @@ const EXPERIENCE_HEADER_PATTERN =
   /^((?:Senior |Lead |Staff |Principal |Web |Software |Associate |Junior )?(?:[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,5})\s+(?:Engineer|Developer|Manager|Designer|Architect|Consultant|Analyst|Intern|Specialist))\s+([A-Z][A-Za-z0-9 &.()-]+?)\s+(\d{2}\/\d{4}(?:\s*-\s*(?:\d{2}\/\d{4}|Present|Current))?|\d{2}\/\d{4})/;
 
 const EDUCATION_ENTRY_PATTERN =
-  /^(.+?)\s+((?:[A-Z][A-Za-z0-9 .'-]*(?:University|School|College|Institute|Academy|Vidyalaya)[A-Za-z0-9 .'-]*)|(?:St\.?\s+[A-Za-z0-9 .'-]+(?:School|College)?)|(?:Kendriya\s+Vidyalaya[^.]*?))\s+(\d{2}\/\d{4})\s*-\s*(\d{2}\/\d{4})/;
+  /^(.+?)\s+((?:[A-Z][A-Za-z0-9 .'-]*(?:University|School|College|Institute|Academy|Vidyalaya)[A-Za-z0-9 .'-]*)|(?:St\.?\s+[A-Za-z0-9 .'-]+(?:School|College)?))\s+(\d{2}\/\d{4}|\d{4})\s*-\s*(\d{2}\/\d{4}|\d{4})/;
 
 export function parseResumeText(rawText: string): ParseResult {
   const text = preprocessResumeText(rawText);
@@ -41,14 +41,14 @@ export function parseResumeText(rawText: string): ParseResult {
     keyAchievements: parseKeyAchievements(sections.keyAchievements),
     interests: parseInterests(sections.interests),
     projects: parseProjects(sections.projects),
-    certifications: parseCertifications(sections.certifications, text),
+    certifications: parseCertifications(sections.certifications),
   };
 
   const filledFields = countFilledFields(resume);
   const confidence =
     filledFields >= 12 ? "high" : filledFields >= 6 ? "medium" : "low";
 
-  return { resume, rawText, confidence };
+  return { resume, rawText, confidence, parser: "heuristic" };
 }
 
 function extractFallbackSummary(text: string): string {
@@ -222,35 +222,21 @@ function parseProjects(sectionText: string) {
     });
 }
 
-function parseCertifications(sectionText: string, fullText: string) {
-  const entries = sectionText
-    ? sectionText
-        .split("\n")
-        .map((line) => line.trim())
-        .filter(Boolean)
-        .map((line) => {
-          const [name, issuer] = line.split(/[-–—|]/).map((part) => part.trim());
-          return {
-            id: uuidv4(),
-            name: name ?? line,
-            issuer: issuer ?? "",
-          };
-        })
-    : [];
+function parseCertifications(sectionText: string) {
+  if (!sectionText.trim()) return [];
 
-  const inlineCertMatch = fullText.match(
-    /((?:Shopify Plus|AWS|Azure|Google Cloud|PMP|Scrum Master)[^.\n]*Certification[^.\n]*)/i,
-  );
-
-  if (inlineCertMatch) {
-    entries.push({
-      id: uuidv4(),
-      name: inlineCertMatch[1].trim(),
-      issuer: "",
+  return sectionText
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [name, issuer] = line.split(/[-–—|]/).map((part) => part.trim());
+      return {
+        id: uuidv4(),
+        name: name ?? line,
+        issuer: issuer ?? "",
+      };
     });
-  }
-
-  return entries;
 }
 
 function extractDates(text: string) {

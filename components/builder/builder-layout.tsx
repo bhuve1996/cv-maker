@@ -12,7 +12,8 @@ import { useResumeStore } from "@/hooks/use-resume-store";
 
 export function BuilderLayout() {
   const hydrated = useResumeHydration();
-  const { hasUploaded, rawText, reset, resume } = useResumeStore();
+  const { hasUploaded, rawText, reset, resume, parseParser, parseWarning } =
+    useResumeStore();
 
   if (!hydrated) {
     return (
@@ -37,7 +38,16 @@ export function BuilderLayout() {
         </div>
         <div className="flex flex-wrap items-center gap-2 print:hidden">
           {hasUploaded && rawText && (
-            <Badge variant="secondary">Parsed from upload — review and edit below</Badge>
+            <Badge variant="secondary">
+              {parseParser === "gemini"
+                ? "Parsed with Gemini — review and edit below"
+                : "Parsed from upload — review and edit below"}
+            </Badge>
+          )}
+          {parseWarning && (
+            <Badge variant="outline" className="max-w-md whitespace-normal">
+              {parseWarning}
+            </Badge>
           )}
           {hasUploaded && (
             <Button type="button" variant="outline" size="sm" onClick={reset}>

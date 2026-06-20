@@ -5,7 +5,7 @@ export function parseSpokenLanguages(sectionText: string): SpokenLanguage[] {
   if (!sectionText.trim()) return [];
 
   const pattern =
-    /([A-Za-z]+)\s+(Proficient|Native|Fluent|Basic|Intermediate|Advanced)/gi;
+    /([A-Za-z]+)\s+(Proficient|Native|Fluent|Basic|Intermediate|Advanced|Conversational|Professional)/gi;
   const languages: SpokenLanguage[] = [];
 
   for (const match of sectionText.matchAll(pattern)) {
@@ -22,61 +22,51 @@ export function parseSpokenLanguages(sectionText: string): SpokenLanguage[] {
 export function parseKeyAchievements(sectionText: string): KeyAchievement[] {
   if (!sectionText.trim()) return [];
 
-  const normalized = sectionText.replace(/\s+/g, " ").trim();
-  const splitMatch = normalized.match(
-    /^(Academic and Professional Excellence)\s+(Achieved.+)$/i,
-  );
-
-  if (splitMatch) {
-    return [
-      {
-        id: uuidv4(),
-        title: splitMatch[1]?.trim() ?? "",
-        description: splitMatch[2]?.trim() ?? "",
-      },
-    ];
-  }
-
-  const lines = sectionText
-    .split("\n")
+  const blocks = sectionText
+    .split(/\n+/)
     .map((line) => line.trim())
     .filter(Boolean);
 
-  if (lines.length === 0) return [];
+  if (blocks.length === 0) return [];
 
-  return [
-    {
+  return blocks.map((block) => {
+    const sentenceSplit = block.match(/^(.{3,100}?)[.:]\s+(.+)$/);
+    if (sentenceSplit) {
+      return {
+        id: uuidv4(),
+        title: sentenceSplit[1]?.trim() ?? "",
+        description: sentenceSplit[2]?.trim() ?? "",
+      };
+    }
+
+    return {
       id: uuidv4(),
-      title: lines[0] ?? "",
-      description: lines.slice(1).join(" "),
-    },
-  ];
+      title: block,
+      description: "",
+    };
+  });
 }
 
 export function parseInterests(sectionText: string): string[] {
   if (!sectionText.trim()) return [];
 
-  const known = [
-    "cricket",
-    "badminton",
-    "swimming",
-    "reading",
-    "travel",
-    "music",
-    "photography",
-    "coding",
-  ];
-  const lower = sectionText.toLowerCase();
-  const found = known.filter((item) => lower.includes(item));
+  const cleaned = sectionText
+    .replace(/^(hobbies and interests|interests)\s*[:.-]?\s*/i, "")
+    .trim();
 
-  if (found.length > 0) {
-    return found.map((item) => item.charAt(0).toUpperCase() + item.slice(1));
+  const splitItems = cleaned
+    .split(/,|\band\b|;/)
+    .map((item) =>
+      item
+        .replace(/^(engaged in|enjoys|like|including|such as)\s+/i, "")
+        .replace(/\.$/, "")
+        .trim(),
+    )
+    .filter((item) => item.length > 2 && item.length < 50);
+
+  if (splitItems.length > 0) {
+    return splitItems;
   }
 
-  return sectionText
-    .split(/,|\band\b/)
-    .map((item) =>
-      item.replace(/^(engaged in|enjoys|like|sports like)\s+/i, "").trim(),
-    )
-    .filter((item) => item.length > 2 && item.length < 40);
+  return cleaned ? [cleaned.slice(0, 120)] : [];
 }

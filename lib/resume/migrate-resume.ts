@@ -47,9 +47,23 @@ function migrateExperience(entry: Partial<Experience>): Experience {
     endDate: entry.endDate ?? "",
     companyDescription: entry.companyDescription ?? "",
     description: entry.description ?? "",
-    projects: entry.projects ?? [],
-    certifications: entry.certifications ?? [],
-    achievements: entry.achievements ?? [],
+    projects: (entry.projects ?? []).map((project) => ({
+      id: project.id ?? uuidv4(),
+      client: project.client ?? "",
+      industry: project.industry ?? "",
+      responsibilities: project.responsibilities ?? [],
+      technologies: project.technologies ?? [],
+    })),
+    certifications: (entry.certifications ?? []).map((cert) => ({
+      id: cert.id ?? uuidv4(),
+      name: cert.name ?? "",
+      status: cert.status ?? "",
+    })),
+    achievements: (entry.achievements ?? []).map((item) => ({
+      id: item.id ?? uuidv4(),
+      description: item.description ?? "",
+      impact: item.impact ?? "",
+    })),
     technologies: entry.technologies ?? [],
   };
 }
