@@ -9,10 +9,10 @@ const VERB_CLIENT_NAMES =
   /^(Developed|Architected|Integrated|Optimized|Translated|Rebuilt|Implemented|Designed|Built|Created|Led|Managed|Maintained|Ensuring)$/i;
 
 const PAREN_PROJECT_RE =
-  /([A-Z][A-Za-z0-9&'/-]+(?:\s+[A-Za-z][^).]{0,80}){0,8})\s*\)\s*-\s*/;
+  /([A-Z][A-Za-z0-9&'/-]+(?:\s+[A-Za-z][^).]{0,80}){0,8})\s*\)\s*-\s*/g;
 
 const DASH_PROJECT_RE =
-  /([A-Z][A-Za-z0-9&'./-]+(?:\s+[A-Za-z][^,-.]{0,80}){0,8})\s+-\s+/;
+  /([A-Z][A-Za-z0-9&'./-]+(?:\s+[A-Za-z][^,-.]{0,80}){0,8})\s+-\s+/g;
 
 export function parseExperienceDetails(description: string) {
   let remaining = description.trim();
@@ -51,12 +51,16 @@ export function parseExperienceDetails(description: string) {
 }
 
 function findFirstProjectIndex(text: string): number {
-  const parenMatch = text.match(PAREN_PROJECT_RE);
+  const parenMatch = text.match(
+    /([A-Z][A-Za-z0-9&'/-]+(?:\s+[A-Za-z][^).]{0,80}){0,8})\s*\)\s*-\s*/,
+  );
   if (parenMatch?.index != null && parenMatch.index >= 0) {
     return parenMatch.index;
   }
 
-  const dashMatch = text.match(DASH_PROJECT_RE);
+  const dashMatch = text.match(
+    /([A-Z][A-Za-z0-9&'./-]+(?:\s+[A-Za-z][^,-.]{0,80}){0,8})\s+-\s+/,
+  );
   if (dashMatch?.index != null && dashMatch.index >= 0) {
     const header = dashMatch[1]?.trim() ?? "";
     if (isValidClientHeader(header)) {
