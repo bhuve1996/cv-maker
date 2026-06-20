@@ -95,6 +95,18 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
               </p>
             )}
             <HtmlContent html={professionalSummary.text} />
+            {professionalSummary.achievements.length > 0 && (
+              <ul className="rd-body" style={{ marginTop: 4 }}>
+                {professionalSummary.achievements.map((item, index) => (
+                  <li key={item.id ?? `summary-achievement-${index}`}>
+                    {item.description}
+                    {item.impact ? (
+                      <span className="rd-muted"> — {item.impact}</span>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
             {professionalSummary.coreExpertise.length > 0 && (
               <p className="rd-inline-list" style={{ marginTop: 4 }}>
                 {professionalSummary.coreExpertise.join(", ")}
@@ -146,9 +158,38 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
                               ))}
                             </ul>
                           )}
+                          {project.technologies.length > 0 && (
+                            <p className="rd-faint rd-small" style={{ marginTop: 2 }}>
+                              {project.technologies.join(", ")}
+                            </p>
+                          )}
                         </div>
                       ))}
                     </div>
+                  )}
+                  {item.certifications.length > 0 && (
+                    <ul className="rd-body rd-small" style={{ marginTop: 4 }}>
+                      {item.certifications.map((cert, index) => (
+                        <li key={cert.id ?? `${item.id}-cert-${index}`}>
+                          <strong>{cert.name}</strong>
+                          {cert.status ? (
+                            <span className="rd-muted"> — {cert.status}</span>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {item.achievements.length > 0 && (
+                    <ul className="rd-body rd-small" style={{ marginTop: 4 }}>
+                      {item.achievements.map((achievement, index) => (
+                        <li key={achievement.id ?? `${item.id}-ach-${index}`}>
+                          {achievement.description}
+                          {achievement.impact ? (
+                            <span className="rd-muted"> — {achievement.impact}</span>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
                   )}
                   {item.description && item.projects.length === 0 && (
                     <div className="rd-projects-list" style={{ marginTop: 4 }}>
@@ -246,8 +287,8 @@ export function ResumeDocument({ resume, id = "resume-preview" }: ResumeDocument
           <section className="rd-section">
             <SectionTitle>Certifications</SectionTitle>
             <ul className="rd-body">
-              {resume.certifications.map((item) => (
-                <li key={item.id}>
+              {resume.certifications.map((item, index) => (
+                <li key={item.id ?? `cert-${index}`}>
                   <strong>{item.name}</strong>
                   {item.issuer && <span className="rd-muted"> — {item.issuer}</span>}
                 </li>

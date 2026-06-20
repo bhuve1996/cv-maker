@@ -9,7 +9,13 @@ Rules:
 - Preserve factual wording from the resume; lightly normalize formatting only.
 - Split employment into separate jobs by employer/role changes.
 - Nest client or project work under the correct employer in experience[].projects when the resume groups them that way.
-- For skills, assign each skill to exactly one category from the allowed list.
+- For each project, use 1-2 complete-sentence bullets in responsibilities[] — do NOT split a single sentence into multiple lowercase fragments.
+- Put measurable summary wins in professionalSummary.achievements[] and job-level wins in experience[].achievements[].
+- Copy certifications mentioned anywhere (including inside jobs) to both experience[].certifications and top-level certifications[] when applicable.
+- interests[] must be short individual items (e.g. "Cricket", "Badminton", "Swimming"), not a full prose sentence.
+- skills[] must be concrete tools/frameworks/languages only — exclude generic words like Modular, SEO, E-commerce unless they appear as explicit standalone skills in a skills section.
+- Do not duplicate the same skill twice. Use correct categories (React/Next.js = frontend, not ui_frameworks).
+- Include the full summary paragraph in professionalSummary.text, including career objective if present.
 - Dates: keep original format when possible (e.g. MM/YYYY, Month YYYY, or Present).
 - If a field cannot be determined, leave it empty rather than guessing.
 
@@ -28,7 +34,7 @@ export const RESUME_PARSE_JSON_SCHEMA = {
     location: { city: "string", country: "string", postalCode: "string" },
   },
   professionalSummary: {
-    text: "string",
+    text: "string — full summary paragraph including objective if present",
     yearsOfExperience: "string",
     designation: "string",
     coreExpertise: ["string"],
@@ -48,7 +54,7 @@ export const RESUME_PARSE_JSON_SCHEMA = {
         {
           client: "string",
           industry: "string",
-          responsibilities: ["string"],
+          responsibilities: ["string — complete sentences, 1-2 per project"],
           technologies: ["string"],
         },
       ],
@@ -70,7 +76,7 @@ export const RESUME_PARSE_JSON_SCHEMA = {
   skills: [{ name: "string", category: "SkillCategory" }],
   spokenLanguages: [{ language: "string", proficiency: "string" }],
   keyAchievements: [{ title: "string", description: "string" }],
-  interests: ["string"],
+  interests: ["string — individual hobbies, not prose"],
   projects: [{ name: "string", description: "string", technologies: "string" }],
   certifications: [{ name: "string", issuer: "string" }],
 };

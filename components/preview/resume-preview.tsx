@@ -1,67 +1,47 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { Download, Loader2, Printer } from "lucide-react";
+import { Download, Eye, Loader2, Printer } from "lucide-react";
+import { ParseSourceBadge } from "@/components/builder/parse-source-badge";
 import { ResumeDocument } from "@/components/preview/resume-document";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useResumeExport } from "@/hooks/use-resume-export";
 import { useResumeStore } from "@/hooks/use-resume-store";
-import { downloadResumePdf, printResume } from "@/lib/pdf-export";
+import { printResume } from "@/lib/pdf-export";
 
 export function ResumePreview() {
-  const previewRef = useRef<HTMLDivElement>(null);
-  const [isExporting, setIsExporting] = useState(false);
-  const [exportError, setExportError] = useState<string | null>(null);
+  const { downloadPdf, isExporting, exportError } = useResumeExport();
   const resume = useResumeStore((state) => state.resume);
-  const fullName = resume.personalInfo.fullName.trim() || "resume";
-
-  const handleDownload = async () => {
-    const element = previewRef.current?.querySelector("#resume-preview") as
-      | HTMLElement
-      | null;
-
-    if (!element) {
-      setExportError("Resume preview not ready. Try again in a moment.");
-      return;
-    }
-
-    setExportError(null);
-    setIsExporting(true);
-
-    try {
-      await downloadResumePdf(
-        element,
-        `${fullName.replace(/\s+/g, "-").toLowerCase()}.pdf`,
-      );
-    } catch {
-      setExportError("PDF export failed. Try Print and save as PDF instead.");
-    } finally {
-      setIsExporting(false);
-    }
-  };
+  const parseParser = useResumeStore((state) => state.parseParser);
 
   return (
-    <Card className="flex h-full flex-col overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b pb-4">
-        <CardTitle className="text-base">Live Preview</CardTitle>
+    <Card className="flex h-full flex-col overflow-hidden border-border/60 bg-card/80 shadow-sm ring-1 ring-primary/5">
+      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0 border-b pb-4">
+        <CardTitle className="flex flex-wrap items-center gap-2 text-base">
+          <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Eye className="size-4" />
+          </span>
+          Live Preview
+          {parseParser && <ParseSourceBadge parser={parseParser} size="sm" />}
+        </CardTitle>
         <div className="flex gap-2">
           <Button type="button" variant="outline" size="sm" onClick={printResume}>
             <Printer className="size-4" />
-            Print
+            <span className="hidden sm:inline">Print</span>
           </Button>
           <Button
             type="button"
             size="sm"
             disabled={isExporting}
-            onClick={() => void handleDownload()}
+            onClick={() => void downloadPdf()}
           >
             {isExporting ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <Download className="size-4" />
             )}
-            Download PDF
+            <span className="hidden sm:inline">Download PDF</span>
           </Button>
         </div>
       </CardHeader>
@@ -71,12 +51,8 @@ export function ResumePreview() {
             {exportError}
           </p>
         )}
-        <ScrollArea className="h-[calc(100vh-12rem)]">
-          <div
-            ref={previewRef}
-            className="flex justify-center bg-slate-100 p-4"
-            id="resume-preview-container"
-          >
+        <ScrollArea className="h-[min(60vh,800px)] lg:h-[calc(100vh-12rem)]">
+          <div className="flex justify-center bg-gradient-to-b from-muted/80 to-muted/40 p-4">
             <ResumeDocument resume={resume} id="resume-preview" />
           </div>
         </ScrollArea>

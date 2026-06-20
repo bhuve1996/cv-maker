@@ -1,4 +1,11 @@
 import type { PersonalInfo, Resume } from "@/types/resume";
+import {
+  filterAndDedupeSkills,
+  mergeSummaryText,
+  normalizeInterestItems,
+  postProcessExperience,
+  promoteJobCertifications,
+} from "@/lib/resume/post-process-parsed-resume";
 
 function toTitleCaseWord(word: string): string {
   if (!word) return "";
@@ -61,7 +68,12 @@ export function cleanupParsedResume(resume: Resume): Resume {
     resume.personalInfo.specialization,
   );
 
-  return {
+  const withSummary = mergeSummaryText({
+    ...resume.professionalSummary,
+    designation: resume.professionalSummary.designation.trim() || currentTitle,
+  });
+
+  const processed: Resume = {
     ...resume,
     personalInfo: {
       ...resume.personalInfo,
@@ -74,12 +86,11 @@ export function cleanupParsedResume(resume: Resume): Resume {
       website: resume.personalInfo.website.trim(),
       github: resume.personalInfo.github.trim(),
     },
-    professionalSummary: {
-      ...resume.professionalSummary,
-      text: resume.professionalSummary.text.trim(),
-      designation:
-        resume.professionalSummary.designation.trim() || currentTitle,
-    },
-    interests: dedupeStrings(resume.interests),
+    professionalSummary: withSummary,
+    experience: postProcessExperience(resume.experience),
+    skills: filterAndDedupeSkills(resume.skills),
+    interests: dedupeStrings(normalizeInterestItems(resume.interests)),
   };
+
+  return promoteJobCertifications(processed);
 }

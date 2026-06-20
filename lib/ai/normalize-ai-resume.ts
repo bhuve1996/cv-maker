@@ -16,11 +16,17 @@ function asStringArray(value: unknown): string[] {
 }
 
 function normalizeSkillCategory(value: unknown, skillName: string): SkillCategory {
+  const fromRules = categorizeSkill(skillName);
+  if (fromRules !== "other") {
+    return fromRules;
+  }
+
   const category = asString(value);
   if (VALID_SKILL_CATEGORIES.has(category)) {
     return category as SkillCategory;
   }
-  return categorizeSkill(skillName);
+
+  return fromRules;
 }
 
 export function normalizeAiResumePayload(raw: unknown): Partial<Resume> {

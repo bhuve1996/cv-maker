@@ -1,0 +1,407 @@
+{
+  "personalInfo": {
+    "fullName": "Bhuvesh Singla",
+    "currentTitle": "Senior Web Frontend Engineer",
+    "specialization": [
+      "React & Next.js",
+      "UI Performance Optimization"
+    ],
+    "email": "bhuve1996@gmail.com",
+    "phone": "91 9530529550",
+    "linkedIn": "https://www.linkedin.com/in/bhuvesh-singla-6b76a6120",
+    "website": "",
+    "github": "",
+    "location": {
+      "city": "Gurugram",
+      "country": "India",
+      "postalCode": "122001"
+    }
+  },
+  "professionalSummary": {
+    "text": "Senior Web Frontend Engineer with over 7 years of experience in frontend development and UI engineering, expert in React.js and Next.js. Key achievements include increasing project delivery speed by 20% through API integration and enhancing user engagement by 20% with React UI dashboards. Seeking a Senior Frontend Developer position at [company name], where my frontend development and UI engineering skills will support your mission of delivering scalable, and accessible web interfaces.",
+    "yearsOfExperience": "7+",
+    "designation": "Senior Web Frontend Engineer",
+    "coreExpertise": [
+      "React"
+    ],
+    "achievements": [
+      {
+        "id": "28855e91-5bb8-42b5-9a71-50e44f143605",
+        "description": "Key achievements include increasing project delivery speed",
+        "impact": "20%"
+      }
+    ],
+    "careerObjective": "Seeking a Senior Frontend Developer position at [company name], where my frontend development and UI engineering skills will support your mission of delivering scalable, and accessible web interfaces."
+  },
+  "experience": [
+    {
+      "id": "6d42a345-134b-4f1e-8015-b7bbbddfdb57",
+      "role": "Senior Web Frontend Engineer",
+      "company": "AKQA",
+      "startDate": "09/2022",
+      "endDate": "Present",
+      "location": "Gurugram, India",
+      "companyDescription": "",
+      "description": "",
+      "projects": [
+        {
+          "id": "527aa733-2b26-424a-9085-565f1c186fbd",
+          "client": "Digital agency delivering exceptional",
+          "industry": "experiences The Kusnacht Practice Luxury Swiss Health & Rehabilitation Clinic",
+          "responsibilities": [
+            "Translated complex Figma designs into pixel-perfect ES6 components (multilingual), used modern build tools and automated testing for clean, flawlessly rendered Sanity- fetched UIs, integrated third-party calendar."
+          ],
+          "technologies": []
+        },
+        {
+          "id": "609fecdb-4bc0-47bd-b888-58d95e2a3910",
+          "client": "Nexeon Battery Technology",
+          "industry": "& Solutions Company",
+          "responsibilities": [
+            "Developed modular UI components, optimized SEO and load performance, and streamlined content workflows through Contentful and Storybook integration and Jest Tested Code."
+          ],
+          "technologies": []
+        },
+        {
+          "id": "b5c7df04-9808-4ee7-8d9c-1add297c6104",
+          "client": "Melbourne Convention Bureau Tourism",
+          "industry": "& Business Events Platform",
+          "responsibilities": [
+            "Architected and customized Sitecore templates with Vue.js and SCSS, ensuring scalable and reusable frontend modules for events and campaigns. Visit Victoria : Integrated Mapbox for maps, customized React for discovery, improved accessibility and through strong teamwork and problem-solving, consistently delivered clean code, and converted components of Vue to React components."
+          ],
+          "technologies": []
+        },
+        {
+          "id": "65a9594d-54e1-4500-b5f5-db21806f220d",
+          "client": "Bunnings Leading Australian",
+          "industry": "Home Improvement Retailer",
+          "responsibilities": [
+            "Rebuilt catalog and checkout flows with Next.js and GraphQL, optimized performance with Vercel deployments, and ensured responsive customer journeys. Successfully completed and actively participated in the structured Shopify Plus Certification."
+          ],
+          "technologies": []
+        }
+      ],
+      "certifications": [
+        {
+          "id": "29d8cda1-568a-4227-a049-bf3c815e3749",
+          "name": "Successfully completed and actively participated in the structured Shopify Plus Certification",
+          "status": "Successfully completed"
+        }
+      ],
+      "achievements": [],
+      "technologies": []
+    },
+    {
+      "id": "8fd37409-77f3-4712-afb6-43ba7a19d970",
+      "role": "Senior Web Frontend Engineer",
+      "company": "JOSH Software",
+      "startDate": "10/2021",
+      "endDate": "09/2022",
+      "location": "Bengaluru, India",
+      "companyDescription": "A software development company specializing in custom applications ADIB Bank Abu Dhabi Islamic Bank, UAE - Delivered secure and responsive banking modules with Angular and React, implemented dynamic forms, and integrated APIs for digital banking services. Angular.js, React.js, SCSS, Postman, GitHub, Jira)",
+      "description": "",
+      "projects": [
+        {
+          "id": "79f248b0-b752-4d7b-8cc3-f5d77da5ed8c",
+          "client": "SBER Bank Largest",
+          "industry": "Russian Financial Institution",
+          "responsibilities": [
+            "Implemented React UI dashboards enriched with GSAP animations, improving user engagement and cross-browser"
+          ],
+          "technologies": [
+            "compatibility. React.js",
+            "GSAP",
+            "SCSS",
+            "Bitbucket"
+          ]
+        }
+      ],
+      "certifications": [],
+      "achievements": [],
+      "technologies": []
+    },
+    {
+      "id": "bdc35de9-3eb9-4e5b-8757-ae1f5c0c0bba",
+      "role": "Web Frontend Engineer",
+      "company": "KDMS",
+      "startDate": "05/2018",
+      "endDate": "10/2021",
+      "location": "Chandigarh, India",
+      "companyDescription": "",
+      "description": "",
+      "projects": [
+        {
+          "id": "d165ee80-7ff5-48be-b825-724d2913fc56",
+          "client": "Educational technology service provider",
+          "industry": "GreatMocks EdTech Platform, Mock Test Solutions",
+          "responsibilities": [],
+          "technologies": []
+        },
+        {
+          "id": "d4616b92-8736-45b1-a81f-fd52eb8cdfe1",
+          "client": "Mock Test Solutions)",
+          "industry": "",
+          "responsibilities": [
+            "Designed responsive learning modules, integrated APIs, and implemented dynamic forms to improve student experience. . React.js, REST APIs, React Bootstrap, JavaScript, CSS Increased international user engagement by 15% by building multilingual e- commerce UI with React and Material UI."
+          ],
+          "technologies": []
+        }
+      ],
+      "certifications": [],
+      "achievements": [
+        {
+          "id": "275ca681-87f7-46ef-8b03-f21c21fdb945",
+          "description": "js, REST APIs, React Bootstrap, JavaScript, CSS Increased international user engagement",
+          "impact": "15%"
+        }
+      ],
+      "technologies": []
+    }
+  ],
+  "education": [
+    {
+      "id": "584614e1-af1e-490c-a414-082c31b963f3",
+      "degree": "Bachelor of Engineering (B.E.)",
+      "institution": "Chitkara University",
+      "board": "",
+      "location": "Rajpura, Punjab",
+      "startDate": "06/2013",
+      "endDate": "06/2017"
+    },
+    {
+      "id": "67b32089-d670-4fa1-a2c5-a89e4967eb47",
+      "degree": "Higher Secondary (Class 12, CBSE Board)",
+      "institution": "St. Kabir Convent Sr. Sec. School",
+      "board": "CBSE",
+      "location": "Bathinda",
+      "startDate": "03/2012",
+      "endDate": "03/2013"
+    },
+    {
+      "id": "596b99cc-942b-4aa9-b32c-360ad9d49281",
+      "degree": "Secondary (Class 10, CBSE Board)",
+      "institution": "Kendriya Vidyalaya No. 4",
+      "board": "CBSE",
+      "location": "Bathinda",
+      "startDate": "03/2010",
+      "endDate": "03/2011"
+    }
+  ],
+  "skills": [
+    {
+      "id": "91e34253-0300-4f00-90f2-462e40d3b19e",
+      "name": "React",
+      "category": "frontend"
+    },
+    {
+      "id": "c56f5cfc-aaf6-4751-a4e5-7d93b8f07ca3",
+      "name": "Next.js",
+      "category": "frontend"
+    },
+    {
+      "id": "dd9daaee-9a96-4ac1-a6a7-1b2c76749c4a",
+      "name": "Agile",
+      "category": "soft"
+    },
+    {
+      "id": "5af5e1d0-5def-4d13-8102-eb741fa72e68",
+      "name": "JavaScript",
+      "category": "languages"
+    },
+    {
+      "id": "3314a5e3-8b89-445e-8f1f-7c582b5293f0",
+      "name": "TypeScript",
+      "category": "languages"
+    },
+    {
+      "id": "5100b6ab-c89f-483e-b84c-10995da5d62a",
+      "name": "Angular",
+      "category": "frontend"
+    },
+    {
+      "id": "e835ae69-a6d7-4136-bc36-7570d9d6d498",
+      "name": "Vue.js",
+      "category": "frontend"
+    },
+    {
+      "id": "0e2f9880-f839-47bd-a19d-d23e7362887c",
+      "name": "React Native",
+      "category": "frontend"
+    },
+    {
+      "id": "66eb9cae-4bad-4af0-b735-f88874fb9277",
+      "name": "Ruby",
+      "category": "languages"
+    },
+    {
+      "id": "37fa64f4-a813-4073-bb0d-6e582cb82122",
+      "name": "SCSS",
+      "category": "languages"
+    },
+    {
+      "id": "8cc046c5-fe8a-4828-8ad5-1490bb2db7ba",
+      "name": "SASS",
+      "category": "languages"
+    },
+    {
+      "id": "5c722c1d-7fdc-43e4-ba42-54ec0d611fec",
+      "name": "HTML",
+      "category": "languages"
+    },
+    {
+      "id": "51842e11-771a-4464-af78-eadc281e5246",
+      "name": "Tailwind",
+      "category": "ui_frameworks"
+    },
+    {
+      "id": "39fb5702-3983-4532-959f-993ef6cc40ad",
+      "name": "Material UI",
+      "category": "ui_frameworks"
+    },
+    {
+      "id": "835b9ea3-d432-49ca-b51c-04db6af2900a",
+      "name": "Bootstrap",
+      "category": "ui_frameworks"
+    },
+    {
+      "id": "e3d57342-3eef-4d96-98ec-fa450f5979f3",
+      "name": "Contentful",
+      "category": "cms"
+    },
+    {
+      "id": "7390fb6c-b339-4a4a-b689-ada4e064bd90",
+      "name": "Sitecore",
+      "category": "cms"
+    },
+    {
+      "id": "288e6174-7e1f-48f7-a478-59549265e6bb",
+      "name": "Vercel",
+      "category": "hosting_deployment"
+    },
+    {
+      "id": "ee92b3f1-501b-4ff7-b26b-9909a689ca9d",
+      "name": "Webpack",
+      "category": "build_tools"
+    },
+    {
+      "id": "5aef5a54-85fd-4ff8-bcc1-17da6d785685",
+      "name": "Babel",
+      "category": "build_tools"
+    },
+    {
+      "id": "c50cbb40-7659-49f4-a54a-5485a747f4b8",
+      "name": "Grunt",
+      "category": "build_tools"
+    },
+    {
+      "id": "913533cd-e8ba-4144-9c02-0c5052b32a5d",
+      "name": "GitHub",
+      "category": "version_control"
+    },
+    {
+      "id": "8d3f334c-8f67-4943-9aee-f5960a0daf5c",
+      "name": "Bitbucket",
+      "category": "version_control"
+    },
+    {
+      "id": "8b5bbaa6-3545-43bc-9772-17a0b35d427e",
+      "name": "JIRA",
+      "category": "project_management"
+    },
+    {
+      "id": "7466b42e-d618-4489-a91e-3013a8327ad5",
+      "name": "Confluence",
+      "category": "project_management"
+    },
+    {
+      "id": "f8a6fd6b-44e5-4e09-af8f-5937be228b2e",
+      "name": "GraphQL",
+      "category": "api_technologies"
+    },
+    {
+      "id": "3c158193-5789-448c-82ed-d8541e76fa54",
+      "name": "REST",
+      "category": "api_technologies"
+    },
+    {
+      "id": "1b503672-ba44-479d-850b-20d70b001b72",
+      "name": "Postman",
+      "category": "api_technologies"
+    },
+    {
+      "id": "1a1efea9-6c67-4fa6-bb09-b8e0e499dcdd",
+      "name": "GSAP",
+      "category": "animations"
+    },
+    {
+      "id": "b73d55bd-8d4e-4343-bb00-fee929f96bf5",
+      "name": "Mapbox",
+      "category": "mapping"
+    },
+    {
+      "id": "39334173-9541-4276-94b7-506ee6c50d93",
+      "name": "Cordova",
+      "category": "frontend"
+    },
+    {
+      "id": "bdaea72c-04da-4d24-97f2-f77bf3eac7d1",
+      "name": "CSS",
+      "category": "languages"
+    },
+    {
+      "id": "faf63fc4-17a7-44bf-802a-5b55cb667fdf",
+      "name": "Node JS",
+      "category": "backend"
+    },
+    {
+      "id": "32059b87-58b3-4dd0-9b6d-490027fc51c5",
+      "name": "Express",
+      "category": "backend"
+    },
+    {
+      "id": "79068dec-3826-42d0-9246-46f372b8fca6",
+      "name": "Fastify",
+      "category": "backend"
+    },
+    {
+      "id": "e43b6873-7f29-4e42-97b7-63aa4b95ec5c",
+      "name": "Netlify",
+      "category": "hosting_deployment"
+    },
+    {
+      "id": "c49a5dea-9ec4-4ad3-b4a3-4757e462924d",
+      "name": "Vercel",
+      "category": "hosting_deployment"
+    }
+  ],
+  "spokenLanguages": [
+    {
+      "id": "9afe0f8b-3e08-4599-9b7b-5cc15a37a006",
+      "language": "English",
+      "proficiency": "Proficient"
+    },
+    {
+      "id": "c4092109-ff10-44df-834a-91075cd421dd",
+      "language": "Hindi",
+      "proficiency": "Native"
+    },
+    {
+      "id": "1a6ff498-7469-40a2-a95f-89892c29b626",
+      "language": "Punjabi",
+      "proficiency": "Native"
+    }
+  ],
+  "keyAchievements": [
+    {
+      "id": "3ba9f4ba-13c5-4555-877f-7815fece40ca",
+      "title": "Academic and Professional Excellence Achieved top 10 percentile in university studies and consistently presented scalable solutions",
+      "description": ""
+    }
+  ],
+  "interests": [
+    "sports like cricket",
+    "badminton"
+  ],
+  "projects": [],
+  "certifications": []
+}

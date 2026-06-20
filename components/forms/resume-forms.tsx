@@ -1,6 +1,16 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import {
+  Award,
+  Briefcase,
+  FolderKanban,
+  GraduationCap,
+  Languages,
+  Plus,
+  Trash2,
+  Trophy,
+} from "lucide-react";
+import { SectionEmptyState } from "@/components/forms/section-empty-state";
 import { RichTextEditor } from "@/components/forms/rich-text-editor";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,10 +23,15 @@ import {
   SKILL_CATEGORY_LABELS,
   SKILL_CATEGORY_ORDER,
 } from "@/lib/resume/skill-categories";
+import { DATE_END_PLACEHOLDER, DATE_PLACEHOLDER } from "@/lib/resume/field-hints";
 import { OPTIONAL_FIELD_LABELS } from "@/lib/resume/optional-fields";
 import { useResumeStore } from "@/hooks/use-resume-store";
 import type { OptionalFields, SkillCategory } from "@/types/resume";
 import { RESUME_SECTIONS } from "@/types/resume";
+
+function confirmRemove(label: string) {
+  return window.confirm(`Remove ${label}? This cannot be undone.`);
+}
 
 function parseCommaList(value: string) {
   return value
@@ -110,6 +125,7 @@ export function PersonalInfoForm() {
           id="linkedIn"
           value={personalInfo.linkedIn}
           onChange={(e) => setPersonalInfo({ linkedIn: e.target.value })}
+          placeholder="linkedin.com/in/yourname"
         />
       </div>
       <div className="space-y-2">
@@ -118,6 +134,7 @@ export function PersonalInfoForm() {
           id="github"
           value={personalInfo.github}
           onChange={(e) => setPersonalInfo({ github: e.target.value })}
+          placeholder="github.com/yourname"
         />
       </div>
       <div className="space-y-2 sm:col-span-2">
@@ -126,6 +143,7 @@ export function PersonalInfoForm() {
           id="website"
           value={personalInfo.website}
           onChange={(e) => setPersonalInfo({ website: e.target.value })}
+          placeholder="https://yourportfolio.com"
         />
       </div>
     </div>
@@ -198,6 +216,15 @@ export function ExperienceForm() {
 
   return (
     <div className="space-y-4">
+      {resume.experience.length === 0 && (
+        <SectionEmptyState
+          icon={Briefcase}
+          title="No work experience yet"
+          description="Add your roles, companies, and key projects. Start with your most recent position."
+          actionLabel="Add first role"
+          onAction={addExperience}
+        />
+      )}
       {resume.experience.map((item, index) => (
         <div key={item.id} className="rounded-lg border p-4">
           <div className="mb-3 flex items-center justify-between">
@@ -206,7 +233,10 @@ export function ExperienceForm() {
               type="button"
               variant="ghost"
               size="icon-sm"
-              onClick={() => removeExperience(item.id)}
+              aria-label={`Remove role ${index + 1}`}
+              onClick={() => {
+                if (confirmRemove(`role ${index + 1}`)) removeExperience(item.id);
+              }}
             >
               <Trash2 className="size-4" />
             </Button>
@@ -255,6 +285,7 @@ export function ExperienceForm() {
                 onChange={(e) =>
                   updateExperience(item.id, { startDate: e.target.value })
                 }
+                placeholder={DATE_PLACEHOLDER}
               />
             </div>
             <div className="space-y-2">
@@ -264,7 +295,7 @@ export function ExperienceForm() {
                 onChange={(e) =>
                   updateExperience(item.id, { endDate: e.target.value })
                 }
-                placeholder="Present"
+                placeholder={DATE_END_PLACEHOLDER}
               />
             </div>
             <div className="space-y-2 sm:col-span-2">
@@ -312,10 +343,12 @@ export function ExperienceForm() {
           </div>
         </div>
       ))}
-      <Button type="button" variant="outline" onClick={addExperience}>
-        <Plus className="size-4" />
-        Add experience
-      </Button>
+      {resume.experience.length > 0 && (
+        <Button type="button" variant="outline" onClick={addExperience}>
+          <Plus className="size-4" />
+          Add experience
+        </Button>
+      )}
     </div>
   );
 }
@@ -326,6 +359,15 @@ export function EducationForm() {
 
   return (
     <div className="space-y-4">
+      {resume.education.length === 0 && (
+        <SectionEmptyState
+          icon={GraduationCap}
+          title="No education entries yet"
+          description="Add your degrees, institutions, and graduation dates."
+          actionLabel="Add first education"
+          onAction={addEducation}
+        />
+      )}
       {resume.education.map((item, index) => (
         <div key={item.id} className="rounded-lg border p-4">
           <div className="mb-3 flex items-center justify-between">
@@ -334,7 +376,10 @@ export function EducationForm() {
               type="button"
               variant="ghost"
               size="icon-sm"
-              onClick={() => removeEducation(item.id)}
+              aria-label={`Remove education ${index + 1}`}
+              onClick={() => {
+                if (confirmRemove(`education ${index + 1}`)) removeEducation(item.id);
+              }}
             >
               <Trash2 className="size-4" />
             </Button>
@@ -384,6 +429,7 @@ export function EducationForm() {
                 onChange={(e) =>
                   updateEducation(item.id, { startDate: e.target.value })
                 }
+                placeholder={DATE_PLACEHOLDER}
               />
             </div>
             <div className="space-y-2">
@@ -393,15 +439,18 @@ export function EducationForm() {
                 onChange={(e) =>
                   updateEducation(item.id, { endDate: e.target.value })
                 }
+                placeholder={DATE_PLACEHOLDER}
               />
             </div>
           </div>
         </div>
       ))}
-      <Button type="button" variant="outline" onClick={addEducation}>
-        <Plus className="size-4" />
-        Add education
-      </Button>
+      {resume.education.length > 0 && (
+        <Button type="button" variant="outline" onClick={addEducation}>
+          <Plus className="size-4" />
+          Add education
+        </Button>
+      )}
     </div>
   );
 }
@@ -490,7 +539,12 @@ export function SkillsForm() {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      onClick={() => removeSkill(item.id)}
+                      aria-label={`Remove skill ${item.name || "entry"}`}
+                      onClick={() => {
+                        if (confirmRemove(`skill "${item.name || "entry"}"`)) {
+                          removeSkill(item.id);
+                        }
+                      }}
                     >
                       <Trash2 className="size-4" />
                     </Button>
@@ -538,6 +592,15 @@ export function SpokenLanguagesForm() {
 
   return (
     <div className="space-y-4">
+      {resume.spokenLanguages.length === 0 && (
+        <SectionEmptyState
+          icon={Languages}
+          title="No languages added"
+          description="List languages you speak and your proficiency level."
+          actionLabel="Add first language"
+          onAction={addSpokenLanguage}
+        />
+      )}
       {resume.spokenLanguages.map((item, index) => (
         <div key={item.id} className="flex gap-2">
           <Input
@@ -558,16 +621,21 @@ export function SpokenLanguagesForm() {
             type="button"
             variant="ghost"
             size="icon"
-            onClick={() => removeSpokenLanguage(item.id)}
+            aria-label={`Remove language ${index + 1}`}
+            onClick={() => {
+              if (confirmRemove(`language ${index + 1}`)) removeSpokenLanguage(item.id);
+            }}
           >
             <Trash2 className="size-4" />
           </Button>
         </div>
       ))}
-      <Button type="button" variant="outline" onClick={addSpokenLanguage}>
-        <Plus className="size-4" />
-        Add language
-      </Button>
+      {resume.spokenLanguages.length > 0 && (
+        <Button type="button" variant="outline" onClick={addSpokenLanguage}>
+          <Plus className="size-4" />
+          Add language
+        </Button>
+      )}
     </div>
   );
 }
@@ -578,6 +646,15 @@ export function KeyAchievementsForm() {
 
   return (
     <div className="space-y-4">
+      {resume.keyAchievements.length === 0 && (
+        <SectionEmptyState
+          icon={Trophy}
+          title="No achievements yet"
+          description="Highlight standout academic or professional accomplishments."
+          actionLabel="Add first achievement"
+          onAction={addKeyAchievement}
+        />
+      )}
       {resume.keyAchievements.map((item, index) => (
         <div key={item.id} className="rounded-lg border p-4">
           <div className="mb-3 flex items-center justify-between">
@@ -586,7 +663,12 @@ export function KeyAchievementsForm() {
               type="button"
               variant="ghost"
               size="icon-sm"
-              onClick={() => removeKeyAchievement(item.id)}
+              aria-label={`Remove achievement ${index + 1}`}
+              onClick={() => {
+                if (confirmRemove(`achievement ${index + 1}`)) {
+                  removeKeyAchievement(item.id);
+                }
+              }}
             >
               <Trash2 className="size-4" />
             </Button>
@@ -610,10 +692,12 @@ export function KeyAchievementsForm() {
           </div>
         </div>
       ))}
-      <Button type="button" variant="outline" onClick={addKeyAchievement}>
-        <Plus className="size-4" />
-        Add achievement
-      </Button>
+      {resume.keyAchievements.length > 0 && (
+        <Button type="button" variant="outline" onClick={addKeyAchievement}>
+          <Plus className="size-4" />
+          Add achievement
+        </Button>
+      )}
     </div>
   );
 }
@@ -638,6 +722,15 @@ export function ProjectsForm() {
 
   return (
     <div className="space-y-4">
+      {resume.projects.length === 0 && (
+        <SectionEmptyState
+          icon={FolderKanban}
+          title="No personal projects yet"
+          description="Showcase side projects, open-source work, or portfolio pieces."
+          actionLabel="Add first project"
+          onAction={addProject}
+        />
+      )}
       {resume.projects.map((item, index) => (
         <div key={item.id} className="rounded-lg border p-4">
           <div className="mb-3 flex items-center justify-between">
@@ -646,7 +739,10 @@ export function ProjectsForm() {
               type="button"
               variant="ghost"
               size="icon-sm"
-              onClick={() => removeProject(item.id)}
+              aria-label={`Remove project ${index + 1}`}
+              onClick={() => {
+                if (confirmRemove(`project ${index + 1}`)) removeProject(item.id);
+              }}
             >
               <Trash2 className="size-4" />
             </Button>
@@ -673,10 +769,12 @@ export function ProjectsForm() {
           </div>
         </div>
       ))}
-      <Button type="button" variant="outline" onClick={addProject}>
-        <Plus className="size-4" />
-        Add project
-      </Button>
+      {resume.projects.length > 0 && (
+        <Button type="button" variant="outline" onClick={addProject}>
+          <Plus className="size-4" />
+          Add project
+        </Button>
+      )}
     </div>
   );
 }
@@ -687,6 +785,15 @@ export function CertificationsForm() {
 
   return (
     <div className="space-y-4">
+      {resume.certifications.length === 0 && (
+        <SectionEmptyState
+          icon={Award}
+          title="No certifications yet"
+          description="Add professional credentials, licenses, or course certificates."
+          actionLabel="Add first certification"
+          onAction={addCertification}
+        />
+      )}
       {resume.certifications.map((item, index) => (
         <div key={item.id} className="rounded-lg border p-4">
           <div className="mb-3 flex items-center justify-between">
@@ -695,7 +802,12 @@ export function CertificationsForm() {
               type="button"
               variant="ghost"
               size="icon-sm"
-              onClick={() => removeCertification(item.id)}
+              aria-label={`Remove certification ${index + 1}`}
+              onClick={() => {
+                if (confirmRemove(`certification ${index + 1}`)) {
+                  removeCertification(item.id);
+                }
+              }}
             >
               <Trash2 className="size-4" />
             </Button>
@@ -718,10 +830,12 @@ export function CertificationsForm() {
           </div>
         </div>
       ))}
-      <Button type="button" variant="outline" onClick={addCertification}>
-        <Plus className="size-4" />
-        Add certification
-      </Button>
+      {resume.certifications.length > 0 && (
+        <Button type="button" variant="outline" onClick={addCertification}>
+          <Plus className="size-4" />
+          Add certification
+        </Button>
+      )}
     </div>
   );
 }

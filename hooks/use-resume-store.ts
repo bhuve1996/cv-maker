@@ -63,6 +63,7 @@ interface ResumeStore {
   removeCertification: (id: string) => void;
   setOptionalFields: (fields: Partial<OptionalFields>) => void;
   setIsParsing: (value: boolean) => void;
+  startFromScratch: () => void;
   reset: () => void;
 }
 
@@ -358,6 +359,8 @@ export const useResumeStore = create<ResumeStore>()(
 
       setIsParsing: (isParsing) => set({ isParsing }),
 
+      startFromScratch: () => set({ hasUploaded: true }),
+
       reset: () =>
         set({
           resume: createEmptyResume(),
@@ -376,6 +379,8 @@ export const useResumeStore = create<ResumeStore>()(
         resume: state.resume,
         rawText: state.rawText,
         hasUploaded: state.hasUploaded,
+        parseParser: state.parseParser,
+        parseWarning: state.parseWarning,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
